@@ -1,0 +1,6 @@
+Xin chào {{ result.application.candidate.get_full_name }},
+
+Kết quả tuyển dụng cho vị trí {{ result.application.job.title }}: {{ result.final_decision }}.
+
+Trân trọng,
+Team tuyển dụng

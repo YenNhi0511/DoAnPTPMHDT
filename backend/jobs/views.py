@@ -74,3 +74,40 @@ class JobViewSet(viewsets.ModelViewSet):
         from applications.serializers import ApplicationListSerializer
         serializer = ApplicationListSerializer(applications, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticatedOrReadOnly])
+    def apply(self, request, pk=None):
+        """Public application endpoint (allow anonymous)"""
+        job = self.get_object()
+        from applications.serializers import ApplicationCreateSerializer
+        data = request.data.copy()
+        data['job'] = str(job.id)
+        serializer = ApplicationCreateSerializer(data=data, context={'request': request})
+        if serializer.is_valid():
+            application = serializer.save()
+            from applications.serializers import ApplicationSerializer
+            return Response(ApplicationSerializer(application).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def stats(self, request):
+        from django.db.models import Count, Avg
+        total_jobs = Job.objects.count()
+        open_jobs = Job.objects.filter(status=Job.Status.OPEN).count()
+        closed_jobs = Job.objects.filter(status=Job.Status.CLOSED).count()
+        total_applications = 0
+        try:
+            from applications.models import Application
+            total_applications = Application.objects.count()
+            avg_ai_score = Application.objects.aggregate(avg=Avg('ai_score'))['avg']
+        except Exception:
+            avg_ai_score = None
+
+        data = {
+            'total_jobs': total_jobs,
+            'open_jobs': open_jobs,
+            'closed_jobs': closed_jobs,
+            'total_applications': total_applications,
+            'avg_ai_score': avg_ai_score,
+        }
+        return Response(data)

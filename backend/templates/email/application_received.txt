@@ -1,0 +1,7 @@
+Xin chào {{ candidate.get_full_name }},
+
+Chúng tôi đã nhận được hồ sơ của bạn cho vị trí: {{ job.title }}.
+Chúng tôi sẽ xử lý và thông báo đến bạn trong thời gian sớm nhất.
+
+Trân trọng,
+Team tuyển dụng

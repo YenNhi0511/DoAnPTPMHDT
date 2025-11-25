@@ -1,0 +1,8 @@
+Xin chào,
+
+Bạn có 1 lịch phỏng vấn cho vị trí: {{ interview.application.job.title }}
+Thời gian: {{ interview.scheduled_at }}
+Địa điểm: {{ interview.location }}
+
+Trân trọng,
+Team tuyển dụng

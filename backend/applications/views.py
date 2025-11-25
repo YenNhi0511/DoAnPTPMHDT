@@ -16,7 +16,15 @@ from .serializers import (
 
 class ApplicationViewSet(viewsets.ModelViewSet):
     """ViewSet cho Application"""
+    # Default permissions: read/list require auth for recruiter/admin; allow create for anonymous
     permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        # Allow unauthenticated users to create applications
+        if self.action == 'create':
+            from rest_framework.permissions import AllowAny
+            return [AllowAny()]
+        return [p() for p in self.permission_classes]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['job', 'status']
     ordering_fields = ['applied_at', 'ai_score']
@@ -93,6 +101,11 @@ class InterviewViewSet(viewsets.ModelViewSet):
         
         return Response(InterviewSerializer(interview).data)
 
+    def perform_create(self, serializer):
+        interview = serializer.save()
+        from .tasks import send_interview_email_task
+        send_interview_email_task.delay(str(interview.id))
+
 
 class InterviewPanelViewSet(viewsets.ModelViewSet):
     """ViewSet cho InterviewPanel"""
@@ -124,3 +137,10 @@ class RecruitmentResultViewSet(viewsets.ModelViewSet):
         send_result_email_task.delay(str(result.id))
         
         return Response({'message': 'Email sent'})
+
+    @action(detail=True, methods=['post'])
+    def generate_offer(self, request, pk=None):
+        result = self.get_object()
+        from .tasks import generate_offer_task
+        generate_offer_task.delay(str(result.id))
+        return Response({'message': 'Offer generation started'})

@@ -22,12 +22,41 @@ class ApplicationSerializer(serializers.ModelSerializer):
 class ApplicationCreateSerializer(serializers.ModelSerializer):
     """Serializer để nộp hồ sơ"""
     
+    candidate_email = serializers.EmailField(write_only=True, required=False)
+    candidate_name = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Application
-        fields = ['job', 'cv_file', 'cover_letter']
+        fields = ['job', 'cv_file', 'cover_letter', 'candidate_email', 'candidate_name']
     
     def create(self, validated_data):
-        validated_data['candidate'] = self.context['request'].user
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        # If the user is authenticated, set candidate directly
+        if user and getattr(user, 'is_authenticated', False):
+            validated_data['candidate'] = user
+            return super().create(validated_data)
+
+        # If anonymous, create a temporary user based on provided email/name
+        from accounts.models import User
+        email = validated_data.pop('candidate_email', None)
+        name = validated_data.pop('candidate_name', None) or 'Candidate'
+
+        if not email:
+            raise serializers.ValidationError({'candidate_email': 'This field is required for anonymous applications.'})
+
+        # auto generate username
+        import uuid
+        username = f"anon_{uuid.uuid4().hex[:8]}"
+        temp_user = User.objects.create_user(
+            email=email,
+            username=username,
+            password=User.objects.make_random_password(),
+            first_name=name.split(' ')[0] if name else '',
+            last_name=' '.join(name.split(' ')[1:]) if name and len(name.split(' ')) > 1 else '',
+            role=User.Role.CANDIDATE
+        )
+        validated_data['candidate'] = temp_user
         return super().create(validated_data)
 
 

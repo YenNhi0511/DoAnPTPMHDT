@@ -80,6 +80,30 @@ job2, created = Job.objects.get_or_create(
     }
 )
 
+# Create sample application (if not exists)
+from applications.models import Application, Interview, InterviewPanel
+app, created = Application.objects.get_or_create(
+    job=job1,
+    candidate=candidate,
+    defaults={
+        'cover_letter': 'I am applying to this role',
+        'status': Application.Status.PENDING,
+    }
+)
+
+# Create sample interview for this application
+if not app.interviews.exists():
+    interview = Interview.objects.create(
+        application=app,
+        scheduled_at=timezone.now() + timedelta(days=7),
+        duration=60,
+        location='Zoom',
+        interview_type=Interview.Type.VIDEO,
+        status=Interview.Status.SCHEDULED,
+    )
+    # Add panel members (use recruiter as panel member)
+    InterviewPanel.objects.create(interview=interview, interviewer=recruiter, role=InterviewPanel.Role.LEAD)
+
 print("✅ Seed data created successfully!")
 print("Users:")
 print(f"  - Admin: {admin.email} / admin123")
