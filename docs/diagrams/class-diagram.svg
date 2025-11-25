@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+    <style>
+        .cls { fill:#fff; stroke:#2d3748; stroke-width:2; }
+        .title { font-family: Arial; font-weight:bold; font-size:14px; fill:#1a202c; }
+        .field { font-family: Arial; font-size:12px; fill:#2d3748; }
+        .connector { stroke:#2d3748; stroke-width:2; marker-end:url(#arr); }
+    </style>
+    <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d3748" />
+        </marker>
+    </defs>
+
+    <!-- User -->
+    <rect x="40" y="40" width="260" height="130" rx="6" class="cls" />
+    <text x="170" y="60" text-anchor="middle" class="title">User</text>
+    <text x="60" y="85" class="field">+ id: UUID</text>
+    <text x="60" y="105" class="field">+ email: String</text>
+    <text x="60" y="125" class="field">+ role: String</text>
+    <text x="60" y="145" class="field">+ createApplication(job, file, data)</text>
+
+    <!-- Job -->
+    <rect x="360" y="40" width="260" height="130" rx="6" class="cls" />
+    <text x="490" y="60" text-anchor="middle" class="title">Job</text>
+    <text x="380" y="85" class="field">+ id: UUID</text>
+    <text x="380" y="105" class="field">+ title: String</text>
+    <text x="380" y="125" class="field">+ status: String</text>
+    <text x="380" y="145" class="field">+ publish(), close()</text>
+
+    <!-- Application -->
+    <rect x="680" y="40" width="320" height="160" rx="6" class="cls" />
+    <text x="840" y="60" text-anchor="middle" class="title">Application</text>
+    <text x="700" y="90" class="field">+ id: UUID</text>
+    <text x="700" y="110" class="field">+ job_id: FK Job</text>
+    <text x="700" y="130" class="field">+ candidate_id: FK User</text>
+    <text x="700" y="150" class="field">+ status: String</text>
+    <text x="700" y="170" class="field">+ ai_score: Float</text>
+
+    <!-- RecruitmentResult -->
+    <rect x="40" y="220" width="260" height="120" rx="6" class="cls" />
+    <text x="170" y="238" text-anchor="middle" class="title">RecruitmentResult</text>
+    <text x="60" y="260" class="field">+ id: UUID</text>
+    <text x="60" y="280" class="field">+ application_id: FK</text>
+    <text x="60" y="300" class="field">+ final_decision: String</text>
+
+    <!-- Interview -->
+    <rect x="360" y="220" width="260" height="120" rx="6" class="cls" />
+    <text x="490" y="238" text-anchor="middle" class="title">Interview</text>
+    <text x="380" y="260" class="field">+ id: UUID</text>
+    <text x="380" y="280" class="field">+ application_id: FK</text>
+    <text x="380" y="300" class="field">+ scheduled_at: datetime</text>
+
+    <!-- InterviewPanel -->
+    <rect x="680" y="220" width="260" height="120" rx="6" class="cls" />
+    <text x="810" y="238" text-anchor="middle" class="title">InterviewPanel</text>
+    <text x="700" y="260" class="field">+ id: UUID</text>
+    <text x="700" y="280" class="field">+ interview_id: FK</text>
+    <text x="700" y="300" class="field">+ user_id: FK</text>
+
+    <!-- Connectors -->
+    <line x1="300" y1="110" x2="360" y2="110" class="connector" marker-end="url(#arr)" />
+    <text x="330" y="100" class="small">User applies/Job has</text>
+    <line x1="620" y1="120" x2="680" y2="120" class="connector" marker-end="url(#arr)" />
+    <text x="650" y="110" class="small">Application links to Job</text>
+    <line x1="820" y1="200" x2="820" y2="220" class="connector" marker-end="url(#arr)" />
+    <text x="820" y="210" class="small" text-anchor="middle">1..*</text>
+
+</svg>

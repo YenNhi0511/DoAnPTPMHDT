@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420">
+    <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a202c" />
+        </marker>
+        <style>
+            .actor { font-family: Arial; font-weight:bold; font-size:14px; }
+            .lifeline { stroke:#a0aec0; stroke-width:2; stroke-dasharray:4 8; }
+            .msg { stroke:#2b6cb0; stroke-width:2; }
+            .box { fill:#f0f7ff; stroke:#2b6cb0; stroke-width:2; rx:6; }
+            .small { font-family: Arial; font-size:12px; }
+        </style>
+    </defs>
+
+    <!-- actors header -->
+    <g transform="translate(40,20)">
+        <text class="actor" x="0" y="0">Candidate</text>
+        <rect x="-20" y="10" width="100" height="30" class="box" rx="6" />
+        <text class="small" x="30" y="30">Fill form & Upload CV</text>
+    </g>
+
+    <g transform="translate(240,20)">
+        <text class="actor">Frontend / FE</text>
+        <rect x="-20" y="10" width="160" height="30" class="box" rx="6" />
+        <text class="small" x="60" y="30">POST /api/jobs/{id}/apply/</text>
+    </g>
+
+    <g transform="translate(480,20)">
+        <text class="actor">Backend API</text>
+        <rect x="-20" y="10" width="160" height="30" class="box" rx="6" />
+        <text class="small" x="60" y="30">ApplicationViewSet</text>
+    </g>
+
+    <g transform="translate(720,20)">
+        <text class="actor">DB</text>
+        <rect x="-20" y="10" width="60" height="30" class="box" rx="6" />
+        <text class="small" x="10" y="30">Postgres</text>
+    </g>
+
+    <g transform="translate(880,20)">
+        <text class="actor">Celery</text>
+        <rect x="-20" y="10" width="120" height="30" class="box" rx="6" />
+        <text class="small" x="40" y="30">Parse & Screen - worker</text>
+    </g>
+
+    <g transform="translate(1040,20)">
+        <text class="actor">Gemini / SMTP</text>
+        <rect x="-20" y="10" width="160" height="30" class="box" rx="6" />
+    </g>
+
+    <!-- lifelines -->
+    <line x1="70" y1="80" x2="70" y2="360" class="lifeline" />
+    <line x1="300" y1="80" x2="300" y2="360" class="lifeline" />
+    <line x1="540" y1="80" x2="540" y2="360" class="lifeline" />
+    <line x1="760" y1="80" x2="760" y2="360" class="lifeline" />
+    <line x1="920" y1="80" x2="920" y2="360" class="lifeline" />
+    <line x1="1140" y1="80" x2="1140" y2="360" class="lifeline" />
+
+    <!-- messages (arrows between lifelines) -->
+    <line x1="100" y1="110" x2="300" y2="110" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="200" y="100" text-anchor="middle">POST /api/jobs/{id}/apply/</text>
+
+    <line x1="320" y1="150" x2="540" y2="150" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="430" y="140" text-anchor="middle">validate & create Application</text>
+
+    <line x1="560" y1="190" x2="760" y2="190" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="660" y="180" text-anchor="middle">INSERT application</text>
+
+    <line x1="540" y1="220" x2="920" y2="220" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="730" y="210" text-anchor="middle">trigger tasks (parse_cv, screen_cv)</text>
+
+    <line x1="920" y1="260" x2="1140" y2="260" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="1030" y="250" text-anchor="middle">Gemini: ai analysis</text>
+
+    <line x1="1140" y1="290" x2="920" y2="290" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="1030" y="280" text-anchor="middle">ai_score, ai_analysis</text>
+
+    <line x1="920" y1="320" x2="760" y2="320" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="840" y="310" text-anchor="middle">update application.ai_*</text>
+
+    <line x1="540" y1="330" x2="300" y2="330" class="msg" marker-end="url(#arr)" />
+    <text class="small" x="420" y="320" text-anchor="middle">201 Created / API Response</text>
+
+</svg>

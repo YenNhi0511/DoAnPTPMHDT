@@ -43,16 +43,20 @@ Mục tiêu: tóm tắt các khối chức năng chính của hệ thống tuy�
 
 - Kết nối các khối bằng mũi tên biểu thị luồng: e.g., Application Management → Screening & AI (trigger), Interview → Notifications (trigger), etc.
 
-````mermaid
-  UI --> INTERVIEW[Quản lý Phỏng vấn (Interview Management)]
-  UI --> RESULT[Kết quả Tuyển dụng & Offer (Recruitment Result & Offer)]
-  UI --> USER[Người dùng & Vai trò (User & Role Management)]
+````text
+BFD (ASCII):
 
-  INTERVIEW --> NOTI
-  RESULT --> NOTI
-  CELERY --> DB[(Cơ sở dữ liệu)]
-  APP --> DB
-  INTERVIEW --> DB
+Actors: Candidate | Recruiter | Interviewer | Admin | Guest
+
+UI ---> Quản lý Phỏng vấn (Interview Management)
+UI ---> Kết quả Tuyển dụng & Offer (Recruitment Result & Offer)
+UI ---> Người dùng & Vai trò (User & Role Management)
+
+Quản lý Phỏng vấn ---> Thông báo (Notifications)
+Kết quả Tuyển dụng ---> Thông báo (Notifications)
+Tác vụ nền (Celery) ---> Cơ sở dữ liệu (Database)
+Application Model ---> Cơ sở dữ liệu (Database)
+Quản lý Phỏng vấn ---> Cơ sở dữ liệu (Database)
 
 ### 1.2 Chi tiết mô tả cho BFD (Sơ đồ chức năng hệ thống và các phần)
 
@@ -163,34 +167,21 @@ Mục tiêu: tóm tắt các khối chức năng chính của hệ thống tuy�
 - **Apply for Job** TRIGGERS **Parse CV** and **AI Screening** (asynchronous) — mapped to Celery tasks
 - **Make Recruitment Decision** INCLUDE **Generate Offer PDF** & TRIGGERS **Send Result Email**
 - **Manage Applications** USES **AI Screening** output (Extend - hiển thị nếu có)
-```mermaid
-%% Use Case Diagram in Mermaid-like format (simplified)
-actor Candidate
-actor Recruiter
-actor Interviewer
-actor Admin
-actor Guest
-actor System
+```text
+Use Case Diagram (ASCII):
 
-Candidate --o ApplyForJob
-Guest --o ApplyForJob
-ApplyForJob ..> ConfirmApplication : include
-ApplyForJob ..> ParseCV : triggers
-ParseCV ..> AIScreening : triggers
-Recruiter --o ManageJob
-Recruiter --o ManageApplications
-Recruiter --o ScheduleInterview
-ScheduleInterview ..> NotifyInterview : include
-Interviewer --o SubmitInterviewFeedback
-Recruiter --o MakeDecision
-MakeDecision ..> GenerateOfferPDF : include
-MakeDecision ..> SendResultEmail : triggers
-Admin --o ManageUsers
-Admin --o Reporting
-System ..> SendResultEmail
-System ..> ParseCV
-System ..> AIScreening
-````
+Actors: Candidate, Guest, Recruiter, Interviewer, Admin, System
+
+Candidate -> Apply for Job
+Guest -> Apply for Job
+Apply for Job -> [includes] Confirm Application
+Apply for Job -> [triggers] Parse CV -> AI Screening
+Recruiter -> Manage Job, Manage Applications, Schedule Interview, Make Decision
+Interviewer -> Submit Interview Feedback
+Recruiter -> Make Decision -> [includes] Generate Offer PDF -> [triggers] Send Result Email
+Admin -> Manage Users, Reporting
+System -> Parse CV, AI Screening, Send Result Email
+```
 
 > Lưu ý: Draw.io không hỗ trợ Mermaid Use Case native; bạn dùng shapes: actors (stickmen), use cases (oval), các mũi tên, ghi chú include/extend.
 
@@ -420,3 +411,6 @@ Nếu bạn muốn, tôi có thể:
 - Hoặc chuyển một số Use Case mô tả thành PNG/SVG để chèn vào báo cáo.
 
 Bạn muốn tôi tiếp theo: (A) Tạo file `.drawio` mẫu; (B) Tạo các vị trí endpoint & tasks checklist để bạn tick khi hoàn thành; hay (C) Bắt đầu triển khai Option A/B/C từ lộ trình thực thi code tiếp theo?
+
+Hoặc: xem thêm các sơ đồ kiến trúc chi tiết tại `docs/06-architecture-diagrams.md` (Activity, Sequence, Communication, Class, ERD, LDM, DFD Level 0..2)
+````

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600">
+    <style>
+        .ent { fill:#ffffff; stroke:#2b6cb0; stroke-width:2; }
+        .title { font-family: Arial; font-weight:bold; font-size:14px; }
+        .attr { font-family: Arial; font-size:12px; }
+        .rel { stroke:#1f2937; stroke-width:2; marker-end:url(#arr); }
+    </style>
+    <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937" />
+        </marker>
+    </defs>
+
+    <!-- USERS -->
+    <rect x="50" y="40" width="260" height="140" rx="6" class="ent" />
+    <text x="180" y="65" text-anchor="middle" class="title">USERS</text>
+    <text x="60" y="95" class="attr">* id: UUID PK</text>
+    <text x="60" y="115" class="attr">email: varchar</text>
+    <text x="60" y="135" class="attr">username: varchar</text>
+    <text x="60" y="155" class="attr">role: varchar</text>
+
+    <!-- JOBS -->
+    <rect x="360" y="40" width="280" height="140" rx="6" class="ent" />
+    <text x="500" y="65" text-anchor="middle" class="title">JOBS</text>
+    <text x="380" y="95" class="attr">* id: UUID PK</text>
+    <text x="380" y="115" class="attr">title: varchar</text>
+    <text x="380" y="135" class="attr">status: varchar</text>
+    <text x="380" y="155" class="attr">deadline: date</text>
+
+    <!-- APPLICATIONS -->
+    <rect x="730" y="40" width="360" height="180" rx="6" class="ent" />
+    <text x="910" y="65" text-anchor="middle" class="title">APPLICATIONS</text>
+    <text x="740" y="95" class="attr">* id: UUID PK</text>
+    <text x="740" y="115" class="attr">job_id: UUID FK</text>
+    <text x="740" y="135" class="attr">candidate_id: UUID FK</text>
+    <text x="740" y="155" class="attr">status: varchar</text>
+    <text x="740" y="175" class="attr">ai_score: numeric</text>
+
+    <!-- INTERVIEWS -->
+    <rect x="1150" y="40" width="260" height="120" rx="6" class="ent" />
+    <text x="1280" y="65" text-anchor="middle" class="title">INTERVIEWS</text>
+    <text x="1160" y="95" class="attr">* id: UUID PK</text>
+    <text x="1160" y="115" class="attr">application_id: UUID FK</text>
+
+    <!-- CONNECTOR LINES -->
+    <line x1="320" y1="120" x2="360" y2="120" class="rel" marker-end="url(#arr)" />
+    <text x="240" y="105" class="attr">1..*</text>
+    <line x1="640" y1="120" x2="730" y2="120" class="rel" marker-end="url(#arr)" />
+    <text x="540" y="105" class="attr">1..*</text>
+    <line x1="1090" y1="120" x2="1150" y2="120" class="rel" marker-end="url(#arr)" />
+    <text x="1030" y="105" class="attr">1..*</text>
+
+    <!-- RECRUITMENT RESULTS -->
+    <rect x="50" y="230" width="300" height="120" rx="6" class="ent" />
+    <text x="200" y="255" text-anchor="middle" class="title">RECRUITMENT_RESULTS</text>
+    <text x="70" y="285" class="attr">* id: UUID PK</text>
+    <text x="70" y="305" class="attr">application_id: UUID FK</text>
+    <text x="70" y="325" class="attr">final_decision: varchar</text>
+
+    <!-- INTERVIEW PANELS -->
+    <rect x="400" y="230" width="300" height="120" rx="6" class="ent" />
+    <text x="550" y="255" text-anchor="middle" class="title">INTERVIEW_PANELS</text>
+    <text x="420" y="285" class="attr">* id: UUID PK</text>
+    <text x="420" y="305" class="attr">interview_id: UUID FK</text>
+    <text x="420" y="325" class="attr">user_id: UUID FK</text>
+
+    <line x1="280" y1="300" x2="400" y2="300" class="rel" marker-end="url(#arr)" />
+    <text x="340" y="295" class="attr">1..*</text>
+
+</svg>

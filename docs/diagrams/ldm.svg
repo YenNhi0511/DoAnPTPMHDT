@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+    <style>
+        .tbl { fill:#fefcf5; stroke:#0b5394; stroke-width:1.8; }
+        .title { font-family: Arial; font-weight:bold; font-size:13px; }
+        .field { font-family: Arial; font-size:12px; }
+        .fk { font-style:italic; fill:#4a5568; }
+    </style>
+
+    <!-- jobs table -->
+    <rect x="40" y="30" width="340" height="120" rx="6" class="tbl" />
+    <text x="60" y="55" class="title">jobs</text>
+    <text x="60" y="75" class="field">id UUID PK</text>
+    <text x="60" y="95" class="field">title varchar</text>
+    <text x="60" y="115" class="field">status varchar | deadline timestamp</text>
+
+    <!-- users table -->
+    <rect x="420" y="30" width="340" height="120" rx="6" class="tbl" />
+    <text x="440" y="55" class="title">users</text>
+    <text x="440" y="75" class="field">id UUID PK</text>
+    <text x="440" y="95" class="field">email varchar</text>
+    <text x="440" y="115" class="field">password_hash, role</text>
+
+    <!-- applications table -->
+    <rect x="800" y="30" width="540" height="180" rx="6" class="tbl" />
+    <text x="820" y="55" class="title">applications</text>
+    <text x="820" y="75" class="field">id UUID PK</text>
+    <text x="820" y="95" class="field">job_id UUID FK -> jobs.id</text>
+    <text x="820" y="115" class="field">candidate_id UUID FK -> users.id</text>
+    <text x="820" y="135" class="field">status varchar | cv_file varchar</text>
+    <text x="820" y="155" class="field">ai_score numeric | ai_analysis jsonb</text>
+
+    <!-- interviews -->
+    <rect x="40" y="220" width="340" height="120" rx="6" class="tbl" />
+    <text x="60" y="245" class="title">interviews</text>
+    <text x="60" y="265" class="field">id UUID PK</text>
+    <text x="60" y="285" class="field">application_id UUID FK -> applications.id</text>
+    <text x="60" y="305" class="field">scheduled_at timestamp | duration int</text>
+
+    <!-- interview_panels -->
+    <rect x="420" y="220" width="340" height="120" rx="6" class="tbl" />
+    <text x="440" y="245" class="title">interview_panels</text>
+    <text x="440" y="265" class="field">id UUID PK</text>
+    <text x="440" y="285" class="field">interview_id UUID FK -> interviews.id</text>
+    <text x="440" y="305" class="field">user_id UUID FK -> users.id</text>
+
+    <!-- recruitment_results -->
+    <rect x="800" y="220" width="540" height="120" rx="6" class="tbl" />
+    <text x="820" y="245" class="title">recruitment_results</text>
+    <text x="820" y="265" class="field">id UUID PK</text>
+    <text x="820" y="285" class="field">application_id UUID FK -> applications.id</text>
+    <text x="820" y="305" class="field">final_decision varchar | offered_salary numeric</text>
+
+    <!-- connectors -->
+    <line x1="380" y1="90" x2="420" y2="90" stroke="#1f2937" stroke-width="2"
+        marker-end="url(#marr)" />
+    <defs>
+        <marker id="marr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#111827" />
+        </marker>
+    </defs>
+</svg>
