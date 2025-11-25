@@ -1,0 +1,24 @@
+Bước I. cài Database
+1. cài pgAdmin4
+2. chạy DB được gửi
+3. Test Connection
+
+```cmd
+psql -U admin -d recruitment_db
+# Nhập password: 123456
+# Nếu login được → OK ( kết quả của tôi "recruitment_db=> 123456" chuyển sang "recruitment_db->" là oke  )
+
+Bước II. CÀI ĐẶT REDIS
+# 1. Cài Docker Desktop: https://www.docker.com/products/docker-desktop
+# 2. Sau khi cài xong và mở Docker Desktop, chạy:
+
+docker run -d --name redis -p 6379:6379 redis:alpine
+
+# Kiểm tra Redis đang chạy:
+docker ps
+# Phải thấy container "redis"
+
+# Test Redis:
+docker exec -it redis redis-cli ping
+# Phải trả về: PONG
+```

@@ -1,0 +1,240 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  ADMIN
+  RECRUITER
+  INTERVIEWER
+  CANDIDATE
+}
+
+enum JobStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
+enum EmploymentType {
+  FULLTIME
+  PARTTIME
+  CONTRACT
+  INTERN
+}
+
+enum ApplicationStatus {
+  PENDING
+  SCREENING
+  INTERVIEW
+  OFFER
+  REJECTED
+  ACCEPTED
+}
+
+enum InterviewType {
+  PHONE
+  VIDEO
+  ONSITE
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum InterviewResult {
+  PASS
+  FAIL
+  PENDING
+}
+
+enum PanelRole {
+  LEAD
+  MEMBER
+  OBSERVER
+}
+
+enum FinalDecision {
+  OFFER
+  REJECT
+}
+
+enum NotificationType {
+  EMAIL
+  SYSTEM
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // hashed with bcrypt
+  name      String
+  role      Role     @default(CANDIDATE)
+  avatar    String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  createdJobs        Job[]              @relation("JobCreator")
+  applications       Application[]      @relation("CandidateApplications")
+  interviewPanels    InterviewPanel[]   @relation("InterviewerPanels")
+  recruitmentResults RecruitmentResult[] @relation("ResultDecider")
+  notifications      Notification[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model Job {
+  id             String         @id @default(uuid())
+  title          String
+  description    String         @db.Text
+  requirements   String         @db.Text // Job Description (JD)
+  salary         String?
+  location       String
+  employmentType EmploymentType @default(FULLTIME)
+  status         JobStatus      @default(DRAFT)
+  deadline       DateTime
+  createdById    String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  // Relations
+  createdBy    User          @relation("JobCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@index([status])
+  @@index([deadline])
+  @@index([createdById])
+  @@map("jobs")
+}
+
+model Application {
+  id            String            @id @default(uuid())
+  jobId         String
+  candidateId   String
+  cvUrl         String            // URL to CV file in storage
+  coverLetter   String?           @db.Text
+  status        ApplicationStatus @default(PENDING)
+  aiScore       Float?            // 0-100
+  aiAnalysis    Json?             // AI screening result (JSON)
+  screenerNotes String?           @db.Text
+  appliedAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  // Relations
+  job       Job                 @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate User                @relation("CandidateApplications", fields: [candidateId], references: [id], onDelete: Cascade)
+  interviews Interview[]
+  result    RecruitmentResult?
+
+  @@unique([jobId, candidateId]) // Ứng viên chỉ nộp 1 lần cho 1 job
+  @@index([jobId, status])
+  @@index([candidateId])
+  @@index([status])
+  @@index([aiScore])
+  @@map("applications")
+}
+
+model Interview {
+  id            String          @id @default(uuid())
+  applicationId String
+  scheduledAt   DateTime
+  duration      Int             // minutes
+  location      String?         // phòng họp hoặc link meet
+  type          InterviewType   @default(VIDEO)
+  status        InterviewStatus @default(SCHEDULED)
+  feedback      String?         @db.Text
+  result        InterviewResult @default(PENDING)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Relations
+  application Application      @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  panels      InterviewPanel[]
+
+  @@index([scheduledAt, status])
+  @@index([applicationId])
+  @@map("interviews")
+}
+
+model InterviewPanel {
+  id            String    @id @default(uuid())
+  interviewId   String
+  interviewerId String
+  role          PanelRole @default(MEMBER)
+  feedback      String?   @db.Text
+  score         Float?    // 0-100
+  createdAt     DateTime  @default(now())
+
+  // Relations
+  interview   Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  interviewer User      @relation("InterviewerPanels", fields: [interviewerId], references: [id], onDelete: Cascade)
+
+  @@unique([interviewId, interviewerId]) // 1 interviewer chỉ tham gia 1 lần
+  @@index([interviewId])
+  @@index([interviewerId])
+  @@map("interview_panels")
+}
+
+model RecruitmentResult {
+  id              String        @id @default(uuid())
+  applicationId   String        @unique // 1-1 relationship
+  finalDecision   FinalDecision
+  offerLetterUrl  String?       // URL to PDF offer letter
+  salary          String?
+  startDate       DateTime?
+  notes           String?       @db.Text
+  decidedById     String
+  decidedAt       DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+
+  // Relations
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  decidedBy   User        @relation("ResultDecider", fields: [decidedById], references: [id])
+
+  @@index([applicationId])
+  @@index([decidedById])
+  @@index([decidedAt])
+  @@map("recruitment_results")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType @default(SYSTEM)
+  title     String
+  content   String           @db.Text
+  isRead    Boolean          @default(false)
+  relatedId String?          // ID của Application/Interview liên quan
+  sentAt    DateTime         @default(now())
+  createdAt DateTime         @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+  @@index([userId])
+  @@map("notifications")
+}
