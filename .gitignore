@@ -37,6 +37,10 @@ db.sqlite3-journal
 .env
 .env.local
 .env.*.local
+backend/.env
+frontend/.env
+*.env
+!.env.example
 
 # IDEs
 .vscode/
@@ -57,6 +61,8 @@ yarn-error.log*
 # React build
 /frontend/build
 /frontend/.env
+/frontend/.env.local
+/frontend/.env.production
 
 # Testing
 .coverage
