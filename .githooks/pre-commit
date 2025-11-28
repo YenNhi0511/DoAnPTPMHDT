@@ -1,0 +1,10 @@
+#!/bin/sh
+# Prevent committing any .env files (safety check)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+if echo "$STAGED_FILES" | grep -E "(^|/)(\.env|backend/\.env|frontend/\.env)$" >/dev/null; then
+  echo "ERROR: One or more .env files are staged for commit. Aborting commit."
+  echo "Please remove the .env file from staging and commit again, or use .env.example"
+  echo "Command: git reset HEAD <path-to-.env>"
+  exit 1
+fi
+exit 0
