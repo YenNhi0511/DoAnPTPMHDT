@@ -195,6 +195,14 @@ GEMINI_API_KEY=your-gemini-api-key
 REDIS_URL=redis://localhost:6379/0
 ```
 
+⚠️ Security: To prevent accidental commits of `.env`, enable the local git hook (recommended) by running:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+This repository includes a `.githooks/pre-commit` script that rejects staged `.env` files. Note that this is a local git configuration and must be run by each developer.
+
 ### Frontend (.env)
 
 Tạo file `frontend/.env`:
