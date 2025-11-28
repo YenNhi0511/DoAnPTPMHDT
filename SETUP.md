@@ -1,364 +1,246 @@
-# 📘 Hướng dẫn Setup & Sử dụng - Hệ thống Tuyển dụng Nhân sự
+# 📘 Hướng dẫn Setup Chi tiết - Hệ thống Tuyển dụng Nhân sự
 
-Hướng dẫn đầy đủ từ setup đến deployment cho team.
+Hướng dẫn từng bước chi tiết để setup và chạy dự án từ đầu đến cuối.
 
 ---
 
 ## 📋 Mục lục
 
-1. [Tổng quan dự án](#1-tổng-quan-dự-án)
-2. [Yêu cầu hệ thống](#2-yêu-cầu-hệ-thống)
-3. [Cài đặt công cụ](#3-cài-đặt-công-cụ-cần-thiết)
-4. [Setup nhanh (5 phút)](#4-setup-nhanh-5-phút)
-5. [Setup chi tiết](#5-setup-chi-tiết-từng-bước)
-6. [Cấu hình Environment Variables](#6-cấu-hình-environment-variables)
-7. [Chạy dự án](#7-chạy-dự-án)
-8. [Troubleshooting](#8-troubleshooting)
-9. [Deployment](#9-deployment)
-10. [Quy trình làm việc](#10-quy-trình-làm-việc)
+1. [Yêu cầu hệ thống](#1-yêu-cầu-hệ-thống)
+2. [Cài đặt công cụ cần thiết](#2-cài-đặt-công-cụ-cần-thiết)
+3. [Clone và chuẩn bị project](#3-clone-và-chuẩn-bị-project)
+4. [Setup Database](#4-setup-database)
+5. [Setup Backend](#5-setup-backend-từng-bước)
+6. [Setup Frontend](#6-setup-frontend-từng-bước)
+7. [Cấu hình Environment Variables](#7-cấu-hình-environment-variables)
+8. [Chạy dự án](#8-chạy-dự-án)
+9. [Kiểm tra hoạt động](#9-kiểm-tra-hoạt-động)
+10. [Troubleshooting](#10-troubleshooting)
 
 ---
 
-## 1. Tổng quan dự án
+## 1. Yêu cầu hệ thống
 
-### Tech Stack
+Trước khi bắt đầu, đảm bảo máy bạn có:
 
-**Backend:**
-- Django 5.0 + Django REST Framework
-- PostgreSQL (hỗ trợ Neon, Supabase, Railway)
-- Celery + Redis (background jobs)
-- Google Gemini API (AI CV screening)
-- JWT Authentication
-
-**Frontend:**
-- React 18
-- Tailwind CSS
-- Recharts (charts & analytics)
-- Axios (HTTP client)
-
-### Tính năng chính
-- ✅ Quản lý quy trình tuyển dụng
-- ✅ Đăng tin tuyển dụng
-- ✅ Nhận hồ sơ ứng viên (upload CV)
-- ✅ Sàng lọc AI tự động
-- ✅ Quản lý phỏng vấn
-- ✅ Báo cáo thống kê
-- ✅ Admin Panel đầy đủ
+- **Windows 10/11** hoặc **macOS 10.15+** hoặc **Linux (Ubuntu 20.04+)**
+- **Python 3.10** hoặc cao hơn
+- **Node.js 18** hoặc cao hơn
+- **Git** đã cài đặt
+- **PostgreSQL** (hoặc dùng database online như Neon/Supabase - khuyến nghị)
 
 ---
 
-## 2. Yêu cầu hệ thống
+## 2. Cài đặt công cụ cần thiết
 
-- **Python:** 3.10 hoặc cao hơn
-- **Node.js:** 18 hoặc cao hơn
-- **PostgreSQL:** 15+ (hoặc dùng online database)
-- **Git:** Đã cài đặt
-- **OS:** Windows 10+, macOS 10.15+, hoặc Linux (Ubuntu 20.04+)
+### 2.1. Cài đặt Python
 
----
+#### Windows:
 
-## 3. Cài đặt công cụ cần thiết
+1. Truy cập: https://www.python.org/downloads/
+2. Tải Python 3.10 hoặc cao hơn
+3. Chạy file installer
+4. **QUAN TRỌNG:** ✅ Chọn "Add Python to PATH" trước khi Install
+5. Click "Install Now"
+6. Đợi cài đặt xong
+7. Kiểm tra: Mở Command Prompt (CMD) hoặc PowerShell, gõ:
+   ```bash
+   python --version
+   ```
+   Phải hiển thị: `Python 3.10.x` hoặc cao hơn
 
-### 3.1. Python
+#### macOS:
 
-**Windows:**
-1. Tải từ https://www.python.org/downloads/
-2. Chọn "Add Python to PATH"
-3. Kiểm tra: `python --version` (phải >= 3.10)
-
-**Mac:**
 ```bash
+# Cài Homebrew nếu chưa có
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Cài Python
 brew install python@3.10
+
+# Kiểm tra
+python3 --version
 ```
 
-**Linux:**
+#### Linux (Ubuntu):
+
 ```bash
 sudo apt update
 sudo apt install python3.10 python3.10-venv python3-pip
+
+# Kiểm tra
+python3 --version
 ```
 
-### 3.2. Node.js
+### 2.2. Cài đặt Node.js
 
-1. Tải từ https://nodejs.org/ (LTS version)
-2. Kiểm tra: `node --version` (phải >= 18)
-3. Kiểm tra: `npm --version`
+1. Truy cập: https://nodejs.org/
+2. Tải bản **LTS** (Long Term Support)
+3. Cài đặt như bình thường
+4. Kiểm tra: Mở terminal, gõ:
+   ```bash
+   node --version
+   npm --version
+   ```
+   Phải hiển thị: `v18.x.x` hoặc cao hơn
 
-### 3.3. Git
+### 2.3. Cài đặt Git
 
-**Windows:** https://git-scm.com/download/win  
-**Mac:** `brew install git`  
-**Linux:** `sudo apt install git`
+#### Windows:
+- Tải từ: https://git-scm.com/download/win
+- Cài đặt với tất cả options mặc định
 
-### 3.4. PostgreSQL (Optional - nếu dùng local)
+#### macOS:
+```bash
+brew install git
+```
 
-**Windows:** Tải từ https://www.postgresql.org/download/windows/  
-**Mac:** `brew install postgresql@15`  
-**Linux:** `sudo apt install postgresql postgresql-contrib`
+#### Linux:
+```bash
+sudo apt install git
+```
+
+Kiểm tra:
+```bash
+git --version
+```
+
+### 2.4. Cài đặt PostgreSQL (Optional - chỉ nếu dùng local)
+
+#### Windows:
+1. Tải từ: https://www.postgresql.org/download/windows/
+2. Chọn PostgreSQL 15 hoặc cao hơn
+3. Cài đặt, nhớ password bạn đặt (sẽ dùng sau)
+4. Port mặc định: 5432
+
+#### macOS:
+```bash
+brew install postgresql@15
+brew services start postgresql@15
+```
+
+#### Linux:
+```bash
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+```
+
+**Lưu ý:** Nếu không muốn cài PostgreSQL local, bạn có thể dùng database online (Neon/Supabase) - xem phần 4.
 
 ---
 
-## 4. Setup nhanh (5 phút)
+## 3. Clone và chuẩn bị project
 
 ### Bước 1: Clone repository
 
-```bash
-git clone <repository-url>
-cd DoAnPTPMHDT
-```
-
-### Bước 2: Setup Backend
-
-**Windows:**
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-
-# Tạo .env file
-copy .env.example .env
-# Sau đó chỉnh sửa .env với thông tin của bạn
-
-python manage.py migrate
-python manage.py createsuperuser
-```
-
-**Mac/Linux:**
-```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Tạo .env file
-cp .env.example .env
-# Sau đó chỉnh sửa .env với thông tin của bạn
-
-python manage.py migrate
-python manage.py createsuperuser
-```
-
-### Bước 3: Setup Frontend
-
-```bash
-cd ../frontend
-npm install
-
-# Tạo .env file
-echo REACT_APP_API_URL=http://localhost:8000/api > .env
-```
-
-### Bước 4: Chạy dự án
-
-**Terminal 1 - Backend:**
-```bash
-cd backend
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Mac/Linux
-python manage.py runserver
-```
-
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-npm start
-```
-
-✅ **Truy cập:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/api
-- Django Admin: http://localhost:8000/admin
-
----
-
-## 5. Setup chi tiết từng bước
-
-### 5.1. Clone Repository
+Mở terminal/command prompt và chạy:
 
 ```bash
 git clone <repository-url>
 cd DoAnPTPMHDT
 ```
 
-### 5.2. Backend Setup
-
-#### Bước 1: Tạo Virtual Environment
-
+**Ví dụ:**
 ```bash
-cd backend
-
-# Windows
-python -m venv venv
-
-# Mac/Linux
-python3 -m venv venv
+git clone https://github.com/yourusername/recruitment-system.git
+cd recruitment-system
 ```
 
-#### Bước 2: Activate Virtual Environment
+### Bước 2: Kiểm tra cấu trúc project
 
-**Windows (CMD):**
-```bash
-venv\Scripts\activate.bat
+Bạn sẽ thấy các thư mục:
 ```
-
-**Windows (PowerShell):**
-```bash
-venv\Scripts\Activate.ps1
-```
-
-**Mac/Linux:**
-```bash
-source venv/bin/activate
-```
-
-Sau khi activate, bạn sẽ thấy `(venv)` ở đầu dòng terminal.
-
-#### Bước 3: Cài đặt Dependencies
-
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-#### Bước 4: Tạo file .env
-
-**Windows:**
-```bash
-copy .env.example .env
-```
-
-**Mac/Linux:**
-```bash
-cp .env.example .env
-```
-
-Sau đó chỉnh sửa file `.env` với thông tin của bạn (xem phần 6).
-
-#### Bước 5: Chạy Migrations
-
-```bash
-python manage.py migrate
-```
-
-#### Bước 6: Tạo Superuser
-
-```bash
-python manage.py createsuperuser
-```
-
-Nhập thông tin:
-- Username: `admin`
-- Email: `admin@example.com`
-- Password: (nhập mật khẩu mạnh)
-
-### 5.3. Frontend Setup
-
-#### Bước 1: Vào thư mục frontend
-
-```bash
-cd ../frontend
-```
-
-#### Bước 2: Cài đặt Dependencies
-
-```bash
-npm install
-```
-
-Nếu gặp lỗi, thử:
-```bash
-npm install --legacy-peer-deps
-```
-
-#### Bước 3: Tạo file .env
-
-Tạo file `.env` trong thư mục `frontend/`:
-
-```env
-REACT_APP_API_URL=http://localhost:8000/api
+DoAnPTPMHDT/
+├── backend/          # Django backend
+├── frontend/         # React frontend
+├── database/         # SQL schema
+├── docs/             # Documentation
+└── SETUP.md          # File này
 ```
 
 ---
 
-## 6. Cấu hình Environment Variables
+## 4. Setup Database
 
-### 6.1. Backend (.env)
+Bạn có 2 lựa chọn: **Database Online** (khuyến nghị) hoặc **Database Local**.
 
-Tạo file `backend/.env` với nội dung:
+### Option 1: Database Online (Khuyến nghị - Dễ nhất)
 
-```env
-# Django Settings
-SECRET_KEY=django-insecure-your-secret-key-change-this-in-production-123456789
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
+#### A. Dùng Neon.tech (Miễn phí, nhanh nhất)
 
-# Database - Option 1: DATABASE_URL (cho online PostgreSQL) - KHUYẾN NGHỊ
-DATABASE_URL=postgresql://user:password@host:5432/dbname?sslmode=require
+1. **Đăng ký:**
+   - Truy cập: https://neon.tech
+   - Click "Sign Up"
+   - Chọn "Continue with GitHub" (nhanh nhất)
 
-# Database - Option 2: Config riêng lẻ (cho local PostgreSQL)
-# DB_NAME=recruitment_db
-# DB_USER=postgres
-# DB_PASSWORD=your_password
-# DB_HOST=localhost
-# DB_PORT=5432
+2. **Tạo Project:**
+   - Click "Create Project"
+   - Điền:
+     - **Project name:** `recruitment-system`
+     - **Region:** `Asia Pacific (Singapore)` ← gần VN nhất
+     - **Database name:** `recruitment_db`
+   - Click "Create Project"
 
-# Email (Gmail)
-EMAIL_HOST_USER=your-email@gmail.com
-EMAIL_HOST_PASSWORD=your-app-password
+3. **Lấy Connection String:**
+   - Sau khi tạo xong, Neon hiển thị **Connection Details**
+   - Chọn tab **Connection string**
+   - Copy chuỗi có dạng:
+     ```
+     postgresql://neondb_owner:xxxxx@ep-xxx-xxx-123456.ap-southeast-1.aws.neon.tech/recruitment_db?sslmode=require
+     ```
+   - **Lưu lại** chuỗi này, sẽ dùng ở bước sau
 
-# AI API (Optional)
-GEMINI_API_KEY=your-gemini-api-key
+#### B. Dùng Supabase (Miễn phí)
 
-# Redis (Optional - cho Celery)
-REDIS_URL=redis://localhost:6379/0
+1. **Đăng ký:**
+   - Truy cập: https://supabase.com
+   - Click "Start your project"
+   - Đăng ký bằng GitHub
+
+2. **Tạo Project:**
+   - Click "New Project"
+   - Điền thông tin:
+     - **Name:** `recruitment-system`
+     - **Database Password:** (đặt mật khẩu mạnh, nhớ lại)
+     - **Region:** `Southeast Asia (Singapore)`
+   - Click "Create new project"
+   - Đợi 2-3 phút để setup xong
+
+3. **Lấy Connection String:**
+   - Vào **Settings** → **Database**
+   - Tìm phần **Connection string**
+   - Copy chuỗi **URI** (có dạng):
+     ```
+     postgresql://postgres:xxxxx@db.xxx.supabase.co:5432/postgres
+     ```
+   - **Lưu lại** chuỗi này
+
+### Option 2: Database Local (Nếu muốn dùng PostgreSQL trên máy)
+
+#### Tạo Database:
+
+**Windows (dùng pgAdmin hoặc psql):**
+
+1. Mở **pgAdmin** (cài cùng PostgreSQL)
+2. Tạo database mới:
+   - Right-click **Databases** → **Create** → **Database**
+   - **Name:** `recruitment_db`
+   - Click **Save**
+
+Hoặc dùng Command Prompt:
+```bash
+psql -U postgres
 ```
 
-**Lưu ý:**
-- **SECRET_KEY:** Tạo key mới bằng lệnh:
-  ```bash
-  python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-  ```
-- **EMAIL_HOST_PASSWORD:** Dùng App Password của Gmail (không phải mật khẩu thường)
-  - Vào Google Account → Security → 2-Step Verification → App Passwords
-- **GEMINI_API_KEY:** Lấy từ https://makersuite.google.com/app/apikey
-
-### 6.2. Frontend (.env)
-
-Tạo file `frontend/.env`:
-
-```env
-REACT_APP_API_URL=http://localhost:8000/api
-```
-
-### 6.3. Setup Database
-
-#### Option 1: PostgreSQL Online (Khuyến nghị)
-
-**Neon.tech (Miễn phí):**
-1. Đăng ký tại https://neon.tech
-2. Tạo project mới
-3. Copy **Connection String**
-4. Dán vào `DATABASE_URL` trong file `.env`
-
-**Supabase (Miễn phí):**
-1. Đăng ký tại https://supabase.com
-2. Tạo project mới
-3. Vào Settings → Database
-4. Copy **Connection String**
-5. Dán vào `DATABASE_URL` trong file `.env`
-
-#### Option 2: PostgreSQL Local
-
-**Tạo Database:**
-
-**Windows (pgAdmin hoặc psql):**
+Trong psql:
 ```sql
 CREATE DATABASE recruitment_db;
 CREATE USER recruitment_user WITH PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE recruitment_db TO recruitment_user;
+\q
 ```
 
-**Mac/Linux:**
+**macOS/Linux:**
 ```bash
 sudo -u postgres psql
 ```
@@ -371,84 +253,444 @@ GRANT ALL PRIVILEGES ON DATABASE recruitment_db TO recruitment_user;
 \q
 ```
 
-**Cấu hình trong .env:**
+**Lưu lại thông tin:**
+- Database name: `recruitment_db`
+- User: `recruitment_user` (hoặc `postgres`)
+- Password: (mật khẩu bạn vừa đặt)
+- Host: `localhost`
+- Port: `5432`
+
+---
+
+## 5. Setup Backend (Từng bước)
+
+### Bước 1: Vào thư mục backend
+
+```bash
+cd backend
+```
+
+### Bước 2: Tạo Virtual Environment
+
+**Windows:**
+```bash
+python -m venv venv
+```
+
+**macOS/Linux:**
+```bash
+python3 -m venv venv
+```
+
+**Giải thích:** Virtual environment giúp cô lập dependencies của project, tránh conflict với các project khác.
+
+### Bước 3: Activate Virtual Environment
+
+**Windows (CMD):**
+```bash
+venv\Scripts\activate.bat
+```
+
+**Windows (PowerShell):**
+```bash
+venv\Scripts\Activate.ps1
+```
+
+Nếu bị lỗi "execution policy", chạy:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+**macOS/Linux:**
+```bash
+source venv/bin/activate
+```
+
+**Kiểm tra:** Bạn sẽ thấy `(venv)` ở đầu dòng terminal, ví dụ:
+```
+(venv) D:\DoAnPTPMHDT\backend>
+```
+
+### Bước 4: Upgrade pip
+
+```bash
+python -m pip install --upgrade pip
+```
+
+### Bước 5: Cài đặt Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+**Lưu ý:**
+- Quá trình này có thể mất 2-5 phút
+- Nếu gặp lỗi trên Windows với `python-magic-bin`, có thể bỏ qua (không bắt buộc)
+
+### Bước 6: Tạo file .env
+
+**Windows:**
+```bash
+# Tạo file .env
+notepad .env
+```
+
+**macOS/Linux:**
+```bash
+nano .env
+```
+
+**Hoặc dùng bất kỳ text editor nào** (VS Code, Notepad++, etc.)
+
+**Nội dung file .env:**
+
+Nếu dùng **Database Online** (Neon/Supabase):
 ```env
+# Django Settings
+SECRET_KEY=django-insecure-change-this-in-production-123456789
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database - Dùng DATABASE_URL (từ Neon/Supabase)
+DATABASE_URL=postgresql://user:password@host:5432/dbname?sslmode=require
+
+# Email (Gmail) - Optional
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+
+# AI API - Optional
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+**Thay thế:**
+- `DATABASE_URL` = Connection string bạn đã copy từ Neon/Supabase
+
+Nếu dùng **Database Local**:
+```env
+# Django Settings
+SECRET_KEY=django-insecure-change-this-in-production-123456789
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database - Local PostgreSQL
 DB_NAME=recruitment_db
 DB_USER=recruitment_user
 DB_PASSWORD=your_password
 DB_HOST=localhost
 DB_PORT=5432
+
+# Email (Gmail) - Optional
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+
+# AI API - Optional
+GEMINI_API_KEY=your-gemini-api-key
 ```
 
----
+**Thay thế:**
+- `DB_NAME` = `recruitment_db`
+- `DB_USER` = `recruitment_user` (hoặc `postgres`)
+- `DB_PASSWORD` = Mật khẩu bạn đã đặt
+- `DB_HOST` = `localhost`
+- `DB_PORT` = `5432`
 
-## 7. Chạy dự án
+**Lưu file** (Ctrl+S hoặc Cmd+S)
 
-### 7.1. Development Mode
+### Bước 7: Tạo SECRET_KEY mới (Khuyến nghị)
 
-**Terminal 1 - Backend Server:**
+Chạy lệnh để tạo SECRET_KEY an toàn:
+
 ```bash
-cd backend
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Mac/Linux
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
 
+Copy kết quả và thay vào `SECRET_KEY` trong file `.env`
+
+### Bước 8: Chạy Migrations
+
+```bash
+python manage.py migrate
+```
+
+**Kết quả mong đợi:**
+```
+Operations to perform:
+  Apply all migrations: accounts, admin, applications, auth, contenttypes, jobs, notifications, sessions
+Running migrations:
+  Applying accounts.0001_initial... OK
+  Applying jobs.0001_initial... OK
+  ...
+```
+
+Nếu thấy lỗi về database connection:
+- Kiểm tra lại thông tin trong file `.env`
+- Đảm bảo database đã được tạo (nếu dùng local)
+- Đảm bảo PostgreSQL đang chạy (nếu dùng local)
+
+### Bước 9: Tạo Superuser (Admin)
+
+```bash
+python manage.py createsuperuser
+```
+
+Nhập thông tin:
+- **Username:** `admin` (hoặc tên bạn muốn)
+- **Email address:** `admin@example.com`
+- **Password:** (nhập mật khẩu mạnh, nhớ lại để đăng nhập)
+- **Password (again):** (nhập lại mật khẩu)
+
+**Lưu lại thông tin đăng nhập!**
+
+### Bước 10: Kiểm tra Backend
+
+```bash
 python manage.py runserver
 ```
 
-Backend sẽ chạy tại: http://localhost:8000
+Mở trình duyệt, truy cập: http://localhost:8000/admin
 
-**Terminal 2 - Frontend Server:**
-```bash
-cd frontend
-npm start
-```
+- Nếu thấy trang đăng nhập Django Admin → ✅ Backend hoạt động tốt!
+- Đăng nhập với superuser vừa tạo
 
-Frontend sẽ chạy tại: http://localhost:3000
-
-**Terminal 3 - Celery Worker (Optional):**
-
-Nếu cần chạy background tasks (email, AI screening):
-
-```bash
-cd backend
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Mac/Linux
-
-celery -A recruitment_system worker -l info
-```
-
-**Lưu ý:** Cần cài Redis trước:
-- Windows: Tải từ https://github.com/microsoftarchive/redis/releases
-- Mac: `brew install redis && brew services start redis`
-- Linux: `sudo apt install redis-server && sudo systemctl start redis`
-
-### 7.2. Kiểm tra hoạt động
-
-1. **Backend:** Mở http://localhost:8000/admin và đăng nhập
-2. **Frontend:** Mở http://localhost:3000 và đăng ký/đăng nhập
-3. **API:** Mở http://localhost:8000/api/jobs/ (nếu thấy JSON → API hoạt động)
+**Dừng server:** Nhấn `Ctrl+C` trong terminal
 
 ---
 
-## 8. Troubleshooting
+## 6. Setup Frontend (Từng bước)
+
+### Bước 1: Vào thư mục frontend
+
+Mở terminal mới (giữ terminal backend đang chạy), chạy:
+
+```bash
+cd frontend
+```
+
+Hoặc nếu đang ở thư mục gốc:
+```bash
+cd DoAnPTPMHDT/frontend
+```
+
+### Bước 2: Cài đặt Dependencies
+
+```bash
+npm install
+```
+
+**Lưu ý:**
+- Quá trình này có thể mất 3-5 phút
+- Nếu gặp lỗi, thử:
+  ```bash
+  npm install --legacy-peer-deps
+  ```
+
+### Bước 3: Tạo file .env
+
+**Windows:**
+```bash
+notepad .env
+```
+
+**macOS/Linux:**
+```bash
+nano .env
+```
+
+**Nội dung:**
+```env
+REACT_APP_API_URL=http://localhost:8000/api
+```
+
+**Lưu file**
+
+### Bước 4: Kiểm tra Frontend
+
+```bash
+npm start
+```
+
+**Kết quả:**
+- Terminal sẽ hiển thị: `Compiled successfully!`
+- Trình duyệt tự động mở: http://localhost:3000
+- Nếu thấy trang web → ✅ Frontend hoạt động tốt!
+
+**Dừng server:** Nhấn `Ctrl+C` trong terminal
+
+---
+
+## 7. Cấu hình Environment Variables
+
+### 7.1. Backend (.env)
+
+File `backend/.env` đã tạo ở bước 5.6. Kiểm tra lại:
+
+**Bắt buộc:**
+- ✅ `SECRET_KEY` - Đã tạo ở bước 5.7
+- ✅ `DATABASE_URL` hoặc `DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT` - Đã setup ở bước 4
+
+**Optional (có thể bỏ qua):**
+- `EMAIL_HOST_USER` - Email Gmail của bạn
+- `EMAIL_HOST_PASSWORD` - App Password của Gmail (xem hướng dẫn bên dưới)
+- `GEMINI_API_KEY` - API key từ Google Gemini (xem hướng dẫn bên dưới)
+
+#### Cấu hình Email (Optional):
+
+1. Vào Google Account: https://myaccount.google.com/
+2. Vào **Security**
+3. Bật **2-Step Verification** (nếu chưa bật)
+4. Vào **App passwords**
+5. Tạo App Password cho "Mail"
+6. Copy password (16 ký tự)
+7. Dán vào `EMAIL_HOST_PASSWORD` trong `.env`
+
+#### Cấu hình Gemini API (Optional):
+
+1. Truy cập: https://makersuite.google.com/app/apikey
+2. Click "Create API Key"
+3. Copy API key
+4. Dán vào `GEMINI_API_KEY` trong `.env`
+
+### 7.2. Frontend (.env)
+
+File `frontend/.env` đã tạo ở bước 6.3. Nội dung:
+
+```env
+REACT_APP_API_URL=http://localhost:8000/api
+```
+
+**Lưu ý:** Nếu deploy production, đổi thành URL backend production.
+
+---
+
+## 8. Chạy dự án
+
+### Bước 1: Chạy Backend
+
+Mở **Terminal 1**, chạy:
+
+```bash
+cd DoAnPTPMHDT/backend
+
+# Activate venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Mac/Linux
+
+# Chạy server
+python manage.py runserver
+```
+
+**Kết quả:**
+```
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+```
+
+✅ Backend đang chạy tại: http://localhost:8000
+
+### Bước 2: Chạy Frontend
+
+Mở **Terminal 2** (terminal mới), chạy:
+
+```bash
+cd DoAnPTPMHDT/frontend
+npm start
+```
+
+**Kết quả:**
+```
+Compiled successfully!
+
+You can now view recruitment-system in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://192.168.x.x:3000
+```
+
+✅ Frontend đang chạy tại: http://localhost:3000
+
+### Bước 3: Truy cập ứng dụng
+
+Mở trình duyệt, truy cập:
+
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:8000/api
+- **Django Admin:** http://localhost:8000/admin
+
+---
+
+## 9. Kiểm tra hoạt động
+
+### Test 1: Đăng ký tài khoản mới
+
+1. Truy cập: http://localhost:3000
+2. Click "Đăng ký" hoặc truy cập: http://localhost:3000/register
+3. Điền form:
+   - Email: `test@example.com`
+   - Username: `testuser`
+   - Password: `Test@12345` (ít nhất 8 ký tự)
+   - Điền đầy đủ Họ, Tên
+4. Click "Đăng ký"
+5. Nếu thành công → ✅ Đăng ký hoạt động!
+
+### Test 2: Đăng nhập
+
+1. Truy cập: http://localhost:3000/login
+2. Đăng nhập với tài khoản vừa tạo
+3. Nếu vào được Dashboard → ✅ Đăng nhập hoạt động!
+
+### Test 3: Django Admin
+
+1. Truy cập: http://localhost:8000/admin
+2. Đăng nhập với superuser đã tạo
+3. Nếu thấy Django Admin interface → ✅ Admin hoạt động!
+
+### Test 4: API Endpoints
+
+1. Truy cập: http://localhost:8000/api/jobs/
+2. Nếu thấy JSON response → ✅ API hoạt động!
+
+---
+
+## 10. Troubleshooting
 
 ### Lỗi: `ModuleNotFoundError: No module named 'dotenv'`
 
+**Nguyên nhân:** Chưa cài python-dotenv
+
+**Giải pháp:**
 ```bash
+# Đảm bảo đã activate venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Mac/Linux
+
 pip install python-dotenv
 ```
 
 ### Lỗi: `django.db.utils.OperationalError: connection refused`
 
-- Kiểm tra PostgreSQL đang chạy
-- Kiểm tra thông tin database trong `.env`
-- Kiểm tra DATABASE_URL format đúng
+**Nguyên nhân:** Không kết nối được database
+
+**Giải pháp:**
+1. Kiểm tra file `.env` có đúng thông tin database
+2. Nếu dùng local PostgreSQL:
+   - Đảm bảo PostgreSQL đang chạy
+   - Kiểm tra service: `services.msc` (Windows) hoặc `sudo systemctl status postgresql` (Linux)
+3. Nếu dùng online database:
+   - Kiểm tra DATABASE_URL format đúng
+   - Kiểm tra database có đang hoạt động (vào dashboard Neon/Supabase)
 
 ### Lỗi: `Port 8000 already in use`
 
+**Nguyên nhân:** Port 8000 đã được sử dụng
+
+**Giải pháp:**
+
 **Windows:**
 ```bash
+# Tìm process dùng port 8000
 netstat -ano | findstr :8000
+
+# Kill process (thay <PID> bằng số từ lệnh trên)
 taskkill /PID <PID> /F
 ```
 
@@ -457,250 +699,93 @@ taskkill /PID <PID> /F
 lsof -ti:8000 | xargs kill -9
 ```
 
+Hoặc chạy server trên port khác:
+```bash
+python manage.py runserver 8001
+```
+
 ### Lỗi: `npm ERR! code ELIFECYCLE`
 
+**Nguyên nhân:** Lỗi khi cài dependencies
+
+**Giải pháp:**
 ```bash
 # Xóa và cài lại
 rm -rf node_modules package-lock.json
 npm install
+
+# Hoặc
+npm install --legacy-peer-deps
 ```
 
-### Lỗi: `CORS error`
+### Lỗi: `CORS error` trong browser console
 
-Kiểm tra `CORS_ALLOWED_ORIGINS` trong `backend/recruitment_system/settings.py` có chứa `http://localhost:3000`
+**Nguyên nhân:** Frontend không kết nối được với backend
 
-### Lỗi: `UnicodeDecodeError` khi load .env
-
-File `.env` bị encoding sai. Tạo lại bằng:
-- Windows: Notepad → Save As → Encoding: UTF-8
-- Mac/Linux: `echo "..." > .env` (UTF-8)
+**Giải pháp:**
+1. Kiểm tra backend đang chạy: http://localhost:8000
+2. Kiểm tra `REACT_APP_API_URL` trong `frontend/.env` = `http://localhost:8000/api`
+3. Kiểm tra CORS settings trong `backend/recruitment_system/settings.py`
 
 ### Lỗi: `401 Unauthorized` khi đăng ký/đăng nhập
 
-- Kiểm tra backend đang chạy
-- Kiểm tra `REACT_APP_API_URL` trong frontend `.env` đúng
-- Kiểm tra CORS settings
+**Nguyên nhân:** Backend permission settings
 
----
+**Giải pháp:**
+- Đảm bảo backend đang chạy
+- Kiểm tra `DEFAULT_PERMISSION_CLASSES` trong settings.py
+- Xem lại phần setup backend
 
-## 9. Deployment
+### Lỗi: `UnicodeDecodeError` khi load .env
 
-### 9.1. Backend Deployment
+**Nguyên nhân:** File .env bị encoding sai
 
-#### Railway (Khuyến nghị)
+**Giải pháp:**
+1. Xóa file .env cũ
+2. Tạo lại bằng Notepad (Windows) hoặc nano (Mac/Linux)
+3. Lưu với encoding UTF-8
 
-1. Đăng ký tại https://railway.app
-2. Tạo New Project → Deploy from GitHub repo
-3. Add PostgreSQL service
-4. Set environment variables:
-   - `SECRET_KEY`
-   - `DEBUG=False`
-   - `ALLOWED_HOSTS=your-domain.com`
-   - `DATABASE_URL` (tự động từ PostgreSQL service)
-5. Set start command: `python manage.py runserver 0.0.0.0:$PORT`
-6. Deploy tự động khi push code
+### Lỗi: `python: command not found` (Mac/Linux)
 
-#### Render
+**Nguyên nhân:** Python chưa được cài hoặc path chưa đúng
 
-1. Đăng ký tại https://render.com
-2. New → Web Service → Connect GitHub repo
-3. Build Command: `pip install -r requirements.txt`
-4. Start Command: `gunicorn recruitment_system.wsgi:application`
-5. Add PostgreSQL database
-6. Set environment variables
-
-#### Heroku
-
+**Giải pháp:**
 ```bash
-heroku login
-heroku create your-app-name
-heroku addons:create heroku-postgresql:hobby-dev
-heroku config:set SECRET_KEY=your-secret-key
-heroku config:set DEBUG=False
-heroku config:set ALLOWED_HOSTS=your-app.herokuapp.com
-git push heroku main
-heroku run python manage.py migrate
-heroku run python manage.py createsuperuser
-```
-
-### 9.2. Frontend Deployment
-
-#### Vercel (Khuyến nghị)
-
-1. Đăng ký tại https://vercel.com
-2. Import GitHub repo
-3. Framework Preset: Create React App
-4. Root Directory: `frontend`
-5. Build Command: `npm run build`
-6. Output Directory: `build`
-7. Environment Variables:
-   - `REACT_APP_API_URL=https://your-api-domain.com/api`
-8. Deploy tự động
-
-#### Netlify
-
-1. Đăng ký tại https://netlify.com
-2. New site from Git
-3. Base directory: `frontend`
-4. Build command: `npm run build`
-5. Publish directory: `frontend/build`
-6. Environment Variables:
-   - `REACT_APP_API_URL=https://your-api-domain.com/api`
-
-### 9.3. Post-Deployment Checklist
-
-- [ ] Database migrations đã chạy
-- [ ] Superuser đã tạo
-- [ ] Environment variables đã set
-- [ ] `DEBUG=False`
-- [ ] `ALLOWED_HOSTS` đã cấu hình
-- [ ] CORS đã cấu hình với domain production
-- [ ] SSL/HTTPS đã setup
-- [ ] Static files đã collect (nếu cần)
-- [ ] Email đã test
-- [ ] API endpoints hoạt động
-- [ ] Frontend kết nối được với API
-
----
-
-## 10. Quy trình làm việc
-
-### 10.1. Clone và Setup
-
-```bash
-git clone <repository-url>
-cd DoAnPTPMHDT
-```
-
-Làm theo hướng dẫn setup ở trên.
-
-### 10.2. Tạo Branch mới
-
-```bash
-git checkout -b feature/ten-tinh-nang
-# hoặc
-git checkout -b fix/ten-bug
-```
-
-### 10.3. Code Standards
-
-**Backend (Python/Django):**
-- Tuân thủ PEP 8
-- Sử dụng type hints khi có thể
-- Viết docstrings cho functions/classes
-- Tên biến/functions rõ ràng, tiếng Anh
-
-**Frontend (React):**
-- Sử dụng functional components
-- Hooks thay vì class components
-- Tên components PascalCase
-- Tên files match với component name
-
-### 10.4. Commit Messages
-
-Format: `[type]: mô tả ngắn gọn`
-
-Types:
-- `feat`: Tính năng mới
-- `fix`: Sửa lỗi
-- `docs`: Cập nhật documentation
-- `style`: Formatting
-- `refactor`: Refactor code
-- `test`: Thêm/sửa tests
-- `chore`: Cập nhật build, dependencies
-
-Ví dụ:
-```
-feat: thêm tính năng sàng lọc CV bằng AI
-fix: sửa lỗi đăng nhập không hoạt động
-docs: cập nhật README với hướng dẫn setup
-```
-
-### 10.5. Testing
-
-Trước khi commit, đảm bảo:
-- Code chạy được không lỗi
-- Test các tính năng đã thay đổi
-- Không có console errors
-
-### 10.6. Pull Request
-
-1. Push code lên branch của bạn
-2. Tạo Pull Request trên GitHub
-3. Mô tả rõ những gì đã thay đổi
-4. Đợi review từ team
-
----
-
-## 📁 Cấu trúc dự án
-
-```
-DoAnPTPMHDT/
-├── backend/                    # Django Backend
-│   ├── recruitment_system/     # Django project settings
-│   ├── accounts/               # User authentication
-│   ├── jobs/                   # Job posting
-│   ├── applications/           # Applications & CVs
-│   ├── notifications/          # Notifications
-│   ├── manage.py
-│   ├── requirements.txt
-│   └── .env                    # Environment variables (tạo từ .env.example)
-│
-├── frontend/                   # React Frontend
-│   ├── public/
-│   ├── src/
-│   │   ├── components/         # Reusable components
-│   │   ├── pages/              # Page components
-│   │   ├── contexts/           # React Context (Auth)
-│   │   ├── services/           # API services
-│   │   └── App.js
-│   ├── package.json
-│   └── .env                    # Environment variables
-│
-├── docs/                       # Documentation
-│   ├── 01-database-design.md
-│   ├── 02-system-architecture.md
-│   ├── 03-api-endpoints.md
-│   └── ...
-│
-├── SETUP.md                    # File này
-└── .gitignore
+# Dùng python3 thay vì python
+python3 -m venv venv
+python3 manage.py migrate
 ```
 
 ---
 
 ## ✅ Checklist Setup
 
-- [ ] Python 3.10+ đã cài đặt
-- [ ] Node.js 18+ đã cài đặt
-- [ ] Git đã cài đặt
+Trước khi báo là setup xong, kiểm tra:
+
+- [ ] Python 3.10+ đã cài và `python --version` hoạt động
+- [ ] Node.js 18+ đã cài và `node --version` hoạt động
+- [ ] Git đã cài và `git --version` hoạt động
 - [ ] Database đã setup (online hoặc local)
 - [ ] Backend virtual environment đã tạo và activate
-- [ ] Backend dependencies đã cài đặt
-- [ ] Backend .env đã tạo và cấu hình
-- [ ] Backend migrations đã chạy
-- [ ] Backend superuser đã tạo
-- [ ] Frontend dependencies đã cài đặt
+- [ ] Backend dependencies đã cài (`pip install -r requirements.txt`)
+- [ ] Backend .env đã tạo và điền đầy đủ
+- [ ] Backend migrations đã chạy (`python manage.py migrate`)
+- [ ] Backend superuser đã tạo (`python manage.py createsuperuser`)
+- [ ] Backend server chạy được (`python manage.py runserver`)
+- [ ] Frontend dependencies đã cài (`npm install`)
 - [ ] Frontend .env đã tạo
-- [ ] Backend server chạy được
-- [ ] Frontend server chạy được
-- [ ] Có thể đăng nhập vào Django admin
-- [ ] Có thể đăng nhập vào frontend
+- [ ] Frontend server chạy được (`npm start`)
+- [ ] Có thể truy cập http://localhost:3000
+- [ ] Có thể truy cập http://localhost:8000/admin
+- [ ] Có thể đăng ký tài khoản mới
+- [ ] Có thể đăng nhập
 
 ---
 
-## 📞 Cần hỗ trợ?
-
-Nếu gặp vấn đề:
-1. Kiểm tra lại các bước trên
-2. Xem phần Troubleshooting
-3. Tạo issue trên GitHub với thông tin lỗi chi tiết
-
----
-
-## 🎯 Quick Commands
+## 🎯 Quick Commands Reference
 
 ### Backend
+
 ```bash
 # Activate venv
 venv\Scripts\activate  # Windows
@@ -721,6 +806,7 @@ python manage.py collectstatic
 ```
 
 ### Frontend
+
 ```bash
 # Install
 npm install
@@ -737,5 +823,30 @@ npm test
 
 ---
 
-**Chúc bạn setup và làm việc thành công! 🎉**
+## 📞 Cần hỗ trợ?
 
+Nếu gặp vấn đề không giải quyết được:
+
+1. **Kiểm tra lại từng bước** trong hướng dẫn này
+2. **Xem phần Troubleshooting** ở trên
+3. **Kiểm tra logs** trong terminal để xem lỗi chi tiết
+4. **Tạo issue trên GitHub** với:
+   - Mô tả lỗi chi tiết
+   - Screenshot (nếu có)
+   - Logs từ terminal
+   - OS và version (Windows/Mac/Linux)
+
+---
+
+## 🎉 Hoàn thành!
+
+Nếu bạn đã làm theo tất cả các bước và checklist đều ✅, chúc mừng! Dự án đã sẵn sàng để phát triển.
+
+**Bước tiếp theo:**
+- Đọc [README.md](./README.md) để hiểu về dự án
+- Xem [docs/](./docs/) để hiểu architecture và API
+- Bắt đầu code! 🚀
+
+---
+
+**Chúc bạn setup thành công! 🎉**
