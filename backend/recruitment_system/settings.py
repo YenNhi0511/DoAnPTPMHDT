@@ -95,6 +95,10 @@ import dj_database_url
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
+    # Remove channel_binding parameter if present (causes issues with dj-database-url)
+    if '&channel_binding=' in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.split('&channel_binding=')[0]
+    
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
