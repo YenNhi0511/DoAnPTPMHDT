@@ -1,10 +1,66 @@
+from django.db import models as db_models
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Job
-from .serializers import JobSerializer, JobCreateSerializer, JobListSerializer
+from .models import Job, RecruitmentProcess, ProcessStep
+from .serializers import (
+    JobSerializer, JobCreateSerializer, JobListSerializer,
+    RecruitmentProcessSerializer, RecruitmentProcessCreateSerializer,
+    ProcessStepSerializer
+)
+
+
+class RecruitmentProcessViewSet(viewsets.ModelViewSet):
+    """ViewSet cho quản lý quy trình tuyển dụng"""
+    queryset = RecruitmentProcess.objects.prefetch_related('steps').select_related('created_by')
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering = ['-created_at']
+    
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return RecruitmentProcessCreateSerializer
+        return RecruitmentProcessSerializer
+    
+    @action(detail=True, methods=['post'])
+    def set_default(self, request, pk=None):
+        """Đặt quy trình làm mặc định"""
+        process = self.get_object()
+        RecruitmentProcess.objects.update(is_default=False)
+        process.is_default = True
+        process.save()
+        return Response({'status': 'Đã đặt làm quy trình mặc định'})
+    
+    @action(detail=True, methods=['post'])
+    def add_step(self, request, pk=None):
+        """Thêm bước vào quy trình"""
+        process = self.get_object()
+        serializer = ProcessStepSerializer(data=request.data)
+        if serializer.is_valid():
+            max_order = process.steps.aggregate(db_models.Max('order'))['order__max'] or 0
+            serializer.save(process=process, order=max_order + 1)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['get'])
+    def default(self, request):
+        """Lấy quy trình mặc định"""
+        process = RecruitmentProcess.objects.filter(is_default=True).first()
+        if process:
+            return Response(RecruitmentProcessSerializer(process).data)
+        return Response({'message': 'Chưa có quy trình mặc định'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ProcessStepViewSet(viewsets.ModelViewSet):
+    """ViewSet cho quản lý các bước trong quy trình"""
+    queryset = ProcessStep.objects.select_related('process')
+    serializer_class = ProcessStepSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['process', 'step_type']
 
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -91,17 +147,39 @@ class JobViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def stats(self, request):
-        from django.db.models import Count, Avg
+        from django.db.models import Count, Avg, Sum
+        from django.db.models.functions import TruncMonth
+        from applications.models import Application, Interview, RecruitmentResult
+        
         total_jobs = Job.objects.count()
         open_jobs = Job.objects.filter(status=Job.Status.OPEN).count()
         closed_jobs = Job.objects.filter(status=Job.Status.CLOSED).count()
-        total_applications = 0
-        try:
-            from applications.models import Application
-            total_applications = Application.objects.count()
-            avg_ai_score = Application.objects.aggregate(avg=Avg('ai_score'))['avg']
-        except Exception:
-            avg_ai_score = None
+        total_applications = Application.objects.count()
+        avg_ai_score = Application.objects.aggregate(avg=Avg('ai_score'))['avg']
+        
+        # Thống kê theo trạng thái ứng viên
+        status_stats = Application.objects.values('status').annotate(count=Count('id'))
+        
+        # Thống kê theo tháng
+        monthly_stats = Application.objects.annotate(
+            month=TruncMonth('applied_at')
+        ).values('month').annotate(count=Count('id')).order_by('month')[:12]
+        
+        # Thống kê phỏng vấn
+        total_interviews = Interview.objects.count()
+        completed_interviews = Interview.objects.filter(status='COMPLETED').count()
+        
+        # Thống kê kết quả
+        total_offers = RecruitmentResult.objects.filter(final_decision='OFFER').count()
+        total_rejects = RecruitmentResult.objects.filter(final_decision='REJECT').count()
+        
+        # Tỷ lệ chuyển đổi
+        conversion_rate = (total_offers / total_applications * 100) if total_applications > 0 else 0
+        
+        # Thống kê theo vị trí
+        jobs_stats = Job.objects.annotate(
+            app_count=Count('applications')
+        ).values('id', 'title', 'app_count', 'positions_count', 'status')[:10]
 
         data = {
             'total_jobs': total_jobs,
@@ -109,5 +187,13 @@ class JobViewSet(viewsets.ModelViewSet):
             'closed_jobs': closed_jobs,
             'total_applications': total_applications,
             'avg_ai_score': avg_ai_score,
+            'status_stats': list(status_stats),
+            'monthly_stats': list(monthly_stats),
+            'total_interviews': total_interviews,
+            'completed_interviews': completed_interviews,
+            'total_offers': total_offers,
+            'total_rejects': total_rejects,
+            'conversion_rate': round(conversion_rate, 2),
+            'jobs_stats': list(jobs_stats),
         }
         return Response(data)
