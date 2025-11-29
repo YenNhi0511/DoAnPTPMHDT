@@ -132,5 +132,8 @@ export const getUsers = (params) => api.get('/users/', { params });
 export const getUser = (id) => api.get(`/users/${id}/`);
 export const updateUser = (id, data) => api.patch(`/users/${id}/`, data);
 export const updateMe = (data) => api.patch('/users/me/', data);
+export const deleteUser = (id) => api.delete(`/users/${id}/`);
+export const disableUser = (id) => api.post(`/users/${id}/disable/`);
+export const resetUserPassword = (id, newPassword) => api.post(`/users/${id}/reset_password/`, { new_password: newPassword });
 
 export default api;

@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getApplications, updateApplicationStatus, screenApplication } from '../services/api';
 import {
   FileText, Search, Filter, Eye, Brain, Mail, CheckCircle,
-  XCircle, Clock, Calendar
+  XCircle, Clock, Calendar, Download, User
 } from 'lucide-react';
 
 const Applications = () => {
@@ -61,29 +61,29 @@ const Applications = () => {
   };
 
   const statusColors = {
-    PENDING: 'badge-warning',
-    SCREENING: 'badge-info',
-    INTERVIEW: 'badge-info',
-    OFFER: 'badge-success',
-    REJECTED: 'badge-danger',
-    ACCEPTED: 'badge-success',
+    PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    SCREENING: 'bg-blue-100 text-blue-700 border-blue-200',
+    INTERVIEW: 'bg-purple-100 text-purple-700 border-purple-200',
+    OFFER: 'bg-green-100 text-green-700 border-green-200',
+    REJECTED: 'bg-red-100 text-red-700 border-red-200',
+    ACCEPTED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h1 className="page-header">
-        <FileText className="w-8 h-8 text-blue-400" />
-        Quản lý hồ sơ ứng tuyển
-      </h1>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Hồ sơ ứng tuyển</h1>
+        <p className="text-gray-600">Quản lý và đánh giá các hồ sơ ứng tuyển</p>
+      </div>
 
       {/* Filters */}
-      <div className="card">
+      <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="input w-full sm:w-48"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-gray-900"
           >
             <option value="">Tất cả trạng thái</option>
             <option value="PENDING">Chờ xử lý</option>
@@ -99,96 +99,90 @@ const Applications = () => {
       {/* Applications List */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
         </div>
       ) : applications.length === 0 ? (
-        <div className="card text-center py-12">
-          <FileText className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">Chưa có hồ sơ nào</h3>
-          <p className="text-gray-400">Các hồ sơ ứng tuyển sẽ xuất hiện ở đây</p>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-12 text-center">
+          <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Chưa có hồ sơ ứng tuyển</h3>
+          <p className="text-gray-600">Các hồ sơ ứng tuyển sẽ hiển thị tại đây</p>
         </div>
       ) : (
-        <div className="card p-0">
-          <div className="table-container">
-            <table className="table">
-              <thead>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th>Ứng viên</th>
-                  <th>Vị trí</th>
-                  <th>Ngày nộp</th>
-                  <th>Điểm AI</th>
-                  <th>Trạng thái</th>
-                  <th>Hành động</th>
+                  <th className="text-left py-4 px-6 text-gray-700 font-semibold text-sm uppercase">Ứng viên</th>
+                  <th className="text-left py-4 px-6 text-gray-700 font-semibold text-sm uppercase">Vị trí</th>
+                  <th className="text-left py-4 px-6 text-gray-700 font-semibold text-sm uppercase">Ngày nộp</th>
+                  <th className="text-left py-4 px-6 text-gray-700 font-semibold text-sm uppercase">Điểm AI</th>
+                  <th className="text-left py-4 px-6 text-gray-700 font-semibold text-sm uppercase">Trạng thái</th>
+                  <th className="text-right py-4 px-6 text-gray-700 font-semibold text-sm uppercase">Thao tác</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200">
                 {applications.map((app) => (
-                  <tr key={app.id}>
-                    <td>
-                      <div>
-                        <p className="font-medium text-white">{app.candidate_name}</p>
-                        {app.candidate_email && (
-                          <p className="text-sm text-gray-400">{app.candidate_email}</p>
-                        )}
+                  <tr key={app.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center shadow-md">
+                          <span className="text-white font-medium text-sm">
+                            {app.candidate_name?.[0] || app.candidate_email?.[0] || 'U'}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">{app.candidate_name || 'N/A'}</p>
+                          <p className="text-sm text-gray-500">{app.candidate_email}</p>
+                        </div>
                       </div>
                     </td>
-                    <td>{app.job_title}</td>
-                    <td>{new Date(app.applied_at).toLocaleDateString('vi-VN')}</td>
-                    <td>
+                    <td className="py-4 px-6">
+                      <p className="font-medium text-gray-900">{app.job_title}</p>
+                    </td>
+                    <td className="py-4 px-6 text-gray-700">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-gray-400" />
+                        {new Date(app.applied_at).toLocaleDateString('vi-VN')}
+                      </div>
+                    </td>
+                    <td className="py-4 px-6">
                       {app.ai_score ? (
-                        <div className="flex items-center gap-2">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
-                            app.ai_score >= 70 ? 'bg-green-500/20 text-green-400' :
-                            app.ai_score >= 50 ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-red-500/20 text-red-400'
-                          }`}>
-                            {app.ai_score.toFixed(0)}
-                          </div>
-                        </div>
+                        <span className={`font-semibold ${
+                          app.ai_score >= 70 ? 'text-green-600' : 
+                          app.ai_score >= 50 ? 'text-yellow-600' : 
+                          'text-red-600'
+                        }`}>
+                          {app.ai_score.toFixed(0)}
+                        </span>
                       ) : (
-                        <span className="text-gray-500">-</span>
+                        <span className="text-gray-400">-</span>
                       )}
                     </td>
-                    <td>
-                      <span className={`badge ${statusColors[app.status]}`}>
+                    <td className="py-4 px-6">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${statusColors[app.status] || statusColors.PENDING}`}>
                         {statusLabels[app.status] || app.status}
                       </span>
                     </td>
-                    <td>
-                      <div className="flex items-center gap-2">
+                    <td className="py-4 px-6">
+                      <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/applications/${app.id}`}
-                          className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-400 hover:text-white"
+                          className="p-2 rounded-lg hover:bg-green-50 text-gray-600 hover:text-green-600 transition-colors"
                           title="Xem chi tiết"
                         >
                           <Eye className="w-4 h-4" />
                         </Link>
-                        {app.status === 'PENDING' && (
-                          <button
-                            onClick={() => handleScreen(app.id)}
-                            className="p-2 rounded-lg hover:bg-slate-700/50 text-blue-400 hover:text-blue-300"
-                            title="Sàng lọc AI"
+                        {app.cv_file && (
+                          <a
+                            href={app.cv_file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
+                            title="Tải CV"
                           >
-                            <Brain className="w-4 h-4" />
-                          </button>
-                        )}
-                        {app.status === 'SCREENING' && (
-                          <>
-                            <button
-                              onClick={() => handleUpdateStatus(app.id, 'INTERVIEW')}
-                              className="p-2 rounded-lg hover:bg-slate-700/50 text-green-400 hover:text-green-300"
-                              title="Chuyển phỏng vấn"
-                            >
-                              <Calendar className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleUpdateStatus(app.id, 'REJECTED')}
-                              className="p-2 rounded-lg hover:bg-slate-700/50 text-red-400 hover:text-red-300"
-                              title="Từ chối"
-                            >
-                              <XCircle className="w-4 h-4" />
-                            </button>
-                          </>
+                            <Download className="w-4 h-4" />
+                          </a>
                         )}
                       </div>
                     </td>
@@ -204,4 +198,3 @@ const Applications = () => {
 };
 
 export default Applications;
-

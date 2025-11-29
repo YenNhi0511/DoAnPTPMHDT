@@ -25,6 +25,9 @@ import Profile from './pages/Profile';
 import VerifyEmail from './pages/VerifyEmail';
 import Settings from './pages/Settings';
 
+// Lấy role từ environment variable
+const APP_ROLE = process.env.REACT_APP_ROLE || 'ALL';
+
 // Protected Route Component - Sử dụng Layout phù hợp với role
 const ProtectedRoute = ({ children, roles, useCandidateLayout = false }) => {
   const { user, loading } = useAuth();
@@ -95,109 +98,135 @@ const PublicRoute = ({ children }) => {
 };
 
 function AppRoutes() {
+  // Filter routes dựa trên APP_ROLE
+  const showAdminRoutes = APP_ROLE === 'ADMIN' || APP_ROLE === 'ALL';
+  const showRecruiterRoutes = APP_ROLE === 'RECRUITER' || APP_ROLE === 'ALL';
+  const showCandidateRoutes = APP_ROLE === 'CANDIDATE' || APP_ROLE === 'ALL';
+  const showPublicRoutes = APP_ROLE === 'ALL' || APP_ROLE === 'CANDIDATE';
+
   return (
     <Routes>
       {/* ============================================
           PUBLIC ROUTES (Không cần đăng nhập)
+          CHỈ hiện cho CANDIDATE hoặc ALL
           ============================================ */}
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-      <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/careers" element={<Careers />} />
-      <Route path="/jobs/:id" element={<JobDetail />} />
+      {showPublicRoutes && (
+        <>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/jobs/:id" element={<JobDetail />} />
+        </>
+      )}
 
       {/* ============================================
           CANDIDATE ROUTES (Ứng viên)
+          CHỈ hiện cho CANDIDATE hoặc ALL
           ============================================ */}
-      <Route 
-        path="/candidate/dashboard" 
-        element={<ProtectedRoute useCandidateLayout><CandidateDashboard /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/profile" 
-        element={<ProtectedRoute useCandidateLayout><Profile /></ProtectedRoute>} 
-      />
+      {showCandidateRoutes && (
+        <>
+          <Route 
+            path="/candidate/dashboard" 
+            element={<ProtectedRoute useCandidateLayout><CandidateDashboard /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/profile" 
+            element={<ProtectedRoute useCandidateLayout><Profile /></ProtectedRoute>} 
+          />
+        </>
+      )}
 
       {/* ============================================
           RECRUITER ROUTES (Nhà tuyển dụng)
+          CHỈ hiện cho RECRUITER hoặc ALL
           ============================================ */}
-      <Route 
-        path="/dashboard" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Dashboard /></ProtectedRoute>} 
-      />
-      
-      {/* Jobs Management */}
-      <Route 
-        path="/jobs" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Jobs /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/jobs/new" 
-        element={<ProtectedRoute roles={['RECRUITER']}><JobForm /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/jobs/:id/edit" 
-        element={<ProtectedRoute roles={['RECRUITER']}><JobForm /></ProtectedRoute>} 
-      />
+      {showRecruiterRoutes && (
+        <>
+          <Route 
+            path="/dashboard" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Dashboard /></ProtectedRoute>} 
+          />
+          
+          {/* Jobs Management */}
+          <Route 
+            path="/jobs" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Jobs /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/jobs/new" 
+            element={<ProtectedRoute roles={['RECRUITER']}><JobForm /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/jobs/:id/edit" 
+            element={<ProtectedRoute roles={['RECRUITER']}><JobForm /></ProtectedRoute>} 
+          />
 
-      {/* Applications */}
-      <Route 
-        path="/applications" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Applications /></ProtectedRoute>} 
-      />
+          {/* Applications */}
+          <Route 
+            path="/applications" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Applications /></ProtectedRoute>} 
+          />
 
-      {/* Interviews */}
-      <Route 
-        path="/interviews" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Interviews /></ProtectedRoute>} 
-      />
+          {/* Interviews */}
+          <Route 
+            path="/interviews" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Interviews /></ProtectedRoute>} 
+          />
 
-      {/* Interview Panels */}
-      <Route 
-        path="/panels" 
-        element={<ProtectedRoute roles={['RECRUITER']}><InterviewPanels /></ProtectedRoute>} 
-      />
+          {/* Interview Panels */}
+          <Route 
+            path="/panels" 
+            element={<ProtectedRoute roles={['RECRUITER']}><InterviewPanels /></ProtectedRoute>} 
+          />
 
-      {/* Results */}
-      <Route 
-        path="/results" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Results /></ProtectedRoute>} 
-      />
+          {/* Results */}
+          <Route 
+            path="/results" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Results /></ProtectedRoute>} 
+          />
 
-      {/* Processes */}
-      <Route 
-        path="/processes" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Processes /></ProtectedRoute>} 
-      />
+          {/* Processes */}
+          <Route 
+            path="/processes" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Processes /></ProtectedRoute>} 
+          />
 
-      {/* Reports */}
-      <Route 
-        path="/reports" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Reports /></ProtectedRoute>} 
-      />
+          {/* Reports */}
+          <Route 
+            path="/reports" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Reports /></ProtectedRoute>} 
+          />
 
-      {/* Settings */}
-      <Route 
-        path="/settings" 
-        element={<ProtectedRoute roles={['RECRUITER']}><Settings /></ProtectedRoute>} 
-      />
+          {/* Settings */}
+          <Route 
+            path="/settings" 
+            element={<ProtectedRoute roles={['RECRUITER']}><Settings /></ProtectedRoute>} 
+          />
+        </>
+      )}
 
       {/* ============================================
           ADMIN ROUTES (Quản trị hệ thống)
+          CHỈ hiện cho ADMIN hoặc ALL
           ============================================ */}
-      <Route 
-        path="/admin/dashboard" 
-        element={<ProtectedRoute roles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/users" 
-        element={<ProtectedRoute roles={['ADMIN']}><AdminUsers /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/settings" 
-        element={<ProtectedRoute roles={['ADMIN']}><AdminSettings /></ProtectedRoute>} 
-      />
+      {showAdminRoutes && (
+        <>
+          <Route 
+            path="/admin/dashboard" 
+            element={<ProtectedRoute roles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/admin/users" 
+            element={<ProtectedRoute roles={['ADMIN']}><AdminUsers /></ProtectedRoute>} 
+          />
+          <Route 
+            path="/admin/settings" 
+            element={<ProtectedRoute roles={['ADMIN']}><AdminSettings /></ProtectedRoute>} 
+          />
+        </>
+      )}
 
       {/* ============================================
           DEFAULT REDIRECT

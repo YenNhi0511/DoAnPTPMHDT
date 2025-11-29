@@ -46,8 +46,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         account_type = attrs.pop('account_type', None)
         if account_type:
             if account_type == 'BUSINESS':
-                # Doanh nghiệp → ADMIN (có đầy đủ quyền quản trị)
-                attrs['role'] = User.Role.ADMIN
+                # Doanh nghiệp → RECRUITER (nhà tuyển dụng)
+                attrs['role'] = User.Role.RECRUITER
             elif account_type == 'INDIVIDUAL':
                 # Cá nhân → CANDIDATE (ứng viên tìm việc)
                 attrs['role'] = User.Role.CANDIDATE
@@ -79,7 +79,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'first_name', 'last_name', 'phone', 'avatar', 'gender',
+            'first_name', 'last_name', 'phone', 'avatar', 'gender', 'role',
             'company_name', 'work_location_province', 'work_location_district',
             'tax_id', 'website', 'field_of_activity', 'scale', 'address',
             'company_email', 'company_description', 'business_registration_document'

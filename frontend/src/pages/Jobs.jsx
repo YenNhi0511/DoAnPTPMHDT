@@ -75,10 +75,10 @@ const Jobs = () => {
   };
 
   const statusColors = {
-    DRAFT: 'badge-gray',
-    OPEN: 'badge-success',
-    CLOSED: 'badge-danger',
-    CANCELLED: 'badge-warning',
+    DRAFT: 'bg-gray-100 text-gray-700 border-gray-200',
+    OPEN: 'bg-green-100 text-green-700 border-green-200',
+    CLOSED: 'bg-red-100 text-red-700 border-red-200',
+    CANCELLED: 'bg-yellow-100 text-yellow-700 border-yellow-200',
   };
 
   const employmentTypeLabels = {
@@ -92,12 +92,15 @@ const Jobs = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="page-header mb-0">
-          <Briefcase className="w-8 h-8 text-blue-400" />
-          Quản lý việc làm
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Quản lý việc làm</h1>
+          <p className="text-gray-600">Quản lý và theo dõi các tin tuyển dụng của bạn</p>
+        </div>
         {isRecruiter && (
-          <Link to="/jobs/new" className="btn-primary flex items-center gap-2">
+          <Link 
+            to="/jobs/new" 
+            className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+          >
             <Plus className="w-5 h-5" />
             Đăng tin tuyển dụng
           </Link>
@@ -105,22 +108,22 @@ const Jobs = () => {
       </div>
 
       {/* Filters */}
-      <div className="card">
+      <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm kiếm việc làm..."
-              className="input pl-11"
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-gray-900"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="input w-full sm:w-40"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-gray-900"
           >
             <option value="">Tất cả trạng thái</option>
             <option value="DRAFT">Nháp</option>
@@ -130,7 +133,7 @@ const Jobs = () => {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="input w-full sm:w-40"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-gray-900"
           >
             <option value="">Tất cả loại</option>
             <option value="FULLTIME">Toàn thời gian</option>
@@ -138,8 +141,12 @@ const Jobs = () => {
             <option value="CONTRACT">Hợp đồng</option>
             <option value="INTERN">Thực tập</option>
           </select>
-          <button type="submit" className="btn-primary">
+          <button 
+            type="submit" 
+            className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+          >
             <Filter className="w-5 h-5" />
+            Lọc
           </button>
         </form>
       </div>
@@ -147,15 +154,18 @@ const Jobs = () => {
       {/* Jobs List */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
         </div>
       ) : jobs.length === 0 ? (
-        <div className="card text-center py-12">
-          <Briefcase className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">Chưa có việc làm nào</h3>
-          <p className="text-gray-400 mb-4">Bắt đầu bằng cách tạo tin tuyển dụng đầu tiên</p>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-12 text-center">
+          <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Chưa có việc làm nào</h3>
+          <p className="text-gray-600 mb-6">Bắt đầu bằng cách tạo tin tuyển dụng đầu tiên</p>
           {isRecruiter && (
-            <Link to="/jobs/new" className="btn-primary inline-flex items-center gap-2">
+            <Link 
+              to="/jobs/new" 
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all shadow-md hover:shadow-lg"
+            >
               <Plus className="w-5 h-5" />
               Đăng tin tuyển dụng
             </Link>
@@ -164,53 +174,61 @@ const Jobs = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobs.map((job) => (
-            <div key={job.id} className="card card-hover relative">
+            <div key={job.id} className="bg-white rounded-xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition-all relative">
               {/* Menu */}
               {isRecruiter && (
                 <div className="absolute top-4 right-4">
                   <button
                     onClick={() => setActiveMenu(activeMenu === job.id ? null : job.id)}
-                    className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-400 hover:text-white"
+                    className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-900"
                   >
                     <MoreVertical className="w-5 h-5" />
                   </button>
                   {activeMenu === job.id && (
-                    <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl border border-slate-700 py-2 z-10">
-                      <Link
-                        to={`/jobs/${job.id}`}
-                        className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50"
-                      >
-                        <Eye className="w-4 h-4" /> Xem chi tiết
-                      </Link>
-                      <Link
-                        to={`/jobs/${job.id}/edit`}
-                        className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50"
-                      >
-                        <Edit className="w-4 h-4" /> Chỉnh sửa
-                      </Link>
-                      {job.status === 'DRAFT' && (
-                        <button
-                          onClick={() => handlePublish(job.id)}
-                          className="flex items-center gap-2 px-4 py-2 text-green-400 hover:text-green-300 hover:bg-slate-700/50 w-full text-left"
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setActiveMenu(null)}
+                      />
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                        <Link
+                          to={`/jobs/${job.id}`}
+                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                          onClick={() => setActiveMenu(null)}
                         >
-                          <CheckCircle className="w-4 h-4" /> Đăng tuyển
-                        </button>
-                      )}
-                      {job.status === 'OPEN' && (
-                        <button
-                          onClick={() => handleClose(job.id)}
-                          className="flex items-center gap-2 px-4 py-2 text-orange-400 hover:text-orange-300 hover:bg-slate-700/50 w-full text-left"
+                          <Eye className="w-4 h-4" /> Xem chi tiết
+                        </Link>
+                        <Link
+                          to={`/jobs/${job.id}/edit`}
+                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                          onClick={() => setActiveMenu(null)}
                         >
-                          <XCircle className="w-4 h-4" /> Đóng tuyển
+                          <Edit className="w-4 h-4" /> Chỉnh sửa
+                        </Link>
+                        {job.status === 'DRAFT' && (
+                          <button
+                            onClick={() => handlePublish(job.id)}
+                            className="flex items-center gap-2 px-4 py-2 text-green-600 hover:bg-green-50 w-full text-left"
+                          >
+                            <CheckCircle className="w-4 h-4" /> Đăng tuyển
+                          </button>
+                        )}
+                        {job.status === 'OPEN' && (
+                          <button
+                            onClick={() => handleClose(job.id)}
+                            className="flex items-center gap-2 px-4 py-2 text-orange-600 hover:bg-orange-50 w-full text-left"
+                          >
+                            <XCircle className="w-4 h-4" /> Đóng tuyển
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDelete(job.id)}
+                          className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left"
+                        >
+                          <Trash2 className="w-4 h-4" /> Xóa
                         </button>
-                      )}
-                      <button
-                        onClick={() => handleDelete(job.id)}
-                        className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-slate-700/50 w-full text-left"
-                      >
-                        <Trash2 className="w-4 h-4" /> Xóa
-                      </button>
-                    </div>
+                      </div>
+                    </>
                   )}
                 </div>
               )}
@@ -218,39 +236,39 @@ const Jobs = () => {
               {/* Content */}
               <Link to={`/jobs/${job.id}`}>
                 <div className="mb-4">
-                  <span className={`badge ${statusColors[job.status]}`}>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${statusColors[job.status] || statusColors.DRAFT}`}>
                     {job.status === 'OPEN' ? 'Đang tuyển' : job.status === 'DRAFT' ? 'Nháp' : job.status === 'CLOSED' ? 'Đã đóng' : job.status}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2 pr-8">{job.title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-2 pr-8 hover:text-green-600 transition-colors">{job.title}</h3>
                 {job.department && (
-                  <p className="text-sm text-blue-400 mb-2">{job.department}</p>
+                  <p className="text-sm text-green-600 font-medium mb-2">{job.department}</p>
                 )}
-                <div className="space-y-2 text-sm text-gray-400">
+                <div className="space-y-2 text-sm text-gray-600 mb-4">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
+                    <MapPin className="w-4 h-4 text-gray-400" />
                     <span>{job.location}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4" />
+                    <Briefcase className="w-4 h-4 text-gray-400" />
                     <span>{employmentTypeLabels[job.employment_type] || job.employment_type}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="w-4 h-4 text-gray-400" />
                     <span>Hạn: {new Date(job.deadline).toLocaleDateString('vi-VN')}</span>
                   </div>
                   {job.applications_count !== undefined && (
                     <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
+                      <Users className="w-4 h-4 text-gray-400" />
                       <span>{job.applications_count} ứng viên</span>
                     </div>
                   )}
                 </div>
                 {(job.salary_min || job.salary_max || job.salary) && (
-                  <div className="mt-4 pt-4 border-t border-slate-700">
-                    <p className="text-green-400 font-semibold">
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-green-600 font-bold text-lg">
                       {job.salary_min && job.salary_max
-                        ? `${Number(job.salary_min).toLocaleString('vi-VN')} - ${Number(job.salary_max).toLocaleString('vi-VN')} VNĐ`
+                        ? `${(Number(job.salary_min) / 1000000).toFixed(0)} - ${(Number(job.salary_max) / 1000000).toFixed(0)} triệu`
                         : job.salary || 'Thỏa thuận'}
                     </p>
                   </div>
@@ -265,4 +283,3 @@ const Jobs = () => {
 };
 
 export default Jobs;
-

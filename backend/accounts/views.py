@@ -21,6 +21,10 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'login', 'register']:
             return [AllowAny()]
+        # Chỉ ADMIN mới có quyền quản lý users (update, delete, disable)
+        if self.action in ['update', 'partial_update', 'destroy', 'disable', 'reset_password']:
+            from rest_framework.permissions import IsAdminUser
+            return [IsAdminUser()]
         return [IsAuthenticated()]
     
     def get_serializer_class(self):
@@ -160,3 +164,40 @@ class UserViewSet(viewsets.ModelViewSet):
             user.save()
             return Response({'message': 'Password updated successfully'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=True, methods=['post'])
+    def disable(self, request, pk=None):
+        """Vô hiệu hóa hoặc kích hoạt user (chỉ ADMIN)"""
+        try:
+            user = self.get_object()
+            user.is_active = not user.is_active
+            user.save()
+            return Response({
+                'message': f'User {"disabled" if not user.is_active else "enabled"} successfully',
+                'is_active': user.is_active
+            })
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+    
+    @action(detail=True, methods=['post'])
+    def reset_password(self, request, pk=None):
+        """Đặt lại mật khẩu cho user (chỉ ADMIN)"""
+        try:
+            user = self.get_object()
+            new_password = request.data.get('new_password')
+            if not new_password:
+                return Response(
+                    {'error': 'new_password is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Password reset successfully'})
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )

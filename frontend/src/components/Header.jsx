@@ -33,10 +33,25 @@ const Header = () => {
     ADMIN: 'Quản trị viên'
   };
 
+  // Role-specific accent colors
+  const getAccentColor = () => {
+    if (isAdmin) return 'from-purple-600 to-indigo-700';
+    if (isRecruiter) return 'from-green-600 to-emerald-700';
+    return 'from-blue-600 to-blue-700'; // CANDIDATE or public
+  };
+
+  const getRoleColor = () => {
+    if (isAdmin) return 'purple';
+    if (isRecruiter) return 'green';
+    return 'blue'; // CANDIDATE
+  };
+
+  const roleColor = getRoleColor();
+
   return (
     <>
-      {/* Top Accent Bar */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 h-1 w-full"></div>
+      {/* Top Accent Bar - Role specific */}
+      <div className={`bg-gradient-to-r ${getAccentColor()} h-1 w-full`}></div>
       
       {/* Main Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
@@ -44,11 +59,11 @@ const Header = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+              <div className={`w-10 h-10 bg-gradient-to-br ${getAccentColor()} rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow`}>
                 <Briefcase className="w-6 h-6 text-white" />
               </div>
               <div>
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                <span className={`text-xl font-bold bg-gradient-to-r ${getAccentColor()} bg-clip-text text-transparent`}>
                   GoodCV
                 </span>
                 <p className="text-xs text-gray-500 -mt-1">Tuyển dụng thông minh</p>
@@ -57,19 +72,21 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              {/* Public/Common Links */}
-              <Link
-                to="/careers"
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  location.pathname === '/careers' || location.pathname === '/' || location.pathname.startsWith('/jobs/')
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                Tìm việc làm
-              </Link>
+              {/* Tìm việc làm - CHỈ cho CANDIDATE hoặc public (không đăng nhập) */}
+              {(isCandidate || !user) && (
+                <Link
+                  to="/careers"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    location.pathname === '/careers' || location.pathname === '/' || location.pathname.startsWith('/jobs/')
+                      ? `bg-blue-50 text-blue-600`
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  Tìm việc làm
+                </Link>
+              )}
 
-              {/* CANDIDATE Navigation */}
+              {/* CANDIDATE Navigation - CHỈ cho CANDIDATE */}
               {isCandidate && (
                 <>
                   <Link
@@ -95,7 +112,7 @@ const Header = () => {
                 </>
               )}
 
-              {/* RECRUITER Navigation */}
+              {/* RECRUITER Navigation - CHỈ cho RECRUITER */}
               {isRecruiter && (
                 <>
                   <Link
@@ -111,7 +128,7 @@ const Header = () => {
                   <Link
                     to="/jobs"
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === '/jobs' || location.pathname.startsWith('/jobs/new') || location.pathname.includes('/jobs/') && location.pathname.includes('/edit')
+                      location.pathname === '/jobs' || location.pathname.startsWith('/jobs/new') || (location.pathname.includes('/jobs/') && location.pathname.includes('/edit'))
                         ? 'bg-green-50 text-green-600'
                         : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                     }`}
@@ -131,7 +148,7 @@ const Header = () => {
                 </>
               )}
 
-              {/* ADMIN Navigation */}
+              {/* ADMIN Navigation - CHỈ cho ADMIN */}
               {isAdmin && (
                 <>
                   <Link
@@ -143,16 +160,6 @@ const Header = () => {
                     }`}
                   >
                     Quản trị hệ thống
-                  </Link>
-                  <Link
-                    to="/dashboard"
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === '/dashboard' && !location.pathname.startsWith('/admin')
-                        ? 'bg-purple-50 text-purple-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                  >
-                    Quản lý việc làm
                   </Link>
                   <Link
                     to="/admin/users"
@@ -230,7 +237,7 @@ const Header = () => {
                           
                           {(isRecruiter || isAdmin) && (
                             <Link
-                              to="/settings"
+                              to={isAdmin ? '/admin/settings' : '/settings'}
                               className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
                               onClick={() => setUserMenuOpen(false)}
                             >
@@ -295,13 +302,17 @@ const Header = () => {
           {mobileMenuOpen && (
             <div className="lg:hidden border-t border-gray-200 py-4">
               <nav className="flex flex-col gap-2">
-                <Link
-                  to="/careers"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Tìm việc làm
-                </Link>
+                {/* Tìm việc làm - CHỈ cho CANDIDATE hoặc public */}
+                {(isCandidate || !user) && (
+                  <Link
+                    to="/careers"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Tìm việc làm
+                  </Link>
+                )}
+                
                 {isCandidate && (
                   <>
                     <Link
@@ -353,13 +364,6 @@ const Header = () => {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Quản trị hệ thống
-                    </Link>
-                    <Link
-                      to="/dashboard"
-                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Quản lý việc làm
                     </Link>
                     <Link
                       to="/admin/users"
