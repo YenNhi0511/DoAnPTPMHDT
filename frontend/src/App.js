@@ -15,9 +15,13 @@ import Results from './pages/Results';
 import Processes from './pages/Processes';
 import Reports from './pages/Reports';
 import Careers from './pages/Careers';
+import Home from './pages/Home';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminSettings from './pages/AdminSettings';
+import Profile from './pages/Profile';
+import VerifyEmail from './pages/VerifyEmail';
+import Settings from './pages/Settings';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, roles }) => {
@@ -65,8 +69,10 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/careers" element={<Careers />} />
 
       {/* Protected Routes */}
@@ -75,7 +81,7 @@ function AppRoutes() {
       {/* Jobs */}
       <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
       <Route path="/jobs/new" element={<ProtectedRoute roles={['ADMIN', 'RECRUITER']}><JobForm /></ProtectedRoute>} />
-      <Route path="/jobs/:id" element={<ProtectedRoute><JobDetail /></ProtectedRoute>} />
+      <Route path="/jobs/:id" element={<JobDetail />} />
       <Route path="/jobs/:id/edit" element={<ProtectedRoute roles={['ADMIN', 'RECRUITER']}><JobForm /></ProtectedRoute>} />
 
       {/* Applications */}
@@ -101,9 +107,14 @@ function AppRoutes() {
       <Route path="/admin/users" element={<ProtectedRoute roles={['ADMIN']}><AdminUsers /></ProtectedRoute>} />
       <Route path="/admin/settings" element={<ProtectedRoute roles={['ADMIN']}><AdminSettings /></ProtectedRoute>} />
 
+      {/* Profile */}
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      
+      {/* Settings */}
+      <Route path="/settings" element={<ProtectedRoute roles={['ADMIN', 'RECRUITER']}><Settings /></ProtectedRoute>} />
+
       {/* Default redirect */}
-      <Route path="/" element={<Navigate to="/careers" replace />} />
-      <Route path="*" element={<Navigate to="/careers" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

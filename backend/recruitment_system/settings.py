@@ -173,6 +173,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Email settings (use console backend for development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'noreply@recruitment.com')
+
+# Frontend URL for email links
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 
 # REST Framework settings
 REST_FRAMEWORK = {
@@ -199,3 +203,27 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery Configuration
+# Sử dụng Redis làm message broker (đơn giản hơn RabbitMQ)
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+
+# Celery settings
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+CELERY_TASK_SOFT_TIME_LIMIT = 60  # 1 minute
+CELERY_WORKER_SEND_TASK_EVENTS = True
+CELERY_TASK_SEND_SENT_EVENT = True
+
+# Windows compatibility: Use solo pool instead of prefork
+# Prefork pool không hoạt động tốt trên Windows
+import sys
+if sys.platform == 'win32':
+    CELERY_WORKER_POOL = 'solo'  # Single-threaded pool for Windows
+else:
+    CELERY_WORKER_POOL = 'prefork'  # Multiprocessing pool for Linux/Mac

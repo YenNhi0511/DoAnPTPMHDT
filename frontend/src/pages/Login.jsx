@@ -18,8 +18,10 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      const result = await login(email, password);
+      // Redirect dựa trên role: ADMIN → /admin/dashboard, các role khác → /dashboard
+      const redirectPath = result?.user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
+      navigate(redirectPath);
     } catch (err) {
       setError(err.response?.data?.error || 'Đăng nhập thất bại. Vui lòng thử lại.');
     } finally {

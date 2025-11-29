@@ -172,14 +172,24 @@ const Layout = ({ children }) => {
 
                 {userMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl border border-slate-700 py-2 animate-fade-in">
-                    <Link
-                      to="/profile"
-                      className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <User className="w-4 h-4" />
-                      Hồ sơ cá nhân
-                    </Link>
+        <Link
+          to="/profile"
+          className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50"
+          onClick={() => setUserMenuOpen(false)}
+        >
+          <User className="w-4 h-4" />
+          Hồ sơ cá nhân
+        </Link>
+        {(isAdmin || isRecruiter) && (
+          <Link
+            to="/settings"
+            className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50"
+            onClick={() => setUserMenuOpen(false)}
+          >
+            <Settings className="w-4 h-4" />
+            Cài đặt tài khoản
+          </Link>
+        )}
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-slate-700/50 w-full text-left"

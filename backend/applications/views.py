@@ -33,7 +33,11 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.role in ['ADMIN', 'RECRUITER']:
-            return Application.objects.select_related('job', 'candidate').all()
+            # Company chỉ thấy applications cho jobs của mình
+            return Application.objects.filter(
+                job__created_by=user
+            ).select_related('job', 'candidate')
+        # Candidate chỉ thấy applications của mình
         return Application.objects.filter(candidate=user).select_related('job')
     
     def get_serializer_class(self):

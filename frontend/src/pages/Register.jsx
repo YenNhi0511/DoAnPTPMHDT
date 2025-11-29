@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Briefcase, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
+import { Briefcase, Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle, CheckCircle, Building2, UserCircle } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -12,11 +12,13 @@ const Register = () => {
     first_name: '',
     last_name: '',
     phone: '',
+    account_type: 'INDIVIDUAL', // INDIVIDUAL hoặc BUSINESS
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [accountType, setAccountType] = useState('INDIVIDUAL');
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -36,9 +38,28 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await register(formData);
+      // Lưu account type để hiển thị message
+      setAccountType(formData.account_type);
+      
+      // Tự động set role dựa trên account_type
+      const registerData = {
+        ...formData,
+        role: formData.account_type === 'BUSINESS' ? 'ADMIN' : 'CANDIDATE',
+      };
+      
+      const result = await register(registerData);
+      
+      // Nếu cần verify email (CANDIDATE hoặc BUSINESS)
+      if (result.requires_verification) {
+        navigate(`/verify-email?email=${formData.email}`);
+        return;
+      }
+      
       setSuccess(true);
-      setTimeout(() => navigate('/login'), 2000);
+      
+      // Nếu không cần verify (đã tự động login)
+      const redirectPath = formData.account_type === 'BUSINESS' ? '/admin/dashboard' : '/dashboard';
+      setTimeout(() => navigate(redirectPath), 1500);
     } catch (err) {
       const errors = err.response?.data;
       if (errors) {
@@ -60,7 +81,11 @@ const Register = () => {
             <CheckCircle className="w-8 h-8 text-green-400" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Đăng ký thành công!</h2>
-          <p className="text-gray-400">Đang chuyển hướng đến trang đăng nhập...</p>
+          <p className="text-gray-400">
+            {accountType === 'BUSINESS' 
+              ? 'Đang chuyển hướng đến trang quản trị...'
+              : 'Đang chuyển hướng đến trang chủ...'}
+          </p>
         </div>
       </div>
     );
@@ -88,6 +113,84 @@ const Register = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Account Type Selection */}
+            <div>
+              <label className="label mb-3">Loại tài khoản</label>
+              <div className="grid grid-cols-2 gap-3">
+                <label className={`relative cursor-pointer ${formData.account_type === 'INDIVIDUAL' ? 'ring-2 ring-blue-500' : ''}`}>
+                  <input
+                    type="radio"
+                    name="account_type"
+                    value="INDIVIDUAL"
+                    checked={formData.account_type === 'INDIVIDUAL'}
+                    onChange={(e) => setFormData({ ...formData, account_type: e.target.value })}
+                    className="sr-only"
+                  />
+                  <div className={`p-4 rounded-lg border-2 transition-all ${
+                    formData.account_type === 'INDIVIDUAL'
+                      ? 'border-blue-500 bg-blue-500/10'
+                      : 'border-slate-700 bg-slate-700/30 hover:border-slate-600'
+                  }`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        formData.account_type === 'INDIVIDUAL'
+                          ? 'bg-blue-500/20'
+                          : 'bg-slate-600/50'
+                      }`}>
+                        <UserCircle className={`w-5 h-5 ${
+                          formData.account_type === 'INDIVIDUAL' ? 'text-blue-400' : 'text-gray-400'
+                        }`} />
+                      </div>
+                      <div>
+                        <p className={`font-medium ${
+                          formData.account_type === 'INDIVIDUAL' ? 'text-white' : 'text-gray-300'
+                        }`}>Cá nhân</p>
+                        <p className="text-xs text-gray-400">Ứng viên tìm việc</p>
+                      </div>
+                    </div>
+                  </div>
+                </label>
+
+                <label className={`relative cursor-pointer ${formData.account_type === 'BUSINESS' ? 'ring-2 ring-blue-500' : ''}`}>
+                  <input
+                    type="radio"
+                    name="account_type"
+                    value="BUSINESS"
+                    checked={formData.account_type === 'BUSINESS'}
+                    onChange={(e) => setFormData({ ...formData, account_type: e.target.value })}
+                    className="sr-only"
+                  />
+                  <div className={`p-4 rounded-lg border-2 transition-all ${
+                    formData.account_type === 'BUSINESS'
+                      ? 'border-blue-500 bg-blue-500/10'
+                      : 'border-slate-700 bg-slate-700/30 hover:border-slate-600'
+                  }`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        formData.account_type === 'BUSINESS'
+                          ? 'bg-blue-500/20'
+                          : 'bg-slate-600/50'
+                      }`}>
+                        <Building2 className={`w-5 h-5 ${
+                          formData.account_type === 'BUSINESS' ? 'text-blue-400' : 'text-gray-400'
+                        }`} />
+                      </div>
+                      <div>
+                        <p className={`font-medium ${
+                          formData.account_type === 'BUSINESS' ? 'text-white' : 'text-gray-300'
+                        }`}>Doanh nghiệp</p>
+                        <p className="text-xs text-gray-400">Tuyển dụng nhân sự</p>
+                      </div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <p className="mt-2 text-xs text-gray-400">
+                {formData.account_type === 'BUSINESS' 
+                  ? 'Tài khoản doanh nghiệp sẽ có quyền quản trị đầy đủ: đăng tin tuyển dụng, quản lý hồ sơ, phỏng vấn, báo cáo'
+                  : 'Tài khoản cá nhân dùng để tìm việc và ứng tuyển vào các vị trí'}
+              </p>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label">Họ</label>

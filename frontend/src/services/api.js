@@ -48,6 +48,8 @@ export const login = (email, password) => api.post('/users/login/', { email, pas
 export const register = (data) => api.post('/users/register/', data);
 export const getMe = () => api.get('/users/me/');
 export const changePassword = (data) => api.post('/users/change_password/', data);
+export const verifyEmail = (token) => api.post('/users/verify_email/', { token });
+export const resendVerification = (email) => api.post('/users/resend_verification/', { email });
 
 // Jobs APIs
 export const getJobs = (params) => api.get('/jobs/', { params });
@@ -128,5 +130,7 @@ export const markAllNotificationsRead = () => api.post('/notifications/mark_all_
 // Users APIs
 export const getUsers = (params) => api.get('/users/', { params });
 export const getUser = (id) => api.get(`/users/${id}/`);
+export const updateUser = (id, data) => api.patch(`/users/${id}/`, data);
+export const updateMe = (data) => api.patch('/users/me/', data);
 
 export default api;

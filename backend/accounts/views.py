@@ -36,11 +36,80 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            
+            # Tất cả users đều cần verify email trước khi login
             return Response({
                 'user': UserSerializer(user).data,
-                'message': 'User registered successfully'
+                'message': 'Registration successful. Please check your email to verify your account.',
+                'requires_verification': True
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
+    def verify_email(self, request):
+        """Xác nhận email với token"""
+        token = request.data.get('token')
+        if not token:
+            return Response(
+                {'error': 'Token is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            user = User.objects.get(email_verification_token=token)
+            if user.is_email_verified:
+                return Response(
+                    {'message': 'Email already verified'},
+                    status=status.HTTP_200_OK
+                )
+            
+            user.is_email_verified = True
+            user.email_verification_token = None
+            user.save()
+            
+            # Tự động login sau khi verify
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'message': 'Email verified successfully',
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'user': UserSerializer(user).data
+            })
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Invalid or expired token'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
+    def resend_verification(self, request):
+        """Gửi lại email verification"""
+        email = request.data.get('email')
+        if not email:
+            return Response(
+                {'error': 'Email is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            user = User.objects.get(email=email)
+            if user.is_email_verified:
+                return Response(
+                    {'message': 'Email already verified'},
+                    status=status.HTTP_200_OK
+                )
+            
+            from .tasks import send_verification_email_task
+            send_verification_email_task.delay(str(user.id))
+            
+            return Response({
+                'message': 'Verification email sent'
+            })
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
     
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def login(self, request):
@@ -63,11 +132,18 @@ class UserViewSet(viewsets.ModelViewSet):
             status=status.HTTP_401_UNAUTHORIZED
         )
     
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get', 'patch'])
     def me(self, request):
-        """Lấy thông tin user hiện tại"""
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data)
+        """Lấy và cập nhật thông tin user hiện tại"""
+        if request.method == 'GET':
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data)
+        elif request.method == 'PATCH':
+            serializer = UserUpdateSerializer(request.user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(UserSerializer(request.user).data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=['post'])
     def change_password(self, request):

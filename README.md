@@ -124,7 +124,9 @@ Truy cập: http://localhost:3000
 
 ## 📖 Cài đặt chi tiết
 
-👉 **Xem file [SETUP.md](./SETUP.md) để có hướng dẫn đầy đủ từng bước.**
+👉 **Xem file [HUONG-DAN-CAI-DAT.md](./HUONG-DAN-CAI-DAT.md) để có hướng dẫn đầy đủ từng bước (file tiếng Việt, dễ làm theo nhất).**
+
+👉 Hoặc xem [SETUP.md](./SETUP.md) cho hướng dẫn tiếng Anh.
 
 ## 📁 Cấu trúc dự án
 

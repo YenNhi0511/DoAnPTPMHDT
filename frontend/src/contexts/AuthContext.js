@@ -14,19 +14,56 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // Option để enable/disable sync giữa các tab
+  // Set false để mỗi tab hoạt động độc lập (phù hợp cho demo)
+  const SYNC_BETWEEN_TABS = false; // true = sync, false = independent
 
-  useEffect(() => {
+  // Load user từ token khi component mount
+  const loadUser = async () => {
     const token = localStorage.getItem('access_token');
     if (token) {
-      getMe()
-        .then((res) => setUser(res.data))
-        .catch(() => {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-        })
-        .finally(() => setLoading(false));
+      try {
+        const res = await getMe();
+        setUser(res.data);
+      } catch (error) {
+        // Token invalid, clear storage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setUser(null);
+      }
     } else {
-      setLoading(false);
+      setUser(null);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadUser();
+
+    if (SYNC_BETWEEN_TABS) {
+      // Listen for storage changes (khi login/logout ở tab khác)
+      // Chỉ enable nếu muốn sync giữa các tab
+      const handleStorageChange = (e) => {
+        if (e.key === 'access_token' || e.key === 'refresh_token') {
+          loadUser();
+        }
+      };
+
+      // Listen for custom storage event (same-tab updates)
+      const handleCustomStorage = (e) => {
+        if (e.detail?.key === 'access_token' || e.detail?.key === 'refresh_token') {
+          loadUser();
+        }
+      };
+
+      window.addEventListener('storage', handleStorageChange);
+      window.addEventListener('auth-storage-change', handleCustomStorage);
+
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('auth-storage-change', handleCustomStorage);
+      };
     }
   }, []);
 
@@ -35,11 +72,41 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('access_token', response.data.access);
     localStorage.setItem('refresh_token', response.data.refresh);
     setUser(response.data.user);
+    
+    // Notify other tabs about auth change (chỉ nếu sync enabled)
+    if (SYNC_BETWEEN_TABS) {
+      window.dispatchEvent(new CustomEvent('auth-storage-change', {
+        detail: { key: 'access_token' }
+      }));
+    }
+    
     return response.data;
   };
 
   const register = async (data) => {
     const response = await apiRegister(data);
+    // Tự động đăng nhập sau khi đăng ký thành công
+    if (response.data && response.data.user) {
+      try {
+        // Login để lấy token
+        const loginResponse = await apiLogin(data.email, data.password);
+        if (loginResponse.data) {
+          localStorage.setItem('access_token', loginResponse.data.access);
+          localStorage.setItem('refresh_token', loginResponse.data.refresh);
+          setUser(loginResponse.data.user || response.data.user);
+          
+          // Notify other tabs about auth change (chỉ nếu sync enabled)
+          if (SYNC_BETWEEN_TABS) {
+            window.dispatchEvent(new CustomEvent('auth-storage-change', {
+              detail: { key: 'access_token' }
+            }));
+          }
+        }
+      } catch (err) {
+        console.error('Auto-login after registration failed:', err);
+        // Vẫn return success, user có thể login thủ công
+      }
+    }
     return response.data;
   };
 
@@ -47,6 +114,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setUser(null);
+    
+    // Notify other tabs about logout (chỉ nếu sync enabled)
+    if (SYNC_BETWEEN_TABS) {
+      window.dispatchEvent(new CustomEvent('auth-storage-change', {
+        detail: { key: 'access_token' }
+      }));
+    }
   };
 
   const isRecruiter = user?.role === 'RECRUITER' || user?.role === 'ADMIN';
@@ -54,7 +128,7 @@ export const AuthProvider = ({ children }) => {
   const isInterviewer = user?.role === 'INTERVIEWER' || isRecruiter;
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isRecruiter, isAdmin, isInterviewer }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, register, logout, isRecruiter, isAdmin, isInterviewer }}>
       {children}
     </AuthContext.Provider>
   );

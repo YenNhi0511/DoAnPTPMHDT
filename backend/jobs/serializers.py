@@ -99,6 +99,7 @@ class JobCreateSerializer(serializers.ModelSerializer):
 class JobListSerializer(serializers.ModelSerializer):
     """Serializer cho list view (ít fields hơn)"""
     created_by_name = serializers.CharField(source='created_by.name', read_only=True)
+    company_name = serializers.CharField(source='created_by.company_name', read_only=True)
     applications_count = serializers.IntegerField(
         source='applications.count',
         read_only=True
@@ -109,6 +110,6 @@ class JobListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'department', 'location', 'salary', 'salary_min', 'salary_max',
             'employment_type', 'positions_count', 'experience_years',
-            'status', 'deadline', 'created_by_name', 'applications_count',
+            'status', 'deadline', 'created_by_name', 'company_name', 'applications_count',
             'created_at', 'description'
         ]

@@ -10,11 +10,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 const Dashboard = () => {
   const { user, isRecruiter, isAdmin } = useAuth();
-
-  // Redirect admin to admin dashboard
-  if (isAdmin) {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
+  
+  // Tất cả hooks phải được gọi ở top level, không được gọi sau điều kiện
   const [stats, setStats] = useState(null);
   const [recentJobs, setRecentJobs] = useState([]);
   const [recentApplications, setRecentApplications] = useState([]);
@@ -58,6 +55,11 @@ const Dashboard = () => {
     REJECTED: 'Từ chối',
     ACCEPTED: 'Đã nhận việc',
   };
+
+  // Redirect admin to admin dashboard (sau khi hooks đã được gọi)
+  if (isAdmin) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
 
   if (loading) {
     return (
