@@ -13,10 +13,10 @@ const Footer = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
                 <Briefcase className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">TopCV</span>
+              <span className="text-xl font-bold text-white">GoodCV</span>
             </div>
             <p className="text-sm text-gray-400 mb-4">
-              Nền tảng tuyển dụng hàng đầu Việt Nam, kết nối nhà tuyển dụng và ứng viên một cách hiệu quả.
+              Nền tảng tuyển dụng thông minh, kết nối nhà tuyển dụng và ứng viên một cách hiệu quả và chuyên nghiệp.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -101,7 +101,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                <span className="text-sm text-gray-400">contact@topcv.vn</span>
+                <span className="text-sm text-gray-400">contact@goodcv.vn</span>
               </li>
             </ul>
           </div>
@@ -110,7 +110,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400">
-              © 2025 TopCV. Tất cả quyền được bảo lưu.
+              © 2025 GoodCV. Tất cả quyền được bảo lưu.
             </p>
             <div className="flex gap-6">
               <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors">

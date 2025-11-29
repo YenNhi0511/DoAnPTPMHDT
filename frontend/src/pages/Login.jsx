@@ -19,8 +19,15 @@ const Login = () => {
 
     try {
       const result = await login(email, password);
-      // Redirect dựa trên role: ADMIN → /admin/dashboard, các role khác → /dashboard
-      const redirectPath = result?.user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
+      // Redirect dựa trên role (3 roles chính)
+      let redirectPath = '/';
+      if (result?.user?.role === 'ADMIN') {
+        redirectPath = '/admin/dashboard';
+      } else if (result?.user?.role === 'CANDIDATE') {
+        redirectPath = '/candidate/dashboard';
+      } else if (result?.user?.role === 'RECRUITER') {
+        redirectPath = '/dashboard';
+      }
       navigate(redirectPath);
     } catch (err) {
       setError(err.response?.data?.error || 'Đăng nhập thất bại. Vui lòng thử lại.');

@@ -24,6 +24,7 @@ cd DoAnPTPMHDT
 ### Option 1: Sử dụng PostgreSQL Local
 
 1. **Cài đặt PostgreSQL:**
+
    - Download và cài đặt từ [postgresql.org](https://www.postgresql.org/download/)
    - Ghi nhớ password bạn đặt cho user `postgres`
 
@@ -38,6 +39,7 @@ cd DoAnPTPMHDT
 ### Option 2: Sử dụng Database Online (Khuyến nghị)
 
 1. **Tạo tài khoản tại Neon hoặc Supabase:**
+
    - Neon: https://neon.tech
    - Supabase: https://supabase.com
 
@@ -55,20 +57,38 @@ python -m venv venv
 ### 3.2. Kích hoạt Virtual Environment
 
 **Windows:**
+
 ```bash
 venv\Scripts\activate
 ```
 
 **Mac/Linux:**
+
 ```bash
 source venv/bin/activate
 ```
 
 ### 3.3. Cài đặt Dependencies
 
+**⚠️ QUAN TRỌNG:** Đảm bảo virtual environment đã được activate (bạn sẽ thấy `(venv)` ở đầu dòng command prompt).
+
 ```bash
 pip install -r requirements.txt
 ```
+
+**Kiểm tra cài đặt thành công:**
+
+```bash
+# Kiểm tra các package quan trọng đã được cài
+pip list | findstr "Django faker reportlab"  # Windows
+# hoặc: pip list | grep "Django faker reportlab"  # Mac/Linux
+```
+
+**Nếu gặp lỗi khi cài đặt:**
+
+- Đảm bảo đã activate venv (thấy `(venv)` ở đầu dòng)
+- Thử upgrade pip: `python -m pip install --upgrade pip`
+- Sau đó chạy lại: `pip install -r requirements.txt`
 
 ### 3.4. Tạo file .env
 
@@ -107,6 +127,7 @@ GEMINI_API_KEY=your-gemini-api-key-here
 ```
 
 **Lưu ý:**
+
 - Thay `your_password`, `your-secret-key-here`, `your-email@gmail.com` bằng giá trị thực tế
 - Để lấy App Password cho Gmail: [Hướng dẫn](https://support.google.com/accounts/answer/185833)
 
@@ -123,6 +144,7 @@ python manage.py createsuperuser
 ```
 
 Nhập thông tin:
+
 - Email: admin@example.com
 - Username: admin
 - Password: (tự đặt)
@@ -131,12 +153,34 @@ Nhập thông tin:
 
 ### 3.7. Tạo dữ liệu mẫu (Optional)
 
+**⚠️ QUAN TRỌNG:** Đảm bảo bạn đã:
+
+1. ✅ Activate virtual environment (`venv\Scripts\activate`)
+2. ✅ Cài đặt dependencies (`pip install -r requirements.txt`)
+3. ✅ Chạy migrations (`python manage.py migrate`)
+
+Sau đó mới chạy các script seed:
+
 ```bash
 # Tạo tài khoản và jobs cơ bản
 python seed_data.py
 
 # Tạo nhiều companies và jobs đầy đủ
 python seed_companies_full.py
+```
+
+**Nếu gặp lỗi "ModuleNotFoundError: No module named 'faker'":**
+
+```bash
+# Đảm bảo đã activate venv
+venv\Scripts\activate  # Windows
+# hoặc: source venv/bin/activate  # Mac/Linux
+
+# Cài đặt lại dependencies
+pip install -r requirements.txt
+
+# Hoặc cài faker riêng
+pip install faker
 ```
 
 ## ⚛️ BƯỚC 4: CÀI ĐẶT FRONTEND
@@ -221,11 +265,13 @@ Frontend sẽ chạy tại: http://localhost:3000
 ## ✅ BƯỚC 7: KIỂM TRA
 
 1. **Kiểm tra Backend:**
+
    - Truy cập: http://localhost:8000/api/
    - Truy cập Admin: http://localhost:8000/admin/
    - Đăng nhập với superuser đã tạo
 
 2. **Kiểm tra Frontend:**
+
    - Truy cập: http://localhost:3000
    - Trang chủ sẽ hiển thị danh sách việc làm
 
@@ -239,10 +285,12 @@ Frontend sẽ chạy tại: http://localhost:3000
 Sau khi chạy `seed_data.py`, bạn có thể dùng các tài khoản sau:
 
 - **Admin:**
+
   - Email: `admin@recruitment.com`
   - Password: `admin123`
 
 - **Recruiter:**
+
   - Email: `recruiter@recruitment.com`
   - Password: `recruiter123`
 
@@ -253,6 +301,7 @@ Sau khi chạy `seed_data.py`, bạn có thể dùng các tài khoản sau:
 ## 🎯 CÁC TÍNH NĂNG CHÍNH
 
 ### Cho Ứng viên (CANDIDATE):
+
 - ✅ Tìm kiếm việc làm với bộ lọc nâng cao
 - ✅ Xem chi tiết công việc
 - ✅ Ứng tuyển với CV
@@ -260,6 +309,7 @@ Sau khi chạy `seed_data.py`, bạn có thể dùng các tài khoản sau:
 - ✅ Quản lý hồ sơ cá nhân
 
 ### Cho Nhà tuyển dụng (ADMIN/RECRUITER):
+
 - ✅ Đăng tin tuyển dụng
 - ✅ Quản lý hồ sơ ứng tuyển
 - ✅ AI screening CV tự động
@@ -269,7 +319,48 @@ Sau khi chạy `seed_data.py`, bạn có thể dùng các tài khoản sau:
 
 ## 🐛 XỬ LÝ LỖI THƯỜNG GẶP
 
-### Lỗi: "ModuleNotFoundError"
+### Lỗi: "ModuleNotFoundError: No module named 'faker'"
+
+**Nguyên nhân:**
+
+- Chưa activate virtual environment (phổ biến nhất)
+- Hoặc chưa cài đặt package `faker` (package này đã được thêm vào requirements.txt)
+
+**Cách fix từng bước:**
+
+```bash
+# Bước 1: Kiểm tra xem đã activate venv chưa
+# Bạn PHẢI thấy (venv) ở đầu dòng command prompt
+# Nếu KHÔNG thấy → chạy lệnh sau:
+
+venv\Scripts\activate  # Windows
+# hoặc: source venv/bin/activate  # Mac/Linux
+
+# Sau khi activate, bạn sẽ thấy (venv) ở đầu dòng, ví dụ:
+# (venv) PS D:\Downloads\PMHDT\DoAnPTPMHDT\backend>
+
+# Bước 2: Cài đặt lại tất cả dependencies (bao gồm faker)
+pip install -r requirements.txt
+
+# Bước 3: Kiểm tra faker đã được cài chưa
+pip list | findstr faker  # Windows
+# hoặc: pip list | grep faker  # Mac/Linux
+
+# Nếu vẫn chưa có, cài riêng:
+pip install faker
+
+# Bước 4: Thử chạy lại script
+python seed_companies_full.py
+```
+
+**⚠️ Lưu ý quan trọng:**
+
+- **LUÔN** activate venv trước khi chạy bất kỳ Python script nào!
+- Nếu bạn thấy `(venv)` ở đầu dòng → Đã activate thành công ✅
+- Nếu không thấy `(venv)` → Chưa activate, cần chạy lại `venv\Scripts\activate` ❌
+
+### Lỗi: "ModuleNotFoundError" (chung)
+
 ```bash
 # Đảm bảo đã activate virtual environment
 venv\Scripts\activate  # Windows
@@ -277,20 +368,24 @@ pip install -r requirements.txt
 ```
 
 ### Lỗi: "Database connection failed"
+
 - Kiểm tra PostgreSQL đang chạy
 - Kiểm tra `DATABASE_URL` trong `.env` đúng chưa
 - Kiểm tra username/password
 
 ### Lỗi: "Redis connection failed"
+
 - Kiểm tra Redis đang chạy: `redis-cli ping` (phải trả về PONG)
 - Nếu dùng Docker: `docker ps` để xem container có chạy không
 
 ### Lỗi: "Port already in use"
+
 - Backend (8000): Đổi port trong `manage.py runserver 8001`
 - Frontend (3000): Hỏi khi chạy `npm start`, chọn Y để dùng port khác
 - Redis (6379): Đổi port trong Docker hoặc config Redis
 
 ### Lỗi: "Email verification không gửi được"
+
 - Kiểm tra `EMAIL_HOST_USER` và `EMAIL_HOST_PASSWORD` trong `.env`
 - Với Gmail, cần dùng App Password, không dùng password thường
 - Kiểm tra Celery worker đang chạy (email được gửi qua Celery)
@@ -304,6 +399,7 @@ pip install -r requirements.txt
 ## 🔐 BẢO MẬT
 
 **Lưu ý quan trọng:**
+
 - ⚠️ File `.env` chứa thông tin nhạy cảm, **KHÔNG** commit lên Git
 - ⚠️ Trong production, đặt `DEBUG=False`
 - ⚠️ Sử dụng secret key mạnh cho `SECRET_KEY`
@@ -312,6 +408,7 @@ pip install -r requirements.txt
 ## 📞 HỖ TRỢ
 
 Nếu gặp vấn đề:
+
 1. Kiểm tra lại các bước trên
 2. Xem file `README.md` để biết thêm chi tiết
 3. Kiểm tra logs trong terminal để xem lỗi cụ thể
@@ -329,4 +426,3 @@ Nếu tất cả các bước trên đều thành công, bạn đã sẵn sàng 
 ---
 
 **Chúc bạn thành công! 🚀**
-

@@ -35,3 +35,4 @@ django-environ>=0.11
 python-dateutil>=2.8
 pytz>=2023.3
 reportlab>=4.0
+faker>=20.0  # For generating fake data (seed scripts)

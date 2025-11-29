@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getJob, getJobApplications, publishJob, closeJob, applyToJob } from '../services/api';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import {
   Briefcase, MapPin, Clock, Users, DollarSign, Calendar,
   Edit, CheckCircle, XCircle, ArrowLeft, FileText, Upload,
@@ -11,7 +13,7 @@ import {
 const JobDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isRecruiter } = useAuth();
+  const { user, isRecruiterOrAdmin } = useAuth();
   const [job, setJob] = useState(null);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ const JobDetail = () => {
         const jobRes = await getJob(id);
         setJob(jobRes.data);
 
-        if (isRecruiter) {
+        if (isRecruiterOrAdmin) {
           const appsRes = await getJobApplications(id);
           setApplications(Array.isArray(appsRes.data) ? appsRes.data : appsRes.data.results || []);
         }
@@ -42,7 +44,7 @@ const JobDetail = () => {
       }
     };
     fetchData();
-  }, [id, isRecruiter]);
+  }, [id, isRecruiterOrAdmin]);
 
   const handlePublish = async () => {
     try {
@@ -101,27 +103,40 @@ const JobDetail = () => {
 
   if (!job) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-xl text-white">Không tìm thấy việc làm</h2>
-        <Link to="/jobs" className="btn-primary mt-4 inline-block">Quay lại</Link>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center py-12">
+            <h2 className="text-xl text-gray-900">Không tìm thấy việc làm</h2>
+            <Link to="/careers" className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Quay lại</Link>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Header />
+      
+      <main className="flex-1">
+        <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-400 hover:text-white"
+          className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
+        <Link to="/careers" className="text-sm text-gray-600 hover:text-blue-600">
+          ← Quay lại danh sách việc làm
+        </Link>
       </div>
 
       {/* Job Info */}
-      <div className="card">
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -132,15 +147,15 @@ const JobDetail = () => {
                 <span className="badge badge-info">{job.employment_type}</span>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">{job.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h1>
             {job.department && (
-              <p className="text-blue-400 flex items-center gap-2">
+              <p className="text-blue-600 flex items-center gap-2">
                 <Building className="w-4 h-4" /> {job.department}
               </p>
             )}
           </div>
 
-          {isRecruiter && (
+          {isRecruiterOrAdmin && (
             <div className="flex items-center gap-2">
               <Link to={`/jobs/${id}/edit`} className="btn-ghost flex items-center gap-2">
                 <Edit className="w-4 h-4" /> Chỉnh sửa
@@ -160,33 +175,33 @@ const JobDetail = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="flex items-center gap-3 text-gray-300">
-            <MapPin className="w-5 h-5 text-gray-400" />
+          <div className="flex items-center gap-3 text-gray-600">
+            <MapPin className="w-5 h-5 text-gray-500" />
             <span>{job.location}</span>
           </div>
-          <div className="flex items-center gap-3 text-gray-300">
-            <Clock className="w-5 h-5 text-gray-400" />
+          <div className="flex items-center gap-3 text-gray-600">
+            <Clock className="w-5 h-5 text-gray-500" />
             <span>Hạn: {new Date(job.deadline).toLocaleDateString('vi-VN')}</span>
           </div>
-          <div className="flex items-center gap-3 text-gray-300">
-            <Users className="w-5 h-5 text-gray-400" />
+          <div className="flex items-center gap-3 text-gray-600">
+            <Users className="w-5 h-5 text-gray-500" />
             <span>{job.positions_count || 1} vị trí</span>
           </div>
           {job.experience_years && (
-            <div className="flex items-center gap-3 text-gray-300">
-              <Award className="w-5 h-5 text-gray-400" />
+            <div className="flex items-center gap-3 text-gray-600">
+              <Award className="w-5 h-5 text-gray-500" />
               <span>{job.experience_years} năm KN</span>
             </div>
           )}
         </div>
 
         {(job.salary_min || job.salary_max || job.salary) && (
-          <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg mb-6">
-            <div className="flex items-center gap-3 text-green-400">
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-6">
+            <div className="flex items-center gap-3 text-green-700">
               <DollarSign className="w-5 h-5" />
               <span className="font-semibold text-lg">
                 {job.salary_min && job.salary_max
-                  ? `${Number(job.salary_min).toLocaleString('vi-VN')} - ${Number(job.salary_max).toLocaleString('vi-VN')} VNĐ`
+                  ? `${(Number(job.salary_min) / 1000000).toFixed(0)} - ${(Number(job.salary_max) / 1000000).toFixed(0)} triệu`
                   : job.salary || 'Thỏa thuận'}
               </span>
             </div>
@@ -195,29 +210,29 @@ const JobDetail = () => {
 
         <div className="space-y-6">
           <div>
-            <h3 className="section-title">Mô tả công việc</h3>
-            <div className="text-gray-300 whitespace-pre-wrap">{job.description}</div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Mô tả công việc</h3>
+            <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">{job.description}</div>
           </div>
 
           <div>
-            <h3 className="section-title">Yêu cầu</h3>
-            <div className="text-gray-300 whitespace-pre-wrap">{job.requirements}</div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Yêu cầu</h3>
+            <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">{job.requirements}</div>
           </div>
         </div>
 
         {/* Apply Button */}
-        {!isRecruiter && job.status === 'OPEN' && !applySuccess && (
-          <div className="mt-6 pt-6 border-t border-slate-700">
+        {!isRecruiterOrAdmin && job.status === 'OPEN' && !applySuccess && (
+          <div className="mt-6 pt-6 border-t border-gray-200">
             {!showApplyForm ? (
               <button
                 onClick={() => setShowApplyForm(true)}
-                className="btn-primary w-full md:w-auto flex items-center justify-center gap-2"
+                className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 font-semibold"
               >
                 <FileText className="w-5 h-5" /> Ứng tuyển ngay
               </button>
             ) : (
               <form onSubmit={handleApply} className="space-y-4">
-                <h3 className="section-title">Nộp hồ sơ ứng tuyển</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Nộp hồ sơ ứng tuyển</h3>
 
                 {!user && (
                   <>
@@ -292,7 +307,7 @@ const JobDetail = () => {
         )}
 
         {applySuccess && (
-          <div className="mt-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 flex items-center gap-3">
+          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 flex items-center gap-3">
             <CheckCircle className="w-5 h-5" />
             <span>Hồ sơ của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ sớm.</span>
           </div>
@@ -300,51 +315,51 @@ const JobDetail = () => {
       </div>
 
       {/* Applications (for recruiters) */}
-      {isRecruiter && applications.length > 0 && (
-        <div className="card">
+      {isRecruiterOrAdmin && applications.length > 0 && (
+        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mt-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="section-title mb-0">Hồ sơ ứng tuyển ({applications.length})</h3>
-            <Link to={`/applications?job=${id}`} className="text-blue-400 hover:text-blue-300 text-sm">
+            <h3 className="text-lg font-semibold text-gray-900">Hồ sơ ứng tuyển ({applications.length})</h3>
+            <Link to={`/applications?job=${id}`} className="text-blue-600 hover:text-blue-700 text-sm font-medium">
               Xem tất cả →
             </Link>
           </div>
-          <div className="table-container">
-            <table className="table">
-              <thead>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th>Ứng viên</th>
-                  <th>Ngày nộp</th>
-                  <th>Điểm AI</th>
-                  <th>Trạng thái</th>
-                  <th></th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ứng viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày nộp</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Điểm AI</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-white divide-y divide-gray-200">
                 {applications.slice(0, 5).map((app) => (
-                  <tr key={app.id}>
-                    <td className="font-medium text-white">{app.candidate_name}</td>
-                    <td>{new Date(app.applied_at).toLocaleDateString('vi-VN')}</td>
-                    <td>
+                  <tr key={app.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 whitespace-nowrap font-medium text-gray-900">{app.candidate_name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-gray-600">{new Date(app.applied_at).toLocaleDateString('vi-VN')}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
                       {app.ai_score ? (
-                        <span className={`font-medium ${app.ai_score >= 70 ? 'text-green-400' : app.ai_score >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
+                        <span className={`font-medium ${app.ai_score >= 70 ? 'text-green-600' : app.ai_score >= 50 ? 'text-yellow-600' : 'text-red-600'}`}>
                           {app.ai_score.toFixed(0)}
                         </span>
                       ) : '-'}
                     </td>
-                    <td>
-                      <span className={`badge ${
-                        app.status === 'ACCEPTED' ? 'badge-success' :
-                        app.status === 'REJECTED' ? 'badge-danger' :
-                        app.status === 'INTERVIEW' ? 'badge-info' :
-                        'badge-warning'
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        app.status === 'ACCEPTED' ? 'bg-green-100 text-green-800' :
+                        app.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
+                        app.status === 'INTERVIEW' ? 'bg-blue-100 text-blue-800' :
+                        'bg-yellow-100 text-yellow-800'
                       }`}>
                         {statusLabels[app.status] || app.status}
                       </span>
                     </td>
-                    <td>
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <Link
                         to={`/applications/${app.id}`}
-                        className="text-blue-400 hover:text-blue-300"
+                        className="text-blue-600 hover:text-blue-700 font-medium"
                       >
                         Chi tiết
                       </Link>
@@ -356,6 +371,10 @@ const JobDetail = () => {
           </div>
         </div>
       )}
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

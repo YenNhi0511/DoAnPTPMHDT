@@ -4,6 +4,8 @@ import { getJobs } from '../services/api';
 import AdvancedFilters from '../components/AdvancedFilters';
 import LocationSelector from '../components/LocationSelector';
 import JobCategoryModal from '../components/JobCategoryModal';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import {
   Briefcase, MapPin, Clock, Search, Building, Users, ChevronRight,
   Heart, SortAsc, Check
@@ -159,18 +161,21 @@ const Careers = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Header />
+      
+      <main className="flex-1">
       {/* Hero Section with Search */}
-      <div className="relative bg-gradient-to-br from-blue-900 via-slate-900 to-purple-900 py-12 px-4">
+      <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-12 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Search Bar */}
-          <div className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-slate-700/50">
+          <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-200">
             <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3">
               {/* Job Category Button */}
               <button
                 type="button"
                 onClick={() => setShowCategoryModal(true)}
-                className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-white flex items-center gap-2 transition-colors whitespace-nowrap"
+                className="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 flex items-center gap-2 transition-colors whitespace-nowrap"
               >
                 <span className="text-lg">☰</span>
                 <span>Danh mục Nghề</span>
@@ -189,7 +194,7 @@ const Careers = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Vị trí tuyển dụng"
-                  className="input pl-12 w-full"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                 />
               </div>
 
@@ -206,7 +211,7 @@ const Careers = () => {
               {/* Search Button */}
               <button 
                 type="submit" 
-                className="btn-primary px-8 whitespace-nowrap"
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap"
               >
                 Tìm kiếm
               </button>
@@ -278,10 +283,10 @@ const Careers = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
               </div>
             ) : jobs.length === 0 ? (
-              <div className="card text-center py-16">
-                <Briefcase className="w-20 h-20 text-gray-500 mx-auto mb-6" />
-                <h3 className="text-2xl font-semibold text-white mb-3">Không tìm thấy vị trí nào</h3>
-                <p className="text-gray-400 mb-6">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+              <div className="bg-white rounded-lg shadow-md border border-gray-200 text-center py-16">
+                <Briefcase className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+                <h3 className="text-2xl font-semibold text-gray-900 mb-3">Không tìm thấy vị trí nào</h3>
+                <p className="text-gray-600 mb-6">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
                 <button
                   onClick={() => {
                     setSearch('');
@@ -289,7 +294,7 @@ const Careers = () => {
                     handleClearFilters();
                     fetchJobs();
                   }}
-                  className="btn-ghost"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Xóa bộ lọc
                 </button>
@@ -300,7 +305,7 @@ const Careers = () => {
                   <Link
                     key={job.id}
                     to={`/jobs/${job.id}`}
-                    className="card block hover:border-blue-500/50 transition-all duration-300"
+                    className="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 border border-gray-200"
                   >
                     <div className="flex gap-4">
                       {/* Company Logo/Icon */}
@@ -318,10 +323,10 @@ const Careers = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-4 mb-2">
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-semibold text-white mb-1 line-clamp-2">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 hover:text-blue-600">
                               {job.title}
                             </h3>
-                            <p className="text-sm text-gray-400 mb-2">
+                            <p className="text-sm text-gray-600 mb-2">
                               {job.company_name || job.created_by_name || 'Công ty'}
                             </p>
                           </div>
@@ -331,20 +336,20 @@ const Careers = () => {
                               e.preventDefault();
                               // Handle save job
                             }}
-                            className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-400 hover:text-red-400 transition-colors flex-shrink-0"
+                            className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
                           >
                             <Heart className="w-5 h-5" />
                           </button>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-2">
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-2">
                           <span className="flex items-center gap-1">
                             <MapPin className="w-4 h-4" /> {job.location}
                           </span>
                           {job.experience_years && (
                             <span>{job.experience_years} năm kinh nghiệm</span>
                           )}
-                          <span className="badge badge-info">
+                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                             {employmentTypeLabels[job.employment_type] || job.employment_type}
                           </span>
                         </div>
@@ -352,19 +357,19 @@ const Careers = () => {
                         {/* Tags */}
                         {job.department && (
                           <div className="flex flex-wrap gap-2 mt-2">
-                            <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded">
+                            <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">
                               {job.department}
                             </span>
                           </div>
                         )}
 
-                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-700">
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
                           <span className="text-xs text-gray-500">
                             Đăng {new Date(job.created_at).toLocaleDateString('vi-VN')}
                           </span>
                           {(job.salary_min || job.salary_max || job.salary) && (
                             <div className="text-right">
-                              <p className="text-green-400 font-semibold text-sm">
+                              <p className="text-green-600 font-semibold text-sm">
                                 {job.salary_min && job.salary_max
                                   ? `${(Number(job.salary_min) / 1000000).toFixed(0)} - ${(Number(job.salary_max) / 1000000).toFixed(0)} triệu`
                                   : job.salary || 'Thỏa thuận'}
@@ -405,6 +410,10 @@ const Careers = () => {
           </div>
         </div>
       </div>
+
+      </main>
+
+      <Footer />
 
       {/* Job Category Modal */}
       <JobCategoryModal

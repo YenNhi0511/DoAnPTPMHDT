@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Header from './Header';
+import Footer from './Footer';
 import {
   Home, Briefcase, Users, Calendar, FileText, Settings,
   BarChart3, Bell, LogOut, Menu, X, ChevronDown, User,
@@ -8,7 +10,7 @@ import {
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
-  const { user, logout, isRecruiter, isAdmin } = useAuth();
+  const { user, logout, isRecruiter, isAdmin, isRecruiterOrAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -19,33 +21,59 @@ const Layout = ({ children }) => {
     navigate('/login');
   };
 
-  const menuItems = [
-    { path: '/dashboard', icon: Home, label: 'Dashboard', roles: ['all'] },
-    { path: '/jobs', icon: Briefcase, label: 'Việc làm', roles: ['all'] },
-    { path: '/applications', icon: FileText, label: 'Hồ sơ ứng tuyển', roles: ['RECRUITER', 'ADMIN', 'INTERVIEWER'] },
-    { path: '/interviews', icon: Calendar, label: 'Lịch phỏng vấn', roles: ['RECRUITER', 'ADMIN', 'INTERVIEWER'] },
-    { path: '/panels', icon: Users, label: 'Hội đồng tuyển dụng', roles: ['RECRUITER', 'ADMIN'] },
-    { path: '/results', icon: Award, label: 'Kết quả tuyển dụng', roles: ['RECRUITER', 'ADMIN'] },
-    { path: '/processes', icon: ClipboardList, label: 'Quy trình tuyển dụng', roles: ['RECRUITER', 'ADMIN'] },
-    { path: '/reports', icon: BarChart3, label: 'Báo cáo thống kê', roles: ['RECRUITER', 'ADMIN'] },
+  // Menu items cho RECRUITER (nhà tuyển dụng)
+  const recruiterMenuItems = [
+    { path: '/dashboard', icon: Home, label: 'Dashboard', roles: ['RECRUITER'] },
+    { path: '/jobs', icon: Briefcase, label: 'Quản lý việc làm', roles: ['RECRUITER'] },
+    { path: '/applications', icon: FileText, label: 'Hồ sơ ứng tuyển', roles: ['RECRUITER'] },
+    { path: '/interviews', icon: Calendar, label: 'Lịch phỏng vấn', roles: ['RECRUITER'] },
+    { path: '/panels', icon: Users, label: 'Hội đồng tuyển dụng', roles: ['RECRUITER'] },
+    { path: '/results', icon: Award, label: 'Kết quả tuyển dụng', roles: ['RECRUITER'] },
+    { path: '/processes', icon: ClipboardList, label: 'Quy trình tuyển dụng', roles: ['RECRUITER'] },
+    { path: '/reports', icon: BarChart3, label: 'Báo cáo thống kê', roles: ['RECRUITER'] },
   ];
 
-  // Admin menu items (separate section)
+  // Menu items cho ADMIN (cũng có thể quản lý việc làm)
   const adminMenuItems = [
+    { path: '/dashboard', icon: Home, label: 'Dashboard', roles: ['ADMIN'] },
+    { path: '/jobs', icon: Briefcase, label: 'Quản lý việc làm', roles: ['ADMIN'] },
+    { path: '/applications', icon: FileText, label: 'Hồ sơ ứng tuyển', roles: ['ADMIN'] },
+    { path: '/interviews', icon: Calendar, label: 'Lịch phỏng vấn', roles: ['ADMIN'] },
+    { path: '/panels', icon: Users, label: 'Hội đồng tuyển dụng', roles: ['ADMIN'] },
+    { path: '/results', icon: Award, label: 'Kết quả tuyển dụng', roles: ['ADMIN'] },
+    { path: '/processes', icon: ClipboardList, label: 'Quy trình tuyển dụng', roles: ['ADMIN'] },
+    { path: '/reports', icon: BarChart3, label: 'Báo cáo thống kê', roles: ['ADMIN'] },
+  ];
+
+  // Kết hợp menu items dựa trên role
+  const menuItems = isAdmin ? adminMenuItems : recruiterMenuItems;
+
+  // Admin section menu items (separate section cho quản trị hệ thống)
+  const adminSectionMenuItems = [
     { path: '/admin/dashboard', icon: Shield, label: 'Admin Dashboard', roles: ['ADMIN'] },
     { path: '/admin/users', icon: Users, label: 'Quản lý người dùng', roles: ['ADMIN'] },
     { path: '/admin/settings', icon: Settings, label: 'Cài đặt hệ thống', roles: ['ADMIN'] },
   ];
 
+  // Filter menu items theo role
   const filteredMenuItems = menuItems.filter(item => {
-    if (item.roles.includes('all')) return true;
     return item.roles.includes(user?.role);
   });
 
+  // Role-specific accent color
+  const accentColor = isAdmin ? 'from-purple-600 to-indigo-700' : 'from-green-600 to-emerald-700';
+
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-slate-900/95 backdrop-blur-sm border-r border-slate-700/50 transition-all duration-300 flex flex-col fixed h-full z-30`}>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Top Accent Bar - Role specific */}
+      <div className={`bg-gradient-to-r ${accentColor} h-1 w-full`}></div>
+      
+      {/* Header */}
+      <Header />
+      
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-slate-900/95 backdrop-blur-sm border-r border-slate-700/50 transition-all duration-300 flex flex-col`}>
         {/* Logo */}
         <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
           {sidebarOpen && (
@@ -89,7 +117,7 @@ const Layout = ({ children }) => {
                   <p className="text-xs font-semibold text-gray-500 uppercase mb-2 px-2">Quản trị</p>
                 </div>
               )}
-              {adminMenuItems
+              {adminSectionMenuItems
                 .filter(item => item.roles.includes(user?.role))
                 .map((item) => {
                   const Icon = item.icon;
@@ -143,9 +171,9 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* Main content */}
-      <div className={`flex-1 ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
+      <div className={`flex-1 flex flex-col ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
         {/* Top bar */}
-        <header className="sticky top-0 z-20 bg-slate-900/80 backdrop-blur-sm border-b border-slate-700/50 px-6 py-4">
+        <header className="sticky top-16 z-20 bg-slate-900/80 backdrop-blur-sm border-b border-slate-700/50 px-6 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-semibold text-white">
               {filteredMenuItems.find(item => location.pathname.startsWith(item.path))?.label || 'Dashboard'}
@@ -180,7 +208,7 @@ const Layout = ({ children }) => {
           <User className="w-4 h-4" />
           Hồ sơ cá nhân
         </Link>
-        {(isAdmin || isRecruiter) && (
+        {isRecruiterOrAdmin && (
           <Link
             to="/settings"
             className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50"
@@ -205,10 +233,14 @@ const Layout = ({ children }) => {
         </header>
 
         {/* Page content */}
-        <main className="p-6">
+        <main className="p-6 flex-1">
           {children}
         </main>
       </div>
+      </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

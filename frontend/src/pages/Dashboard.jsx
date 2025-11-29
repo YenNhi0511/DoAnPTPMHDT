@@ -4,14 +4,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { getJobStats, getJobs, getApplications, getInterviews } from '../services/api';
 import {
   Briefcase, Users, Calendar, FileText, TrendingUp, Clock,
-  CheckCircle, XCircle, AlertCircle, ArrowRight, Award
+  CheckCircle, XCircle, ArrowRight, Award, Plus, Eye, Building2
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 
 const Dashboard = () => {
-  const { user, isRecruiter, isAdmin } = useAuth();
+  const { user, isRecruiterOrAdmin, isAdmin } = useAuth();
   
-  // Tất cả hooks phải được gọi ở top level, không được gọi sau điều kiện
   const [stats, setStats] = useState(null);
   const [recentJobs, setRecentJobs] = useState([]);
   const [recentApplications, setRecentApplications] = useState([]);
@@ -28,7 +27,7 @@ const Dashboard = () => {
         setStats(statsRes.data);
         setRecentJobs(Array.isArray(jobsRes.data) ? jobsRes.data.slice(0, 5) : jobsRes.data.results?.slice(0, 5) || []);
 
-        if (isRecruiter) {
+        if (isRecruiterOrAdmin) {
           const [appsRes, interviewsRes] = await Promise.all([
             getApplications({ ordering: '-applied_at' }),
             getInterviews({ status: 'SCHEDULED', ordering: 'scheduled_at' }),
@@ -43,9 +42,9 @@ const Dashboard = () => {
       }
     };
     fetchData();
-  }, [isRecruiter]);
+  }, [isRecruiterOrAdmin]);
 
-  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+  const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
   const statusLabels = {
     PENDING: 'Chờ xử lý',
@@ -56,7 +55,7 @@ const Dashboard = () => {
     ACCEPTED: 'Đã nhận việc',
   };
 
-  // Redirect admin to admin dashboard (sau khi hooks đã được gọi)
+  // Redirect admin to admin dashboard
   if (isAdmin) {
     return <Navigate to="/admin/dashboard" replace />;
   }
@@ -64,85 +63,103 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Welcome */}
-      <div className="card bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500/30">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white mb-2">
-              Xin chào, {user?.first_name || 'User'}! 👋
-            </h1>
-            <p className="text-gray-300">
-              {isRecruiter
-                ? 'Quản lý quy trình tuyển dụng của bạn tại đây.'
-                : 'Tìm kiếm cơ hội việc làm phù hợp với bạn.'}
-            </p>
+      {/* Welcome Hero Section */}
+      <div className="bg-gradient-to-r from-green-600 via-green-700 to-emerald-700 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                <Building2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold mb-2">
+                  Xin chào, {user?.first_name} {user?.last_name}! 👋
+                </h1>
+                <p className="text-green-100 text-lg">
+                  Quản lý quy trình tuyển dụng và tìm kiếm ứng viên tài năng
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-4 mt-6">
+              <Link
+                to="/jobs/new"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <Plus className="w-5 h-5" />
+                Đăng tin tuyển dụng mới
+              </Link>
+              <Link
+                to="/applications"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 rounded-lg font-semibold hover:bg-white/20 transition-all"
+              >
+                <Eye className="w-5 h-5" />
+                Xem hồ sơ ứng tuyển
+              </Link>
+            </div>
           </div>
-          <Link to={isRecruiter ? '/jobs/new' : '/careers'} className="btn-primary flex items-center gap-2">
-            {isRecruiter ? 'Đăng tin tuyển dụng' : 'Tìm việc làm'}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="stat-card animate-fade-in stagger-1">
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-              <Briefcase className="w-6 h-6 text-blue-400" />
+            <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+              <Briefcase className="w-7 h-7 text-green-600" />
             </div>
-            <span className="text-green-400 text-sm font-medium flex items-center gap-1">
-              <TrendingUp className="w-4 h-4" /> +12%
-            </span>
+            <TrendingUp className="w-5 h-5 text-green-600" />
           </div>
-          <p className="text-3xl font-bold text-white mb-1">{stats?.total_jobs || 0}</p>
-          <p className="text-gray-400 text-sm">Tổng việc làm</p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">{stats?.total_jobs || 0}</p>
+          <p className="text-gray-600 text-sm font-medium">Tổng việc làm</p>
         </div>
 
-        <div className="stat-card animate-fade-in stagger-2">
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-400" />
+            <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center">
+              <CheckCircle className="w-7 h-7 text-emerald-600" />
             </div>
+            <TrendingUp className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-3xl font-bold text-white mb-1">{stats?.open_jobs || 0}</p>
-          <p className="text-gray-400 text-sm">Đang tuyển</p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">{stats?.open_jobs || 0}</p>
+          <p className="text-gray-600 text-sm font-medium">Đang tuyển</p>
         </div>
 
-        <div className="stat-card animate-fade-in stagger-3">
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
-              <FileText className="w-6 h-6 text-orange-400" />
+            <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+              <FileText className="w-7 h-7 text-blue-600" />
             </div>
+            <TrendingUp className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-3xl font-bold text-white mb-1">{stats?.total_applications || 0}</p>
-          <p className="text-gray-400 text-sm">Hồ sơ ứng tuyển</p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">{stats?.total_applications || 0}</p>
+          <p className="text-gray-600 text-sm font-medium">Hồ sơ ứng tuyển</p>
         </div>
 
-        <div className="stat-card animate-fade-in stagger-4">
+        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-              <Award className="w-6 h-6 text-purple-400" />
+            <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+              <Award className="w-7 h-7 text-purple-600" />
             </div>
+            <TrendingUp className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-3xl font-bold text-white mb-1">{stats?.conversion_rate || 0}%</p>
-          <p className="text-gray-400 text-sm">Tỷ lệ tuyển dụng</p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">{stats?.conversion_rate || 0}%</p>
+          <p className="text-gray-600 text-sm font-medium">Tỷ lệ tuyển dụng</p>
         </div>
       </div>
 
-      {/* Charts */}
-      {isRecruiter && stats && (
+      {/* Charts Section */}
+      {isRecruiterOrAdmin && stats && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Status Distribution */}
-          <div className="card">
-            <h3 className="section-title">Phân bố trạng thái hồ sơ</h3>
+          <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Phân bố trạng thái hồ sơ</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -163,8 +180,8 @@ const Dashboard = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
-                    labelStyle={{ color: '#fff' }}
+                    contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    labelStyle={{ color: '#111827', fontWeight: '600' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -173,29 +190,29 @@ const Dashboard = () => {
               {stats.status_stats?.map((s, idx) => (
                 <div key={s.status} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
-                  <span className="text-sm text-gray-400">{statusLabels[s.status] || s.status}: {s.count}</span>
+                  <span className="text-sm text-gray-600 font-medium">{statusLabels[s.status] || s.status}: {s.count}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Monthly Applications */}
-          <div className="card">
-            <h3 className="section-title">Hồ sơ theo tháng</h3>
+          <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Hồ sơ theo tháng</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.monthly_stats?.map(m => ({
                   month: new Date(m.month).toLocaleDateString('vi-VN', { month: 'short' }),
                   count: m.count
                 })) || []}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="month" stroke="#94a3b8" />
-                  <YAxis stroke="#94a3b8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="month" stroke="#6b7280" />
+                  <YAxis stroke="#6b7280" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
-                    labelStyle={{ color: '#fff' }}
+                    contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    labelStyle={{ color: '#111827', fontWeight: '600' }}
                   />
-                  <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="count" fill="#10b981" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -203,121 +220,171 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Recent Data */}
+      {/* Recent Data Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Jobs */}
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="section-title mb-0">Việc làm gần đây</h3>
-            <Link to="/jobs" className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1">
-              Xem tất cả <ArrowRight className="w-4 h-4" />
-            </Link>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Việc làm của tôi</h3>
+                <p className="text-sm text-gray-600 mt-1">Danh sách việc làm gần đây</p>
+              </div>
+              <Link to="/jobs" className="text-green-600 hover:text-green-700 text-sm font-semibold flex items-center gap-1">
+                Xem tất cả
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
-          <div className="space-y-3">
-            {recentJobs.length === 0 ? (
-              <p className="text-gray-400 text-center py-4">Chưa có việc làm nào</p>
-            ) : (
-              recentJobs.map((job) => (
-                <Link
-                  key={job.id}
-                  to={`/jobs/${job.id}`}
-                  className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors"
-                >
-                  <div>
-                    <h4 className="font-medium text-white">{job.title}</h4>
-                    <p className="text-sm text-gray-400">{job.location} • {job.employment_type}</p>
-                  </div>
-                  <span className={`badge ${job.status === 'OPEN' ? 'badge-success' : job.status === 'CLOSED' ? 'badge-danger' : 'badge-gray'}`}>
-                    {job.status}
-                  </span>
-                </Link>
-              ))
-            )}
+          <div className="p-6">
+            <div className="space-y-3">
+              {recentJobs.length === 0 ? (
+                <div className="text-center py-8">
+                  <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-600 mb-4">Chưa có việc làm nào</p>
+                  <Link
+                    to="/jobs/new"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Tạo việc làm mới
+                  </Link>
+                </div>
+              ) : (
+                recentJobs.map((job) => (
+                  <Link
+                    key={job.id}
+                    to={`/jobs/${job.id}`}
+                    className="block p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:shadow-md transition-all group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors mb-1">
+                          {job.title}
+                        </h4>
+                        <p className="text-sm text-gray-600">{job.location} • {job.employment_type}</p>
+                      </div>
+                      <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                        job.status === 'OPEN' ? 'bg-green-100 text-green-700' :
+                        job.status === 'CLOSED' ? 'bg-red-100 text-red-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {job.status === 'OPEN' ? 'Đang tuyển' : job.status === 'CLOSED' ? 'Đã đóng' : 'Nháp'}
+                      </span>
+                    </div>
+                  </Link>
+                ))
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Recent Applications or Upcoming Interviews */}
-        {isRecruiter ? (
-          <div className="card">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="section-title mb-0">Phỏng vấn sắp tới</h3>
-              <Link to="/interviews" className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1">
-                Xem tất cả <ArrowRight className="w-4 h-4" />
+        {/* Upcoming Interviews */}
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Phỏng vấn sắp tới</h3>
+                <p className="text-sm text-gray-600 mt-1">Lịch phỏng vấn trong tuần</p>
+              </div>
+              <Link to="/interviews" className="text-green-600 hover:text-green-700 text-sm font-semibold flex items-center gap-1">
+                Xem tất cả
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+          </div>
+          <div className="p-6">
             <div className="space-y-3">
               {upcomingInterviews.length === 0 ? (
-                <p className="text-gray-400 text-center py-4">Không có lịch phỏng vấn</p>
+                <div className="text-center py-8">
+                  <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-600">Không có lịch phỏng vấn</p>
+                </div>
               ) : (
                 upcomingInterviews.map((interview) => (
                   <div
                     key={interview.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30"
+                    className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-5 h-5 text-blue-400" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                          <Calendar className="w-6 h-6 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-gray-900 mb-1">{interview.candidate_name}</h4>
+                          <p className="text-sm text-gray-600 truncate">{interview.job_title}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-medium text-white">{interview.candidate_name}</h4>
-                        <p className="text-sm text-gray-400">{interview.job_title}</p>
+                      <div className="text-right flex-shrink-0 ml-4">
+                        <p className="text-sm font-semibold text-gray-900">
+                          {new Date(interview.scheduled_at).toLocaleDateString('vi-VN')}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {new Date(interview.scheduled_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-white">
-                        {new Date(interview.scheduled_at).toLocaleDateString('vi-VN')}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {new Date(interview.scheduled_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                      </p>
                     </div>
                   </div>
                 ))
               )}
             </div>
           </div>
-        ) : (
-          <div className="card">
-            <h3 className="section-title">Hồ sơ của bạn</h3>
-            <div className="space-y-3">
-              {recentApplications.length === 0 ? (
-                <div className="text-center py-8">
-                  <FileText className="w-12 h-12 text-gray-500 mx-auto mb-3" />
-                  <p className="text-gray-400">Bạn chưa ứng tuyển vị trí nào</p>
-                  <Link to="/careers" className="btn-primary mt-4 inline-block">
-                    Tìm việc ngay
-                  </Link>
-                </div>
-              ) : (
-                recentApplications.map((app) => (
-                  <div
-                    key={app.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30"
-                  >
-                    <div>
-                      <h4 className="font-medium text-white">{app.job_title}</h4>
-                      <p className="text-sm text-gray-400">
-                        Nộp lúc: {new Date(app.applied_at).toLocaleDateString('vi-VN')}
-                      </p>
-                    </div>
-                    <span className={`badge ${
-                      app.status === 'ACCEPTED' ? 'badge-success' :
-                      app.status === 'REJECTED' ? 'badge-danger' :
-                      app.status === 'INTERVIEW' ? 'badge-info' :
-                      'badge-warning'
-                    }`}>
-                      {statusLabels[app.status] || app.status}
-                    </span>
-                  </div>
-                ))
-              )}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Link
+          to="/jobs/new"
+          className="group p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 hover:border-green-300 hover:shadow-lg transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Plus className="w-7 h-7 text-white" />
             </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Đăng tin mới</h3>
+              <p className="text-sm text-gray-600">Tạo việc làm mới</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-green-600 ml-auto group-hover:translate-x-1 transition-transform" />
           </div>
-        )}
+        </Link>
+
+        <Link
+          to="/applications"
+          className="group p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 hover:border-blue-300 hover:shadow-lg transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Eye className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Xem hồ sơ</h3>
+              <p className="text-sm text-gray-600">Quản lý ứng viên</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-blue-600 ml-auto group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+
+        <Link
+          to="/interviews"
+          className="group p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border-2 border-purple-200 hover:border-purple-300 hover:shadow-lg transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Calendar className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Lịch phỏng vấn</h3>
+              <p className="text-sm text-gray-600">Quản lý lịch hẹn</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-purple-600 ml-auto group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
-

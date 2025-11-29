@@ -123,12 +123,33 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const isRecruiter = user?.role === 'RECRUITER' || user?.role === 'ADMIN';
+  // 3 Roles chính:
+  // 1. ADMIN - Quản lý hệ thống
+  // 2. CANDIDATE - Ứng viên tìm việc
+  // 3. RECRUITER - Nhà tuyển dụng (doanh nghiệp/cá nhân)
+  
   const isAdmin = user?.role === 'ADMIN';
-  const isInterviewer = user?.role === 'INTERVIEWER' || isRecruiter;
+  const isCandidate = user?.role === 'CANDIDATE';
+  const isRecruiter = user?.role === 'RECRUITER';
+  // ADMIN cũng có thể làm recruiter (quản lý việc làm)
+  const isRecruiterOrAdmin = isRecruiter || isAdmin;
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, register, logout, isRecruiter, isAdmin, isInterviewer }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      setUser, 
+      loading, 
+      login, 
+      register, 
+      logout, 
+      isAdmin,
+      isCandidate,
+      isRecruiter,
+      isRecruiterOrAdmin, // Helper để check quyền recruiter (bao gồm cả ADMIN)
+      // Backward compatibility
+      isRecruiter: isRecruiterOrAdmin,
+      isInterviewer: isRecruiterOrAdmin, // INTERVIEWER được xử lý như RECRUITER
+    }}>
       {children}
     </AuthContext.Provider>
   );
