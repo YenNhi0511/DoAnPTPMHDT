@@ -93,7 +93,7 @@ const ChangePassword = () => {
             <button
               type="button"
               onClick={() => setShowPasswords({ ...showPasswords, old: !showPasswords.old })}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
             >
               {showPasswords.old ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -119,7 +119,7 @@ const ChangePassword = () => {
             <button
               type="button"
               onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
             >
               {showPasswords.new ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -145,7 +145,7 @@ const ChangePassword = () => {
             <button
               type="button"
               onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
             >
               {showPasswords.confirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>

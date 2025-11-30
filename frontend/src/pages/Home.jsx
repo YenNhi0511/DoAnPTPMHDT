@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { getJobs } from '../services/api';
 import AdvancedFilters from '../components/AdvancedFilters';
 import LocationSelector from '../components/LocationSelector';
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 
 const Home = () => {
+  const { user, isRecruiter } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Search state
@@ -114,8 +116,15 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchJobs();
-  }, [filters, sortBy]);
+    if (!isRecruiter) {
+      fetchJobs();
+    }
+  }, [filters, sortBy, isRecruiter]);
+
+  // Redirect recruiter to dashboard
+  if (isRecruiter) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -166,12 +175,12 @@ const Home = () => {
   };
 
   const popularCategories = [
-    { name: 'Công nghệ thông tin', count: 1200, icon: '💻' },
-    { name: 'Kinh doanh / Bán hàng', count: 850, icon: '📊' },
-    { name: 'Marketing / Truyền thông', count: 650, icon: '📱' },
-    { name: 'Kế toán / Tài chính', count: 520, icon: '💰' },
-    { name: 'Nhân sự', count: 480, icon: '👥' },
-    { name: 'Kỹ thuật', count: 750, icon: '🔧' },
+    { name: 'Công nghệ thông tin', icon: '💻' },
+    { name: 'Kinh doanh / Bán hàng', icon: '📊' },
+    { name: 'Marketing / Truyền thông', icon: '📱' },
+    { name: 'Kế toán / Tài chính', icon: '💰' },
+    { name: 'Nhân sự', icon: '👥' },
+    { name: 'Kỹ thuật', icon: '🔧' },
   ];
 
   return (
@@ -213,19 +222,19 @@ const Home = () => {
                     className="px-4 py-3 bg-gray-50 rounded-xl text-left flex items-center justify-between hover:bg-gray-100 transition-colors border border-gray-200"
                   >
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-5 h-5 text-gray-500" />
+                      <Briefcase className="w-5 h-5 text-gray-700" />
                       <span className="text-gray-700 font-medium text-sm">
                         {filters.job_categories?.length > 0
                           ? `${filters.job_categories.length} danh mục`
                           : 'Danh mục Nghề'}
                       </span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                    <ChevronRight className="w-4 h-4 text-gray-600" />
                   </button>
 
                   {/* Search Input */}
                   <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                     <input
                       type="text"
                       value={search}
@@ -266,21 +275,23 @@ const Home = () => {
         </div>
 
         {/* Popular Categories */}
-        <div className="bg-white py-12 border-b border-gray-200">
+        <div className="bg-gradient-to-br from-gray-50 to-blue-50 py-16 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Ngành nghề phổ biến</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">Ngành nghề phổ biến</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
               {popularCategories.map((category, index) => (
                 <Link
                   key={index}
                   to={`/careers?category=${encodeURIComponent(category.name)}`}
-                  className="group p-4 bg-gray-50 rounded-xl hover:bg-blue-50 hover:border-blue-200 border-2 border-transparent transition-all text-center"
+                  className="group relative p-6 bg-white rounded-2xl hover:bg-blue-50 hover:shadow-xl hover:-translate-y-1 border-2 border-gray-100 hover:border-blue-300 transition-all duration-300 text-center"
                 >
-                  <div className="text-3xl mb-2">{category.icon}</div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1 group-hover:text-blue-600 transition-colors">
+                  <div className="text-4xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
+                    {category.icon}
+                  </div>
+                  <h3 className="font-bold text-gray-900 text-sm leading-tight group-hover:text-blue-600 transition-colors duration-300">
                     {category.name}
                   </h3>
-                  <p className="text-xs text-gray-500">{category.count} việc làm</p>
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/0 to-blue-600/0 group-hover:from-blue-500/5 group-hover:to-blue-600/5 transition-all duration-300 pointer-events-none"></div>
                 </Link>
               ))}
             </div>
@@ -471,7 +482,7 @@ const Home = () => {
                                   e.preventDefault();
                                   // Handle save job
                                 }}
-                                className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
+                                className="p-2 text-gray-600 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
                               >
                                 <Heart className="w-5 h-5" />
                               </button>

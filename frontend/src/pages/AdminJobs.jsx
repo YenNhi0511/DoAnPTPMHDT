@@ -21,7 +21,9 @@ const AdminJobs = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const res = await getJobs();
+      // Admin cần thấy TẤT CẢ jobs trong hệ thống, không filter theo user
+      // Gửi request không có filter để lấy tất cả
+      const res = await getJobs({ limit: 1000 }); // Lấy tối đa 1000 jobs
       setJobs(Array.isArray(res.data) ? res.data : res.data.results || []);
     } catch (error) {
       console.error('Error fetching jobs:', error);
@@ -64,7 +66,7 @@ const AdminJobs = () => {
 
   const stats = {
     total: jobs.length,
-    active: jobs.filter(j => j.status === 'ACTIVE').length,
+    active: jobs.filter(j => j.status === 'OPEN').length,
     closed: jobs.filter(j => j.status === 'CLOSED').length,
     draft: jobs.filter(j => j.status === 'DRAFT').length,
   };
@@ -108,7 +110,7 @@ const AdminJobs = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
-              <p className="text-sm text-gray-600 font-medium">Đang hoạt động</p>
+              <p className="text-sm text-gray-600 font-medium">Đang tuyển</p>
             </div>
           </div>
         </div>
@@ -142,7 +144,7 @@ const AdminJobs = () => {
       <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               placeholder="Tìm kiếm theo tiêu đề, công ty, mô tả..."
@@ -157,7 +159,7 @@ const AdminJobs = () => {
             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-gray-900"
           >
             <option value="all">Tất cả trạng thái</option>
-            <option value="ACTIVE">Đang hoạt động</option>
+            <option value="OPEN">Đang tuyển</option>
             <option value="CLOSED">Đã đóng</option>
             <option value="DRAFT">Bản nháp</option>
           </select>
@@ -181,7 +183,7 @@ const AdminJobs = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredJobs.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-12 text-gray-500">
+                  <td colSpan="6" className="text-center py-12 text-gray-700">
                     Không tìm thấy tin tuyển dụng nào
                   </td>
                 </tr>
@@ -194,7 +196,7 @@ const AdminJobs = () => {
                     <td className="py-4 px-6">
                       <div>
                         <p className="font-semibold text-gray-900">{job.title}</p>
-                        <p className="text-sm text-gray-500 line-clamp-1">{job.description}</p>
+                        <p className="text-sm text-gray-700 line-clamp-1">{job.description}</p>
                       </div>
                     </td>
                     <td className="py-4 px-6 text-gray-700">
@@ -204,20 +206,24 @@ const AdminJobs = () => {
                       {job.location || 'N/A'}
                     </td>
                     <td className="py-4 px-6">
-                      {job.status === 'ACTIVE' ? (
+                      {job.status === 'OPEN' ? (
                         <span className="flex items-center gap-1 text-green-600 font-medium text-sm">
                           <CheckCircle className="w-4 h-4" />
-                          Đang hoạt động
+                          Đang tuyển
                         </span>
                       ) : job.status === 'CLOSED' ? (
                         <span className="flex items-center gap-1 text-gray-600 font-medium text-sm">
                           <XCircle className="w-4 h-4" />
                           Đã đóng
                         </span>
-                      ) : (
+                      ) : job.status === 'DRAFT' ? (
                         <span className="flex items-center gap-1 text-yellow-600 font-medium text-sm">
                           <Clock className="w-4 h-4" />
                           Bản nháp
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-gray-600 font-medium text-sm">
+                          {job.status}
                         </span>
                       )}
                     </td>

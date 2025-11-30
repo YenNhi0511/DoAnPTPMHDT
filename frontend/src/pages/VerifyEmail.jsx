@@ -24,20 +24,21 @@ const VerifyEmail = () => {
     try {
       const response = await verifyEmail(verifyToken);
       setStatus('success');
-      setMessage('Email đã được xác thực thành công!');
+      setMessage('Email đã được xác thực thành công! Bạn sẽ được chuyển đến trang đăng nhập...');
       
-      // Auto login và redirect
+      // Auto login và redirect về trang login
       if (response.data.access && response.data.user) {
         localStorage.setItem('access_token', response.data.access);
         localStorage.setItem('refresh_token', response.data.refresh);
         
-        // Redirect based on role
+        // Redirect về trang login sau 2 giây
         setTimeout(() => {
-          if (response.data.user.role === 'ADMIN') {
-            navigate('/admin/dashboard');
-          } else {
-            navigate('/dashboard');
-          }
+          navigate('/login');
+        }, 2000);
+      } else {
+        // Nếu không có token, chỉ redirect về login
+        setTimeout(() => {
+          navigate('/login');
         }, 2000);
       }
     } catch (error) {
@@ -62,14 +63,17 @@ const VerifyEmail = () => {
 
   if (status === 'success') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 via-slate-900 to-purple-900">
-        <div className="card text-center max-w-md animate-fade-in">
-          <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-400" />
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-green-500 via-emerald-600 to-teal-700">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-4">Xác thực thành công!</h2>
-          <p className="text-gray-300 mb-6">{message}</p>
-          <p className="text-gray-400 text-sm">Đang chuyển hướng...</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">✅ Xác thực thành công!</h2>
+          <p className="text-gray-600 mb-6">{message}</p>
+          <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
+            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-green-600"></div>
+            <span>Đang chuyển đến trang đăng nhập...</span>
+          </div>
         </div>
       </div>
     );
@@ -80,7 +84,7 @@ const VerifyEmail = () => {
       {/* Header */}
       <div className="bg-teal-800/50 border-b border-teal-700/50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="text-teal-400 font-bold text-xl">topcv</div>
+          <div className="text-teal-400 font-bold text-xl">GoodCV</div>
           <div className="flex items-center gap-3">
             <button className="px-4 py-2 bg-blue-700 hover:bg-blue-600 rounded-lg text-white text-sm flex items-center gap-2">
               <span>👤</span>
@@ -176,7 +180,7 @@ const VerifyEmail = () => {
         </div>
 
         {/* Help Text */}
-        <div className="text-center text-gray-400 text-sm">
+        <div className="text-center text-gray-600 text-sm">
           <p>Không nhận được email? <button onClick={handleResend} className="text-blue-400 hover:text-blue-300">Gửi lại email xác thực</button></p>
         </div>
       </div>

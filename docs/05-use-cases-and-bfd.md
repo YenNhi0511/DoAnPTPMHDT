@@ -114,7 +114,7 @@ Quản lý Phỏng vấn ---> Cơ sở dữ liệu (Database)
   - FR5: Background CV parsing & AI scoring
   - FR6: Recruiter can filter & manage applications and schedule interviews
   - FR7: Interviewers submit feedback for a given interview
-  - FR8: Recruiters create recruitment result; if offer, produce PDF and send via email
+  - FR8: Recruiters create recruitment result; if offer, produce PDF and create notification
   - FR9: Admin & Recruiter roles & permissions management
   - FR10: Reporting endpoints for jobs & pipeline analytics
 
@@ -163,7 +163,7 @@ Quản lý Phỏng vấn ---> Cơ sở dữ liệu (Database)
 12. Make Recruitment Decision (Offer/Reject)
 16. User Management (Admin)
 17. Authentication & Authorization
-- **Apply for Job** INCLUDE **Confirm Application** (nộp hồ sơ kèm gửi email xác nhận)
+- **Apply for Job** INCLUDE **Confirm Application** (nộp hồ sơ kèm tạo notification)
 - **Apply for Job** TRIGGERS **Parse CV** and **AI Screening** (asynchronous) — mapped to Celery tasks
 - **Make Recruitment Decision** INCLUDE **Generate Offer PDF** & TRIGGERS **Send Result Email**
 - **Manage Applications** USES **AI Screening** output (Extend - hiển thị nếu có)
@@ -217,7 +217,8 @@ Mỗi Use Case sẽ có phần sau:
   2. Server validate input và file.
   3. Server tạo `Application` record.
   4. Server response với 201 + Application detail.
-  5. Server signal triggers: `send_confirmation_email_task`, `parse_cv_task`, `screen_cv_task` (Celery).
+  5. Server creates system notification for candidate.
+  6. Server signal triggers: `parse_cv_task`, `screen_cv_task` (Celery).
 - **Alternate flows**:
   - A1: File invalid / too big: return 400, message error, no Application created.
   - A2: Duplicate application: return 400 hoặc 409.
@@ -230,17 +231,17 @@ Mỗi Use Case sẽ có phần sau:
   - Tasks: `send_confirmation_email_task`, `parse_cv_task`, `screen_cv_task`
   - Frontend: `ApplyForm.jsx` component
 
-### UC: Confirm Application (Send Confirmation Email)
+### UC: Confirm Application (Create Confirmation Notification)
 
-- **Actor**: System (Celery)
-- **Mục tiêu**: Gửi email xác nhận tới candidate sau khi Application được tạo.
-- **Preconditions**: Application created with candidate email.
-- **Postconditions**: Candidate receives confirmation email; log success/fail.
+- **Actor**: System
+- **Mục tiêu**: Tạo notification xác nhận tới candidate sau khi Application được tạo.
+- **Preconditions**: Application created with candidate.
+- **Postconditions**: Candidate receives system notification; notification saved to database.
 - **Main Success Scenario**:
-  1. Signal post_save on Application calls `send_confirmation_email_task`.
-  2. Task loads `application`, renders template `email/application_received.html`, sends email via SMTP.
-- **Alternate flows**: SMTP error → log & retry (optional)
-- **Mapping**: `applications.tasks.send_confirmation_email_task`
+  1. Signal post_save on Application creates Notification record.
+  2. Notification saved to database with type=SYSTEM.
+  3. Candidate sees notification in their notification center.
+- **Mapping**: `applications.signals.application_created` → Create Notification
 
 ### UC: Parse CV (extract text)
 
@@ -288,8 +289,8 @@ Mỗi Use Case sẽ có phần sau:
 - **Actor**: Recruiter
 - **Goal**: Schedule interview, add panel, notify participants.
 - **Preconditions**: Application exist; recruiter has permission.
-- **Postconditions**: Interview created; `send_interview_email_task` scheduled.
-- **Mapping**: `POST /api/interviews/` (InterviewViewSet), `send_interview_email_task` (applications.tasks)
+- **Postconditions**: Interview created; system notifications created for candidate and interviewers.
+- **Mapping**: `POST /api/interviews/` (InterviewViewSet) → Create Notifications
 
 ### UC: Submit Interview Feedback
 
@@ -302,9 +303,9 @@ Mỗi Use Case sẽ có phần sau:
 
 - **Actor**: Recruiter, Admin
 - **Goal**: Create RecruitmentResult with final_decision; generate offer PDF; notify candidate.
-- **Preconditions**: Completed interviews & feedback OR recruiter’s decision.
-- **Postconditions**: Result saved; if OFFER → PDF generated & attached; email sent.
-- **Mapping**: `POST /api/results/` → `generate_offer_task` → `send_result_email_task`.
+- **Preconditions**: Completed interviews & feedback OR recruiter's decision.
+- **Postconditions**: Result saved; if OFFER → PDF generated & saved; system notification created.
+- **Mapping**: `POST /api/results/` → `generate_offer_task` → Create Notification.
 
 ### UC: Reporting & Analytics
 
@@ -342,9 +343,10 @@ Mỗi Use Case sẽ có phần sau:
 - **Goal**: Create new account
 - **Preconditions**: Email is unique, password meets policy
 - **Main Flow**:
-  1. POST /api/users/ with registration fields
+  1. POST /api/users/register/ with registration fields
   2. Server validates & creates User record with appropriate role
-  3. Option: send verify email or onboarding flow
+  3. Server returns success response
+  4. User can login immediately (no email verification required)
 
 ### UC: Quản lý Tin tuyển dụng — chi tiết
 

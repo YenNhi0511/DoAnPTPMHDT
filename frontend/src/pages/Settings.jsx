@@ -59,7 +59,7 @@ const Settings = () => {
                           : 'text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-gray-400'}`} />
+                      <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-gray-600'}`} />
                       <span className="font-medium">{item.label}</span>
                     </button>
                   );

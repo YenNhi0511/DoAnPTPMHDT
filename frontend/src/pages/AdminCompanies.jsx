@@ -21,10 +21,20 @@ const AdminCompanies = () => {
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const res = await getUsers({ role: 'RECRUITER' });
-      setCompanies(Array.isArray(res.data) ? res.data : res.data.results || []);
+      // Lấy tất cả users có role RECRUITER và có company_name
+      const res = await getUsers({ role: 'RECRUITER', has_company: 'true' });
+      const companiesData = Array.isArray(res.data) ? res.data : res.data.results || [];
+      // Đảm bảo chỉ lấy những user có company_name (là công ty thực sự)
+      const companiesOnly = companiesData.filter(user => 
+        user.company_name && 
+        user.company_name.trim() !== '' &&
+        user.role === 'RECRUITER'
+      );
+      setCompanies(companiesOnly);
+      console.log(`✅ Fetched ${companiesOnly.length} companies from ${companiesData.length} recruiters`);
     } catch (error) {
       console.error('Error fetching companies:', error);
+      setCompanies([]);
     } finally {
       setLoading(false);
     }
@@ -128,7 +138,7 @@ const AdminCompanies = () => {
       <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               placeholder="Tìm kiếm theo tên công ty, email, lĩnh vực..."
@@ -166,7 +176,7 @@ const AdminCompanies = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredCompanies.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-12 text-gray-500">
+                  <td colSpan="6" className="text-center py-12 text-gray-700">
                     Không tìm thấy công ty nào
                   </td>
                 </tr>
@@ -187,7 +197,7 @@ const AdminCompanies = () => {
                           <p className="font-semibold text-gray-900">
                             {company.company_name || `${company.first_name} ${company.last_name}`}
                           </p>
-                          <p className="text-sm text-gray-500">{company.email}</p>
+                          <p className="text-sm text-gray-700">{company.email}</p>
                         </div>
                       </div>
                     </td>
@@ -310,7 +320,7 @@ const AdminCompanies = () => {
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Địa chỉ</label>
                     <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <MapPin className="w-4 h-4 text-gray-600" />
                       <span className="text-gray-900">{selectedCompany.address}</span>
                     </div>
                   </div>
@@ -319,7 +329,7 @@ const AdminCompanies = () => {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Website</label>
                     <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <Globe className="w-4 h-4 text-gray-400" />
+                      <Globe className="w-4 h-4 text-gray-600" />
                       <a href={selectedCompany.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
                         {selectedCompany.website}
                       </a>

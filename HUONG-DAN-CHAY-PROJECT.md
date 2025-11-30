@@ -1,346 +1,174 @@
-# 🚀 Hướng dẫn chạy Project - Số Terminal và Lệnh
+# 🚀 Hướng Dẫn Chạy Project - GoodCV
 
-## 📊 Tổng quan
+## 📋 Các File Script
 
-Để chạy đầy đủ project, bạn cần **4-7 terminals** tùy theo cách bạn muốn chạy:
+### 1. `START-PROJECT-COMPLETE.bat` ⭐ (KHUYẾN NGHỊ)
+**Chạy TẤT CẢ services (Backend + 3 Frontend roles)**
 
-### Tối thiểu (Chạy cơ bản):
-- **3 terminals**: Backend + Frontend (1 role) + Redis
-
-### Đầy đủ (Chạy tất cả tính năng):
-- **6 terminals**: Backend + Celery + Redis + Frontend (3 roles)
-
----
-
-## 🎯 CÁCH 1: Chạy tối thiểu (3 terminals)
-
-### Terminal 1: Redis (Docker - Background)
-```bash
-# Chạy Redis bằng Docker (chạy 1 lần, tự động chạy nền)
-cd backend
-start-redis-docker.bat
-# Hoặc:
-docker start redis
-# Hoặc nếu chưa có:
-docker run -d --name redis -p 6379:6379 redis:alpine
-```
-
-**Lưu ý:** Redis chạy nền, không cần giữ terminal này mở.
-
-### Terminal 2: Backend (Django)
-```bash
-cd backend
-venv\Scripts\activate
-python manage.py runserver
-```
-
-**URL:** http://localhost:8000
-
-### Terminal 3: Frontend (1 role - Ví dụ: Candidate)
-```bash
-cd frontend
-npm run start:candidate
-```
-
-**URL:** http://localhost:3001
-
----
-
-## 🎯 CÁCH 2: Chạy đầy đủ (6 terminals)
-
-### Terminal 1: Redis (Docker)
-```bash
-cd backend
-start-redis-docker.bat
-# Hoặc:
-docker start redis
-```
-
-**Lưu ý:** Redis chạy nền, có thể đóng terminal này sau khi Redis đã start.
-
-### Terminal 2: Backend (Django)
-```bash
-cd backend
-venv\Scripts\activate
-python manage.py runserver
-```
-
-**URL:** http://localhost:8000
-
-### Terminal 3: Celery Worker
-```bash
-cd backend
-venv\Scripts\activate
-celery -A recruitment_system worker -l info --pool=solo
-```
-
-**Lưu ý:** 
-- `--pool=solo` chỉ cần cho Windows
-- Mac/Linux: `celery -A recruitment_system worker -l info`
-
-### Terminal 4: Frontend - Admin (Port 3000)
-```bash
-cd frontend
-npm run start:admin
-```
-
-**URL:** http://localhost:3000
-
-### Terminal 5: Frontend - Candidate (Port 3001)
-```bash
-cd frontend
-npm run start:candidate
-```
-
-**URL:** http://localhost:3001
-
-### Terminal 6: Frontend - Recruiter (Port 3002)
-```bash
-cd frontend
-npm run start:recruiter
-```
-
-**URL:** http://localhost:3002
-
----
-
-## 🎯 CÁCH 3: Sử dụng Batch Files (Tự động)
-
-### Chạy tất cả Frontend roles cùng lúc:
-```bash
-# Từ thư mục root
-start-all-roles.bat
-```
-
-Script này sẽ tự động mở 3 terminals cho 3 frontend roles.
-
-Sau đó bạn vẫn cần chạy thủ công:
-- **Terminal 1:** Backend
-- **Terminal 2:** Celery
-- **Terminal 3:** Redis (hoặc dùng Docker)
-
----
-
-## 📋 Tóm tắt số lượng Terminal
-
-| Cách chạy | Số Terminal | Ghi chú |
-|-----------|-------------|---------|
-| **Tối thiểu** | 3 | Backend + Frontend (1 role) + Redis (background) |
-| **Cơ bản** | 4 | Backend + Celery + Frontend (1 role) + Redis (background) |
-| **Đầy đủ** | 6 | Backend + Celery + Frontend (3 roles) + Redis (background) |
-| **Tối đa** | 7 | Backend + Celery + Frontend (3 roles) + Redis (terminal riêng) |
-
----
-
-## 🚀 Script tự động (Khuyến nghị)
-
-Tạo file `start-all.bat` trong thư mục root:
-
-```batch
-@echo off
-echo ========================================
-echo Starting GoodCV - Full Stack
-echo ========================================
-echo.
-
-REM Start Redis (Docker)
-echo [1/6] Starting Redis...
-start "Redis" cmd /k "cd backend && start-redis-docker.bat"
-timeout /t 3 /nobreak >nul
-
-REM Start Backend
-echo [2/6] Starting Backend...
-start "Backend" cmd /k "cd backend && venv\Scripts\activate && python manage.py runserver"
-timeout /t 5 /nobreak >nul
-
-REM Start Celery
-echo [3/6] Starting Celery...
-start "Celery" cmd /k "cd backend && venv\Scripts\activate && celery -A recruitment_system worker -l info --pool=solo"
-timeout /t 3 /nobreak >nul
-
-REM Start Frontend - Admin
-echo [4/6] Starting Frontend - Admin...
-start "Frontend Admin" cmd /k "cd frontend && npm run start:admin"
-timeout /t 3 /nobreak >nul
-
-REM Start Frontend - Candidate
-echo [5/6] Starting Frontend - Candidate...
-start "Frontend Candidate" cmd /k "cd frontend && npm run start:candidate"
-timeout /t 3 /nobreak >nul
-
-REM Start Frontend - Recruiter
-echo [6/6] Starting Frontend - Recruiter...
-start "Frontend Recruiter" cmd /k "cd frontend && npm run start:recruiter"
-timeout /t 3 /nobreak >nul
-
-echo.
-echo ========================================
-echo All services started!
-echo ========================================
-echo.
-echo URLs:
-echo   Backend:    http://localhost:8000
-echo   Admin:      http://localhost:3000
-echo   Candidate:  http://localhost:3001
-echo   Recruiter:  http://localhost:3002
-echo.
-echo Press any key to exit...
-pause >nul
-```
+- ✅ Tự động kiểm tra và cài đặt dependencies
+- ✅ Tự động chạy migrations
+- ✅ Khởi động Backend (Port 8000)
+- ✅ Khởi động Frontend Admin (Port 3003)
+- ✅ Khởi động Frontend Recruiter (Port 3002)
+- ✅ Khởi động Frontend Candidate (Port 3001)
+- ✅ Khởi động Celery Worker (nếu Redis đang chạy)
 
 **Cách dùng:**
 ```bash
-# Double-click file start-all.bat
-# Hoặc chạy từ terminal:
-start-all.bat
+Double-click: START-PROJECT-COMPLETE.bat
 ```
 
----
+### 2. `START-PROJECT-SIMPLE.bat`
+**Chạy Backend + 1 Frontend (Port 3000)**
 
-## ⚡ Quick Start (Lệnh ngắn gọn)
+- ✅ Tự động setup và khởi động
+- ✅ Chỉ chạy 1 frontend (port 3000)
 
-### Tối thiểu:
+**Cách dùng:**
 ```bash
-# Terminal 1: Redis (1 lần, sau đó chạy nền)
-docker start redis
-
-# Terminal 2: Backend
-cd backend && venv\Scripts\activate && python manage.py runserver
-
-# Terminal 3: Frontend (chọn 1 role)
-cd frontend && npm run start:candidate
+Double-click: START-PROJECT-SIMPLE.bat
 ```
 
-### Đầy đủ:
+### 3. `STOP-ALL-SERVICES.bat`
+**Dừng TẤT CẢ services**
+
+- ✅ Dừng Backend
+- ✅ Dừng tất cả Frontend
+- ✅ Dừng Celery
+
+**Cách dùng:**
 ```bash
-# Terminal 1: Redis
-docker start redis
-
-# Terminal 2: Backend
-cd backend && venv\Scripts\activate && python manage.py runserver
-
-# Terminal 3: Celery
-cd backend && venv\Scripts\activate && celery -A recruitment_system worker -l info --pool=solo
-
-# Terminal 4-6: Frontend (3 roles)
-cd frontend && npm run start:admin
-cd frontend && npm run start:candidate
-cd frontend && npm run start:recruiter
+Double-click: STOP-ALL-SERVICES.bat
 ```
 
----
+### 4. `CHECK-PROJECT-STATUS.bat`
+**Kiểm tra trạng thái project**
 
-## 🔍 Kiểm tra các service đang chạy
+- ✅ Kiểm tra Python, Node.js
+- ✅ Kiểm tra dependencies
+- ✅ Kiểm tra services đang chạy
 
-### Kiểm tra Backend:
+**Cách dùng:**
 ```bash
-# Mở browser: http://localhost:8000/api/
-# Hoặc: http://localhost:8000/admin/
-```
-
-### Kiểm tra Frontend:
-```bash
-# Admin: http://localhost:3000
-# Candidate: http://localhost:3001
-# Recruiter: http://localhost:3002
-```
-
-### Kiểm tra Redis:
-```bash
-docker ps | findstr redis
-# Hoặc:
-docker exec -it redis redis-cli ping
-# Phải trả về: PONG
-```
-
-### Kiểm tra Celery:
-- Xem terminal Celery, phải thấy: `celery@hostname ready`
-- Nếu có task, sẽ thấy log processing
-
----
-
-## ⚠️ Lưu ý quan trọng
-
-1. **Thứ tự khởi động:**
-   - Redis → Backend → Celery → Frontend
-   - Đợi mỗi service khởi động xong (3-5 giây) trước khi start service tiếp theo
-
-2. **Redis:**
-   - Chỉ cần chạy 1 lần (dùng Docker)
-   - Có thể đóng terminal sau khi Redis đã start
-   - Kiểm tra: `docker ps` phải thấy container `redis`
-
-3. **Celery:**
-   - Cần Redis đang chạy
-   - Nếu không có Celery, các tính năng async (email, AI screening) sẽ không hoạt động
-   - Có thể bỏ qua nếu chỉ test UI
-
-4. **Frontend:**
-   - Có thể chạy 1, 2, hoặc 3 roles tùy nhu cầu
-   - Mỗi role chạy trên port riêng
-   - Có thể dùng `start-all-roles.bat` để chạy cả 3 cùng lúc
-
-5. **Database:**
-   - PostgreSQL (local hoặc Neon) phải đang chạy
-   - Kiểm tra: `python backend/check_database_connection.py`
-
----
-
-## 🛑 Dừng các service
-
-### Dừng từng service:
-- **Backend/Celery/Frontend:** Nhấn `Ctrl+C` trong terminal
-- **Redis:** `docker stop redis`
-
-### Dừng tất cả:
-```bash
-# Dừng tất cả frontend (đóng các cửa sổ terminal)
-# Dừng backend và celery (Ctrl+C)
-# Dừng Redis
-docker stop redis
+Double-click: CHECK-PROJECT-STATUS.bat
 ```
 
 ---
 
-## 📝 Checklist trước khi chạy
+## 🎯 Hướng Dẫn Sử Dụng
 
-- [ ] PostgreSQL đang chạy (local hoặc Neon)
-- [ ] Redis đang chạy (`docker ps` thấy redis)
-- [ ] Backend dependencies đã cài (`pip install -r requirements.txt`)
-- [ ] Frontend dependencies đã cài (`npm install`)
-- [ ] File `.env` đã cấu hình đúng
-- [ ] Migrations đã chạy (`python manage.py migrate`)
+### Bước 1: Lần đầu setup (chỉ cần làm 1 lần)
+
+1. **Cài đặt Python 3.10+**
+   - Download: https://www.python.org/downloads/
+   - ✅ Check "Add Python to PATH" khi cài đặt
+
+2. **Cài đặt Node.js 18+**
+   - Download: https://nodejs.org/
+   - ✅ Cài đặt phiên bản LTS
+
+3. **Cài đặt PostgreSQL** (hoặc dùng Neon/Supabase online)
+   - Local: https://www.postgresql.org/download/
+   - Online: https://neon.tech hoặc https://supabase.com
+
+### Bước 2: Chạy project
+
+**Cách 1: Chạy tất cả (KHUYẾN NGHỊ)**
+```
+Double-click: START-PROJECT-COMPLETE.bat
+```
+
+**Cách 2: Chạy đơn giản (1 frontend)**
+```
+Double-click: START-PROJECT-SIMPLE.bat
+```
+
+### Bước 3: Truy cập
+
+Sau khi chạy script, mở trình duyệt:
+
+- **Backend API**: http://localhost:8000
+- **Admin Panel**: http://localhost:3003
+- **Recruiter**: http://localhost:3002
+- **Candidate**: http://localhost:3001
+
+**Tài khoản Admin:**
+- Email: `admin@goodcv.com`
+- Password: `admin123`
 
 ---
 
-## 🆘 Troubleshooting
+## 🔧 Troubleshooting
 
-### Lỗi "Port already in use":
-- Kiểm tra port nào đang bị chiếm
-- Dừng process đang dùng port đó
-- Hoặc đổi port trong cấu hình
+### Lỗi: "Python không được tìm thấy"
+**Giải pháp:**
+1. Cài đặt Python 3.10+
+2. ✅ Check "Add Python to PATH"
+3. Restart terminal/command prompt
 
-### Redis không kết nối được:
-- Kiểm tra Docker có đang chạy không
-- Kiểm tra Redis container: `docker ps`
-- Restart Redis: `docker restart redis`
+### Lỗi: "Node.js không được tìm thấy"
+**Giải pháp:**
+1. Cài đặt Node.js 18+ (LTS)
+2. Restart terminal/command prompt
 
-### Celery không hoạt động:
-- Kiểm tra Redis có đang chạy không
-- Kiểm tra connection: `python backend/test-redis-connection.py`
-- Xem log Celery để biết lỗi cụ thể
+### Lỗi: "Port đã được sử dụng"
+**Giải pháp:**
+1. Chạy `STOP-ALL-SERVICES.bat` để dừng tất cả
+2. Hoặc đổi port trong file `.env` và `package.json`
 
-### Frontend không kết nối được Backend:
-- Kiểm tra Backend có đang chạy không (http://localhost:8000)
-- Kiểm tra `REACT_APP_API_URL` trong `frontend/.env`
-- Kiểm tra CORS settings trong backend
+### Lỗi: "Database connection failed"
+**Giải pháp:**
+1. Kiểm tra PostgreSQL đang chạy
+2. Kiểm tra file `backend/.env` có đúng thông tin database không
+3. Chạy `python backend/fix-env-file.py` để sửa cấu hình
+
+### Lỗi: "Email không gửi được"
+**Giải pháp:**
+1. Kiểm tra file `backend/.env` có cấu hình email đúng không
+2. Chạy `python backend/fix-env-file.py` để sửa
+3. Xem hướng dẫn: `backend/HUONG-DAN-CAU-HINH-EMAIL.md`
 
 ---
 
-## 📚 Tài liệu tham khảo
+## 📝 Checklist Trước Khi Chạy
 
-- `HUONG-DAN-CAI-DAT.md` - Hướng dẫn cài đặt đầy đủ
-- `MULTI-PORT-SETUP.md` - Chi tiết về multi-port frontend
-- `backend/CELERY-SETUP.md` - Hướng dẫn Celery
-- `backend/INSTALL-REDIS-WINDOWS.md` - Cài đặt Redis
+- [ ] Python 3.10+ đã cài đặt
+- [ ] Node.js 18+ đã cài đặt
+- [ ] PostgreSQL đã setup (hoặc dùng online)
+- [ ] File `backend/.env` đã được tạo và cấu hình
+- [ ] Database connection string đúng
 
+---
+
+## 🎯 Kết Quả Mong Đợi
+
+Sau khi chạy `START-PROJECT-COMPLETE.bat`:
+
+1. ✅ Backend chạy trên port 8000
+2. ✅ Frontend Admin chạy trên port 3003
+3. ✅ Frontend Recruiter chạy trên port 3002
+4. ✅ Frontend Candidate chạy trên port 3001
+5. ✅ Các cửa sổ terminal mở riêng cho mỗi service
+
+**Lưu ý:**
+- Backend cần vài giây để khởi động hoàn toàn
+- Đợi backend khởi động xong trước khi test frontend
+- Để dừng tất cả, chạy `STOP-ALL-SERVICES.bat` hoặc đóng các cửa sổ terminal
+
+---
+
+## 💡 Tips
+
+1. **Lần đầu chạy**: Script sẽ tự động cài đặt dependencies (có thể mất vài phút)
+2. **Lần sau**: Chỉ cần double-click script là chạy ngay
+3. **Kiểm tra status**: Dùng `CHECK-PROJECT-STATUS.bat` để xem services nào đang chạy
+4. **Dừng services**: Dùng `STOP-ALL-SERVICES.bat` để dừng tất cả
+
+---
+
+## 🆘 Cần Giúp Đỡ?
+
+1. Chạy `CHECK-PROJECT-STATUS.bat` để kiểm tra
+2. Xem log trong các cửa sổ terminal
+3. Kiểm tra file `backend/.env` có đúng không
+4. Xem các file hướng dẫn trong thư mục `backend/`

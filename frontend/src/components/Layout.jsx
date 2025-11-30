@@ -40,7 +40,6 @@ const Layout = ({ children }) => {
     { path: '/admin/users', icon: Users, label: 'Quản lý người dùng', roles: ['ADMIN'] },
     { path: '/admin/companies', icon: Briefcase, label: 'Quản lý công ty', roles: ['ADMIN'] },
     { path: '/admin/jobs', icon: FileText, label: 'Quản lý tin tuyển dụng', roles: ['ADMIN'] },
-    { path: '/admin/candidates', icon: User, label: 'Quản lý ứng viên', roles: ['ADMIN'] },
     { path: '/admin/settings', icon: Settings, label: 'Cài đặt hệ thống', roles: ['ADMIN'] },
   ];
 

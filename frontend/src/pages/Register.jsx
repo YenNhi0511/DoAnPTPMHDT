@@ -21,7 +21,7 @@ const Register = () => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [accountType, setAccountType] = useState('INDIVIDUAL');
-  const { register } = useAuth();
+  const { register, setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -49,15 +49,24 @@ const Register = () => {
       
       const result = await register(registerData);
       
-      if (result.requires_verification) {
-        navigate(`/verify-email?email=${formData.email}`);
-        return;
+      // Tự động đăng nhập sau khi đăng ký (không cần verify email)
+      if (result.access && result.refresh) {
+        localStorage.setItem('access_token', result.access);
+        localStorage.setItem('refresh_token', result.refresh);
+        setUser(result.user);
+        
+        setSuccess(true);
+        
+        // Redirect dựa trên role
+        let redirectPath = '/careers';
+        if (result.user.role === 'ADMIN') {
+          redirectPath = '/admin/dashboard';
+        } else if (result.user.role === 'RECRUITER') {
+          redirectPath = '/dashboard';
+        }
+        
+        setTimeout(() => navigate(redirectPath), 1500);
       }
-      
-      setSuccess(true);
-      
-      const redirectPath = formData.account_type === 'BUSINESS' ? '/dashboard' : '/candidate/dashboard';
-      setTimeout(() => navigate(redirectPath), 1500);
     } catch (err) {
       const errors = err.response?.data;
       if (errors) {
@@ -145,7 +154,7 @@ const Register = () => {
                           : 'bg-gray-100'
                       }`}>
                         <UserCircle className={`w-6 h-6 ${
-                          formData.account_type === 'INDIVIDUAL' ? 'text-white' : 'text-gray-400'
+                          formData.account_type === 'INDIVIDUAL' ? 'text-white' : 'text-gray-600'
                         }`} />
                       </div>
                       <div>
@@ -154,7 +163,7 @@ const Register = () => {
                         }`}>
                           Cá nhân
                         </p>
-                        <p className="text-xs text-gray-500">Ứng viên tìm việc</p>
+                        <p className="text-xs text-gray-700">Ứng viên tìm việc</p>
                       </div>
                     </div>
                   </label>
@@ -181,7 +190,7 @@ const Register = () => {
                           : 'bg-gray-100'
                       }`}>
                         <Building2 className={`w-6 h-6 ${
-                          formData.account_type === 'BUSINESS' ? 'text-white' : 'text-gray-400'
+                          formData.account_type === 'BUSINESS' ? 'text-white' : 'text-gray-600'
                         }`} />
                       </div>
                       <div>
@@ -190,12 +199,12 @@ const Register = () => {
                         }`}>
                           Doanh nghiệp
                         </p>
-                        <p className="text-xs text-gray-500">Tuyển dụng nhân sự</p>
+                        <p className="text-xs text-gray-700">Tuyển dụng nhân sự</p>
                       </div>
                     </div>
                   </label>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-gray-700">
                   {formData.account_type === 'BUSINESS' 
                     ? 'Tài khoản doanh nghiệp: đăng tin tuyển dụng, quản lý hồ sơ, phỏng vấn, báo cáo'
                     : 'Tài khoản cá nhân: tìm việc và ứng tuyển vào các vị trí'}
@@ -232,7 +241,7 @@ const Register = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                   <input
                     type="email"
                     name="email"
@@ -248,7 +257,7 @@ const Register = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Tên đăng nhập</label>
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                   <input
                     type="text"
                     name="username"
@@ -264,7 +273,7 @@ const Register = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Số điện thoại</label>
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                   <input
                     type="tel"
                     name="phone"
@@ -279,7 +288,7 @@ const Register = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Mật khẩu</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
@@ -293,7 +302,7 @@ const Register = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -303,7 +312,7 @@ const Register = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Xác nhận mật khẩu</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password2"

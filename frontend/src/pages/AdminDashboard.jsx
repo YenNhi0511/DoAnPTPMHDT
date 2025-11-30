@@ -20,11 +20,12 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Admin cần thấy TẤT CẢ dữ liệu trong hệ thống
         const [statsRes, jobsRes, appsRes, usersRes] = await Promise.all([
-          getJobStats(),
-          getJobs({ ordering: '-created_at', limit: 5 }),
-          getApplications({ ordering: '-applied_at', limit: 10 }),
-          getUsers({ limit: 100 }),
+          getJobStats(), // Stats API đã filter cho ADMIN
+          getJobs({ ordering: '-created_at', limit: 5 }), // Backend sẽ trả về tất cả jobs cho ADMIN
+          getApplications({ ordering: '-applied_at', limit: 10 }), // Tất cả applications
+          getUsers({ limit: 1000 }), // Tất cả users
         ]);
 
         setStats(statsRes.data);
@@ -44,6 +45,7 @@ const AdminDashboard = () => {
         setUserStats(userStatsData);
       } catch (error) {
         console.error('Error fetching admin dashboard data:', error);
+        console.error('Error details:', error.response?.data);
       } finally {
         setLoading(false);
       }
@@ -73,7 +75,7 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6 max-w-full">
       {/* Welcome Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-2xl p-8 text-white shadow-xl">
+      <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-2xl p-8 text-white shadow-xl border border-purple-500/20">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
@@ -121,107 +123,93 @@ const AdminDashboard = () => {
 
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow-md p-6 border-2 border-purple-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-              <Briefcase className="w-7 h-7 text-purple-600" />
+            <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center shadow-md">
+              <Briefcase className="w-7 h-7 text-white" />
             </div>
             <TrendingUp className="w-5 h-5 text-purple-600" />
           </div>
           <p className="text-3xl font-bold text-gray-900 mb-1">{stats?.total_jobs || 0}</p>
-          <p className="text-gray-600 text-sm font-medium">Tổng việc làm</p>
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
-              <span className="text-green-600 font-semibold">{stats?.open_jobs || 0}</span> đang tuyển
+          <p className="text-gray-700 text-sm font-semibold">Tổng việc làm</p>
+          <div className="mt-3 pt-3 border-t border-purple-200">
+            <p className="text-xs text-gray-700 font-medium">
+              <span className="text-green-600 font-bold">{stats?.open_jobs || 0}</span> đang tuyển
             </p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+        <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl shadow-md p-6 border-2 border-indigo-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center">
-              <Users className="w-7 h-7 text-indigo-600" />
+            <div className="w-14 h-14 bg-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+              <Users className="w-7 h-7 text-white" />
             </div>
             <TrendingUp className="w-5 h-5 text-indigo-600" />
           </div>
           <p className="text-3xl font-bold text-gray-900 mb-1">{userStats?.total || 0}</p>
-          <p className="text-gray-600 text-sm font-medium">Tổng người dùng</p>
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
-              <span className="text-blue-600 font-semibold">{userStats?.byRole?.CANDIDATE || 0}</span> ứng viên
+          <p className="text-gray-700 text-sm font-semibold">Tổng người dùng</p>
+          <div className="mt-3 pt-3 border-t border-indigo-200">
+            <p className="text-xs text-gray-700 font-medium">
+              <span className="text-blue-600 font-bold">{userStats?.byRole?.CANDIDATE || 0}</span> ứng viên
             </p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-md p-6 border-2 border-blue-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-              <FileText className="w-7 h-7 text-blue-600" />
+            <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center shadow-md">
+              <FileText className="w-7 h-7 text-white" />
             </div>
             <TrendingUp className="w-5 h-5 text-blue-600" />
           </div>
           <p className="text-3xl font-bold text-gray-900 mb-1">{stats?.total_applications || 0}</p>
-          <p className="text-gray-600 text-sm font-medium">Hồ sơ ứng tuyển</p>
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
-              <span className="text-yellow-600 font-semibold">{stats?.pending_applications || 0}</span> chờ xử lý
+          <p className="text-gray-700 text-sm font-semibold">Hồ sơ ứng tuyển</p>
+          <div className="mt-3 pt-3 border-t border-blue-200">
+            <p className="text-xs text-gray-700 font-medium">
+              <span className="text-yellow-600 font-bold">{stats?.pending_applications || 0}</span> chờ xử lý
             </p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl shadow-md p-6 border-2 border-emerald-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center">
-              <Target className="w-7 h-7 text-emerald-600" />
+            <div className="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+              <Target className="w-7 h-7 text-white" />
             </div>
             <TrendingUp className="w-5 h-5 text-emerald-600" />
           </div>
           <p className="text-3xl font-bold text-gray-900 mb-1">{stats?.conversion_rate || 0}%</p>
-          <p className="text-gray-600 text-sm font-medium">Tỷ lệ tuyển dụng</p>
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
-              <span className="text-purple-600 font-semibold">{stats?.hired_count || 0}</span> đã tuyển
+          <p className="text-gray-700 text-sm font-semibold">Tỷ lệ tuyển dụng</p>
+          <div className="mt-3 pt-3 border-t border-emerald-200">
+            <p className="text-xs text-gray-700 font-medium">
+              <span className="text-purple-600 font-bold">{stats?.hired_count || 0}</span> đã tuyển
             </p>
           </div>
         </div>
       </div>
 
       {/* Secondary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl shadow-md p-6 border-2 border-cyan-200">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-cyan-600" />
+            <div className="w-12 h-12 bg-cyan-600 rounded-xl flex items-center justify-center shadow-md">
+              <Calendar className="w-6 h-6 text-white" />
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{stats?.upcoming_interviews || 0}</p>
-              <p className="text-sm text-gray-600 font-medium">Phỏng vấn sắp tới</p>
+              <p className="text-sm text-gray-700 font-semibold">Phỏng vấn sắp tới</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl shadow-md p-6 border-2 border-indigo-200">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-pink-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
-                {stats?.avg_salary ? new Intl.NumberFormat('vi-VN').format(stats.avg_salary / 1000000) + 'M' : '0'}đ
-              </p>
-              <p className="text-sm text-gray-600 font-medium">Lương trung bình</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-              <Zap className="w-6 h-6 text-indigo-600" />
+            <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+              <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{stats?.avg_time_to_hire || 0} ngày</p>
-              <p className="text-sm text-gray-600 font-medium">Thời gian tuyển TB</p>
+              <p className="text-sm text-gray-700 font-semibold">Thời gian tuyển TB</p>
             </div>
           </div>
         </div>
@@ -230,7 +218,7 @@ const AdminDashboard = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* User Role Distribution */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+        <div className="bg-gradient-to-br from-white to-purple-50 rounded-xl shadow-md border-2 border-purple-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Phân bố người dùng theo vai trò</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -274,7 +262,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Application Status Distribution */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+        <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl shadow-md border-2 border-blue-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Phân bố trạng thái hồ sơ</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -315,7 +303,7 @@ const AdminDashboard = () => {
 
       {/* Monthly Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+        <div className="bg-gradient-to-br from-white to-indigo-50 rounded-xl shadow-md border-2 border-indigo-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Xu hướng hồ sơ theo tháng</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -342,7 +330,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+        <div className="bg-gradient-to-br from-white to-purple-50 rounded-xl shadow-md border-2 border-purple-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Việc làm theo tháng</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -367,7 +355,7 @@ const AdminDashboard = () => {
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Jobs */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+        <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md border-2 border-gray-200 overflow-hidden">
           <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
             <div className="flex items-center justify-between">
               <div>
@@ -414,7 +402,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent Applications */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+        <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md border-2 border-gray-200 overflow-hidden">
           <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
             <div className="flex items-center justify-between">
               <div>

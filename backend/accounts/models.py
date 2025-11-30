@@ -23,6 +23,12 @@ class User(AbstractUser):
     email_verification_token = models.CharField(max_length=100, null=True, blank=True)
     email_verification_sent_at = models.DateTimeField(null=True, blank=True)
     
+    # OTP verification (fallback khi email không hoạt động)
+    otp_code = models.CharField(max_length=6, null=True, blank=True, help_text='6-digit OTP code')
+    otp_sent_at = models.DateTimeField(null=True, blank=True)
+    otp_verified = models.BooleanField(default=False)
+    otp_attempts = models.IntegerField(default=0, help_text='Số lần nhập sai OTP')
+    
     # Thông tin bổ sung cho doanh nghiệp
     company_name = models.CharField(max_length=255, null=True, blank=True, help_text='Tên công ty')
     gender = models.CharField(max_length=10, null=True, blank=True, choices=[('MALE', 'Nam'), ('FEMALE', 'Nữ')])

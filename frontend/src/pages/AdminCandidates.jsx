@@ -131,7 +131,7 @@ const AdminCandidates = () => {
       <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               placeholder="Tìm kiếm theo tên, email..."
@@ -160,7 +160,7 @@ const AdminCandidates = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredCandidates.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-12 text-gray-500">
+                  <td colSpan="6" className="text-center py-12 text-gray-700">
                     Không tìm thấy ứng viên nào
                   </td>
                 </tr>
@@ -183,19 +183,19 @@ const AdminCandidates = () => {
                             <p className="font-semibold text-gray-900">
                               {candidate.first_name} {candidate.last_name}
                             </p>
-                            <p className="text-sm text-gray-500">@{candidate.username}</p>
+                            <p className="text-sm text-gray-700">@{candidate.username}</p>
                           </div>
                         </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2 text-gray-700">
-                          <Mail className="w-4 h-4 text-gray-400" />
+                          <Mail className="w-4 h-4 text-gray-600" />
                           {candidate.email}
                         </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-gray-400" />
+                          <FileText className="w-4 h-4 text-gray-600" />
                           <span className="font-semibold text-gray-900">{candidateApps.length}</span>
                         </div>
                       </td>
@@ -289,7 +289,7 @@ const AdminCandidates = () => {
               <div>
                 <h4 className="text-lg font-bold text-gray-900 mb-4">Hồ sơ ứng tuyển ({getCandidateApplications(selectedCandidate.id).length})</h4>
                 {getCandidateApplications(selectedCandidate.id).length === 0 ? (
-                  <p className="text-gray-500">Chưa có hồ sơ ứng tuyển</p>
+                  <p className="text-gray-700">Chưa có hồ sơ ứng tuyển</p>
                 ) : (
                   <div className="space-y-3">
                     {getCandidateApplications(selectedCandidate.id).map((app) => (

@@ -130,7 +130,7 @@ const CompanyPage = () => {
               {company.company_description}
             </p>
           ) : (
-            <p className="text-gray-500 italic">Chưa có thông tin giới thiệu</p>
+            <p className="text-gray-700 italic">Chưa có thông tin giới thiệu</p>
           )}
         </div>
 
@@ -143,7 +143,7 @@ const CompanyPage = () => {
           <div className="space-y-3">
             {company.address && (
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-gray-700">Địa chỉ</p>
                   <p className="text-gray-600">{company.address}</p>
@@ -152,7 +152,7 @@ const CompanyPage = () => {
             )}
             {company.company_email && (
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <Mail className="w-5 h-5 text-gray-600 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-gray-700">Email</p>
                   <a href={`mailto:${company.company_email}`} className="text-blue-600 hover:text-blue-700">
@@ -163,7 +163,7 @@ const CompanyPage = () => {
             )}
             {company.phone && (
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <Phone className="w-5 h-5 text-gray-600 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-gray-700">Điện thoại</p>
                   <a href={`tel:${company.phone}`} className="text-blue-600 hover:text-blue-700">
@@ -174,7 +174,7 @@ const CompanyPage = () => {
             )}
             {company.tax_id && (
               <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <FileText className="w-5 h-5 text-gray-600 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-gray-700">Mã số thuế</p>
                   <p className="text-gray-600">{company.tax_id}</p>

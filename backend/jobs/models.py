@@ -119,3 +119,32 @@ class Job(models.Model):
     
     def __str__(self):
         return self.title
+
+
+class SavedJob(models.Model):
+    """Model cho công việc đã lưu của ứng viên"""
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='saved_jobs'
+    )
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name='saved_by_users'
+    )
+    saved_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'saved_jobs'
+        ordering = ['-saved_at']
+        unique_together = [['user', 'job']]  # Mỗi user chỉ lưu 1 job 1 lần
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['job']),
+        ]
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.job.title}"

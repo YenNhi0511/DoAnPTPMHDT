@@ -22,10 +22,12 @@ const Results = () => {
     try {
       const [resultsRes, appsRes] = await Promise.all([
         getResults(),
-        getApplications({ status: 'INTERVIEW' }),
+        getApplications(), // Lấy tất cả applications, không chỉ INTERVIEW
       ]);
       setResults(Array.isArray(resultsRes.data) ? resultsRes.data : resultsRes.data.results || []);
-      setApplications(Array.isArray(appsRes.data) ? appsRes.data : appsRes.data.results || []);
+      // Chỉ hiển thị applications có thể tạo result (INTERVIEW, OFFER, hoặc các status khác trừ ACCEPTED)
+      const availableApps = Array.isArray(appsRes.data) ? appsRes.data : appsRes.data.results || [];
+      setApplications(availableApps.filter(app => app.status !== 'ACCEPTED'));
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -51,7 +53,14 @@ const Results = () => {
       });
       fetchData();
     } catch (error) {
-      alert('Có lỗi xảy ra');
+      console.error('Error creating result:', error);
+      const errorMessage = error.response?.data?.application?.[0] || 
+                          error.response?.data?.final_decision?.[0] ||
+                          error.response?.data?.detail || 
+                          error.response?.data?.error ||
+                          error.message || 
+                          'Có lỗi xảy ra';
+      alert(errorMessage);
     }
   };
 
@@ -190,7 +199,7 @@ const Results = () => {
         </div>
       ) : results.length === 0 ? (
         <div className="bg-white rounded-xl shadow-md border border-gray-200 text-center py-12">
-          <Award className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Award className="w-16 h-16 text-gray-600 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Chưa có kết quả nào</h3>
           <p className="text-gray-600">Thêm kết quả tuyển dụng sau khi hoàn thành phỏng vấn</p>
         </div>
@@ -258,7 +267,7 @@ const Results = () => {
                     ) : (
                       <button
                         onClick={() => handleGenerateOffer(result.id)}
-                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
                       >
                         <FileText className="w-4 h-4" />
                         Tạo Offer

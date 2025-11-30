@@ -202,7 +202,7 @@ const CandidateInterviews = () => {
           {filteredInterviews.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Calendar className="w-10 h-10 text-gray-400" />
+                <Calendar className="w-10 h-10 text-gray-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Chưa có lịch phỏng vấn</h3>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">

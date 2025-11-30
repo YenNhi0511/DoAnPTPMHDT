@@ -68,25 +68,43 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await apiLogin(email, password);
-    localStorage.setItem('access_token', response.data.access);
-    localStorage.setItem('refresh_token', response.data.refresh);
-    setUser(response.data.user);
-    
-    // Notify other tabs about auth change (chỉ nếu sync enabled)
-    if (SYNC_BETWEEN_TABS) {
-      window.dispatchEvent(new CustomEvent('auth-storage-change', {
-        detail: { key: 'access_token' }
-      }));
+    try {
+      const response = await apiLogin(email, password);
+      
+      // Kiểm tra response có đầy đủ không
+      if (!response.data || !response.data.access) {
+        throw new Error('Invalid response from server');
+      }
+      
+      localStorage.setItem('access_token', response.data.access);
+      localStorage.setItem('refresh_token', response.data.refresh);
+      setUser(response.data.user);
+      
+      // Notify other tabs about auth change (chỉ nếu sync enabled)
+      if (SYNC_BETWEEN_TABS) {
+        window.dispatchEvent(new CustomEvent('auth-storage-change', {
+          detail: { key: 'access_token' }
+        }));
+      }
+      
+      return response.data;
+    } catch (error) {
+      // Re-throw để component có thể xử lý
+      throw error;
     }
-    
-    return response.data;
   };
 
   const register = async (data) => {
     const response = await apiRegister(data);
-    // Tự động đăng nhập sau khi đăng ký thành công
-    if (response.data && response.data.user) {
+    // KHÔNG tự động đăng nhập nếu cần verify email
+    // User phải verify email trước khi có thể login
+    if (response.data && response.data.requires_verification) {
+      // Không tự động login, user cần verify email trước
+      return response.data;
+    }
+    
+    // Nếu không cần verify (trường hợp đặc biệt), mới tự động login
+    if (response.data && response.data.user && !response.data.requires_verification) {
       try {
         // Login để lấy token
         const loginResponse = await apiLogin(data.email, data.password);

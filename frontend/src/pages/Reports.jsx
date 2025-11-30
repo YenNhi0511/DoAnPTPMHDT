@@ -116,7 +116,7 @@ const Reports = () => {
           <p className="text-gray-600 text-sm font-medium">Tổng việc làm</p>
           <div className="mt-2 text-sm">
             <span className="text-green-600 font-medium">{stats?.open_jobs || 0} đang tuyển</span>
-            <span className="text-gray-400 mx-2">•</span>
+            <span className="text-gray-600 mx-2">•</span>
             <span className="text-gray-600">{stats?.closed_jobs || 0} đã đóng</span>
           </div>
         </div>
@@ -159,7 +159,7 @@ const Reports = () => {
           <p className="text-gray-600 text-sm font-medium">Tỷ lệ tuyển dụng thành công</p>
           <div className="mt-2 text-sm">
             <span className="text-green-600 font-medium">{stats?.total_offers || 0} offers</span>
-            <span className="text-gray-400 mx-2">•</span>
+            <span className="text-gray-600 mx-2">•</span>
             <span className="text-red-600 font-medium">{stats?.total_rejects || 0} từ chối</span>
           </div>
         </div>

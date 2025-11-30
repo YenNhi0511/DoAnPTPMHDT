@@ -73,11 +73,24 @@ const JobForm = () => {
 
     try {
       const data = { ...formData };
+      
+      // Convert salary fields properly
+      if (data.salary_min && data.salary_min !== '') {
+        data.salary_min = parseFloat(data.salary_min);
+      } else {
+        data.salary_min = null;
+      }
+      
+      if (data.salary_max && data.salary_max !== '') {
+        data.salary_max = parseFloat(data.salary_max);
+      } else {
+        data.salary_max = null;
+      }
+      
       // Convert empty strings to null for optional fields
-      if (!data.salary_min) data.salary_min = null;
-      if (!data.salary_max) data.salary_max = null;
-      if (!data.experience_years) data.experience_years = null;
-      if (!data.recruitment_process) data.recruitment_process = null;
+      if (!data.salary || data.salary.trim() === '') data.salary = null;
+      if (!data.experience_years || data.experience_years === '') data.experience_years = null;
+      if (!data.recruitment_process || data.recruitment_process === '') data.recruitment_process = null;
 
       if (isEdit) {
         await updateJob(id, data);

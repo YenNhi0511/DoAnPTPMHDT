@@ -3,7 +3,7 @@ echo ========================================
 echo Starting GoodCV - All Roles
 echo ========================================
 echo.
-echo Starting ADMIN on port 3000...
+echo Starting ADMIN on port 3003...
 start "GoodCV Admin" cmd /k "cd frontend && npm run start:admin"
 timeout /t 3 /nobreak >nul
 
@@ -19,7 +19,7 @@ echo.
 echo ========================================
 echo All roles started!
 echo ========================================
-echo Admin:    http://localhost:3000
+echo Admin:    http://localhost:3003
 echo Candidate: http://localhost:3001
 echo Recruiter: http://localhost:3002
 echo.

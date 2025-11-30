@@ -1,0 +1,22 @@
+Xin chào {{ candidate.get_full_name }},
+
+Cảm ơn bạn đã dành thời gian tham gia phỏng vấn cho vị trí:
+
+{{ job.title }}
+Địa điểm: {{ job.location }}
+
+Sau khi xem xét kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng chúng tôi đã quyết định không tiếp tục với đơn ứng tuyển của bạn tại thời điểm này.
+
+{% if feedback %}
+Nhận xét từ hội đồng phỏng vấn:
+{{ feedback }}
+{% endif %}
+
+Chúng tôi đánh giá cao sự quan tâm của bạn đến vị trí này và chúc bạn thành công trong các cơ hội nghề nghiệp khác.
+
+Trân trọng,
+Team tuyển dụng
+
+---
+Email này được gửi tự động từ hệ thống tuyển dụng. Vui lòng không trả lời email này.
+

@@ -28,20 +28,27 @@ const Profile = () => {
 
   useEffect(() => {
     loadUser();
-  }, []);
+  }, [authUser]); // Reload khi authUser thay đổi
 
   const loadUser = async () => {
     try {
+      setLoading(true);
       const res = await getMe();
-      setUser(res.data);
+      const userData = res.data;
+      setUser(userData);
       setFormData({
-        first_name: res.data.first_name || '',
-        last_name: res.data.last_name || '',
-        email: res.data.email || '',
-        phone: res.data.phone || '',
-        username: res.data.username || '',
+        first_name: userData.first_name || '',
+        last_name: userData.last_name || '',
+        email: userData.email || '',
+        phone: userData.phone || '',
+        username: userData.username || '',
       });
+      // Cập nhật auth context nếu cần
+      if (authUser && authUser.id !== userData.id) {
+        login(userData); // Cập nhật user trong context
+      }
     } catch (err) {
+      console.error('Error loading user:', err);
       setError('Không thể tải thông tin người dùng');
     } finally {
       setLoading(false);
@@ -191,7 +198,7 @@ const Profile = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Hồ sơ cá nhân</h1>
-          <p className="text-gray-600">Quản lý thông tin tài khoản của bạn</p>
+          <p className="text-gray-700">Quản lý thông tin tài khoản của bạn</p>
         </div>
       </div>
 
@@ -202,7 +209,7 @@ const Profile = () => {
           className={`px-4 py-2 font-medium transition-colors relative ${
             activeTab === 'profile'
               ? `${colors.text} border-b-2 ${colors.border}`
-              : 'text-gray-500 hover:text-gray-700'
+              : 'text-gray-700 hover:text-gray-900'
           }`}
           style={activeTab === 'profile' ? { borderBottomColor: `var(--color-${roleColor})` } : {}}
         >
@@ -216,7 +223,7 @@ const Profile = () => {
           className={`px-4 py-2 font-medium transition-colors relative ${
             activeTab === 'password'
               ? `${colors.text} border-b-2 ${colors.border}`
-              : 'text-gray-500 hover:text-gray-700'
+              : 'text-gray-700 hover:text-gray-900'
           }`}
           style={activeTab === 'password' ? { borderBottomColor: `var(--color-${roleColor})` } : {}}
         >
@@ -258,7 +265,7 @@ const Profile = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-1">
                 {user.first_name} {user.last_name}
               </h2>
-              <p className="text-gray-600">{user.email}</p>
+              <p className="text-gray-800">{user.email}</p>
               <span className={`inline-block mt-2 px-3 py-1 ${colors.bgLight} ${colors.text} rounded-full text-sm font-medium`}>
                 {user.role === 'ADMIN' ? 'Quản trị viên' : user.role === 'RECRUITER' ? 'Nhà tuyển dụng' : 'Ứng viên'}
               </span>
@@ -274,7 +281,7 @@ const Profile = () => {
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-offset-0 focus:border-transparent"
                   style={{ '--tw-ring-color': colors.ring }}
                   placeholder="Nguyễn"
                   required
@@ -287,7 +294,7 @@ const Profile = () => {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-offset-0 focus:border-transparent"
                   style={{ '--tw-ring-color': colors.ring }}
                   placeholder="Văn A"
                   required
@@ -298,18 +305,18 @@ const Profile = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                   placeholder="your@email.com"
                   required
                   disabled
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-700">
                   Không thể thay đổi
                 </span>
               </div>
@@ -318,18 +325,18 @@ const Profile = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Tên đăng nhập</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                   placeholder="username"
                   required
                   disabled
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-700">
                   Không thể thay đổi
                 </span>
               </div>
@@ -338,13 +345,13 @@ const Profile = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-offset-0 focus:border-transparent"
                   style={{ '--tw-ring-color': colors.ring }}
                   placeholder="0901234567"
                 />
@@ -383,13 +390,13 @@ const Profile = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu hiện tại</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <input
                   type="password"
                   name="old_password"
                   value={passwordData.old_password}
                   onChange={handlePasswordChange}
-                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-offset-0 focus:border-transparent"
                   style={{ '--tw-ring-color': colors.ring }}
                   placeholder="••••••••"
                   required
@@ -400,32 +407,32 @@ const Profile = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu mới</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <input
                   type="password"
                   name="new_password"
                   value={passwordData.new_password}
                   onChange={handlePasswordChange}
-                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-offset-0 focus:border-transparent"
                   style={{ '--tw-ring-color': colors.ring }}
                   placeholder="••••••••"
                   required
                   minLength={8}
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">Tối thiểu 8 ký tự</p>
+              <p className="mt-1 text-xs text-gray-700">Tối thiểu 8 ký tự</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Xác nhận mật khẩu mới</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
                 <input
                   type="password"
                   name="new_password2"
                   value={passwordData.new_password2}
                   onChange={handlePasswordChange}
-                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-offset-0 focus:border-transparent"
                   style={{ '--tw-ring-color': colors.ring }}
                   placeholder="••••••••"
                   required

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   getInterviewPanels, createInterviewPanel, updateInterviewPanel, deleteInterviewPanel,
-  getInterviews, getJobs, getApplications, getUsers
+  getInterviews, createInterview, getJobs, getApplications, getUsers
 } from '../services/api';
 import {
   Users, Plus, Edit, Trash2, Star, User, MessageSquare, Save, X, Search, Filter,
@@ -33,6 +33,13 @@ const InterviewPanels = () => {
   const [panelFormData, setPanelFormData] = useState({
     name: '',
     job: '',
+    application: '', // Cho phép chọn application cụ thể
+    interview: '', // Hoặc chọn interview có sẵn
+    createNewInterview: true, // Tạo interview mới hay dùng interview có sẵn
+    scheduled_at: '',
+    duration: 60,
+    location: '',
+    interview_type: 'VIDEO',
     objective: '',
     stage: 'ROUND_1',
     members: []
@@ -40,6 +47,7 @@ const InterviewPanels = () => {
   
   const [memberFormData, setMemberFormData] = useState({
     email: '',
+    interviewer_id: null,
     role: 'MEMBER',
     permissions: {
       can_view: true,
@@ -67,26 +75,27 @@ const InterviewPanels = () => {
           interview,
           members: [],
           totalScore: 0,
-          averageScore: 0
+          averageScore: panel.average_score || 0, // Sử dụng average_score từ API
+          totalPanelMembers: panel.total_panel_members || 0,
+          scoredMembers: panel.scored_members || 0
         };
       }
     }
     if (acc[interviewId]) {
       acc[interviewId].members.push(panel);
-      if (panel.score) {
-        acc[interviewId].totalScore += panel.score;
+      // Cập nhật averageScore từ panel đầu tiên (tất cả panels cùng interview có cùng average_score)
+      if (panel.average_score !== null && panel.average_score !== undefined) {
+        acc[interviewId].averageScore = panel.average_score;
+      }
+      if (panel.total_panel_members) {
+        acc[interviewId].totalPanelMembers = panel.total_panel_members;
+      }
+      if (panel.scored_members !== null && panel.scored_members !== undefined) {
+        acc[interviewId].scoredMembers = panel.scored_members;
       }
     }
     return acc;
   }, {});
-
-  // Calculate average scores
-  Object.values(groupedPanels).forEach(panel => {
-    const scoredMembers = panel.members.filter(m => m.score !== null && m.score !== undefined);
-    panel.averageScore = scoredMembers.length > 0 
-      ? panel.totalScore / scoredMembers.length 
-      : 0;
-  });
 
   // Filter panels
   const filteredPanels = Object.values(groupedPanels).filter(panel => {
@@ -110,19 +119,25 @@ const InterviewPanels = () => {
 
   const fetchData = async () => {
     try {
-      const [panelsRes, interviewsRes, jobsRes, appsRes, usersRes] = await Promise.all([
+      // Chỉ lấy users với role INTERVIEWER (thành viên hội đồng chuyên nghiệp)
+      // Không lấy RECRUITER của các công ty khác
+      const interviewersRes = await getUsers({ role: 'INTERVIEWER' });
+      
+      const [panelsRes, interviewsRes, jobsRes, appsRes] = await Promise.all([
         getInterviewPanels(),
         getInterviews(),
         getJobs(),
-        getApplications(),
-        getUsers({ role: 'RECRUITER' })
+        getApplications()
       ]);
       
       setPanels(Array.isArray(panelsRes.data) ? panelsRes.data : panelsRes.data.results || []);
       setInterviews(Array.isArray(interviewsRes.data) ? interviewsRes.data : interviewsRes.data.results || []);
       setJobs(Array.isArray(jobsRes.data) ? jobsRes.data : jobsRes.data.results || []);
       setApplications(Array.isArray(appsRes.data) ? appsRes.data : appsRes.data.results || []);
-      setUsers(Array.isArray(usersRes.data) ? usersRes.data : usersRes.data.results || []);
+      
+      // Chỉ lấy users với role INTERVIEWER
+      const interviewers = Array.isArray(interviewersRes.data) ? interviewersRes.data : interviewersRes.data.results || [];
+      setUsers(interviewers);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -133,12 +148,82 @@ const InterviewPanels = () => {
   const handleCreatePanel = async (e) => {
     e.preventDefault();
     try {
-      // For now, we'll create panels by adding members to an interview
-      // In a full implementation, you'd create a separate Panel model
-      alert('Chức năng tạo hội đồng mới sẽ được triển khai với model riêng');
+      if (!panelFormData.job) {
+        alert('Vui lòng chọn vị trí tuyển dụng');
+        return;
+      }
+      
+      let targetInterview = null;
+      
+      // Nếu chọn dùng interview có sẵn
+      if (!panelFormData.createNewInterview && panelFormData.interview) {
+        targetInterview = panelFormData.interview;
+      } else {
+        // Tạo interview mới
+        if (!panelFormData.application) {
+          alert('Vui lòng chọn ứng viên để tạo interview');
+          return;
+        }
+        
+        if (!panelFormData.scheduled_at) {
+          alert('Vui lòng chọn thời gian phỏng vấn');
+          return;
+        }
+        
+        // Tạo interview cho application đã chọn
+        const interviewData = {
+          application: panelFormData.application,
+          scheduled_at: new Date(panelFormData.scheduled_at).toISOString(),
+          duration: panelFormData.duration || 60,
+          location: panelFormData.location || '',
+          interview_type: panelFormData.interview_type || 'VIDEO',
+        };
+        
+        const interviewRes = await createInterview(interviewData);
+        targetInterview = interviewRes.data.id;
+      }
+      
+      // Thêm các panel members vào interview
+      if (panelFormData.members && panelFormData.members.length > 0) {
+        await Promise.all(
+          panelFormData.members.map(member =>
+            createInterviewPanel({
+              interview: targetInterview,
+              interviewer: member.interviewer_id,
+              role: member.role || 'MEMBER'
+            })
+          )
+        );
+      } else {
+        alert('Vui lòng thêm ít nhất một thành viên vào hội đồng');
+        return;
+      }
+      
       setShowCreatePanel(false);
+      setPanelFormData({
+        name: '',
+        job: '',
+        application: '',
+        interview: '',
+        createNewInterview: true,
+        scheduled_at: '',
+        duration: 60,
+        location: '',
+        interview_type: 'VIDEO',
+        objective: '',
+        stage: 'ROUND_1',
+        members: []
+      });
+      setMemberFormData({ email: '', interviewer_id: null, role: 'MEMBER' });
+      fetchData();
+      alert('✅ Đã tạo hội đồng tuyển dụng thành công!');
     } catch (error) {
-      alert('Có lỗi xảy ra');
+      console.error('Error creating panel:', error);
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.error ||
+                          error.message || 
+                          'Có lỗi xảy ra';
+      alert(errorMessage);
     }
   };
 
@@ -195,9 +280,18 @@ const InterviewPanels = () => {
         feedback: '',
         recommendation: 'PENDING'
       });
+      
+      // Hiển thị thông báo về kết quả tự động
+      alert('✅ Đã lưu điểm thành công!\n\nHệ thống sẽ tự động:\n- Tính điểm trung bình (có trọng số)\n- Cập nhật kết quả phỏng vấn (PASS nếu >= 70, FAIL nếu < 70)\n- Tạo OFFER và gửi email nếu điểm >= 70');
+      
       fetchData();
     } catch (error) {
-      alert('Không thể lưu điểm');
+      console.error('Error submitting score:', error);
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.error ||
+                          error.message || 
+                          'Không thể lưu điểm';
+      alert(errorMessage);
     }
   };
 
@@ -249,7 +343,7 @@ const InterviewPanels = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" />
               <input
                 type="text"
                 value={searchQuery}
@@ -289,7 +383,7 @@ const InterviewPanels = () => {
       {/* Panels List */}
       {filteredPanels.length === 0 ? (
         <div className="bg-white rounded-xl shadow-md border border-gray-200 text-center py-12">
-          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Chưa có hội đồng nào</h3>
           <p className="text-gray-600 mb-4">Tạo hội đồng mới để bắt đầu quy trình tuyển dụng</p>
           <button
@@ -315,6 +409,19 @@ const InterviewPanels = () => {
                       {averageScore > 0 && (
                         <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
                           Điểm TB: {averageScore.toFixed(1)}/100
+                        </span>
+                      )}
+                      {groupedPanels[interview.id]?.scoredMembers !== undefined && groupedPanels[interview.id]?.totalPanelMembers > 0 && (
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
+                          {groupedPanels[interview.id].scoredMembers}/{groupedPanels[interview.id].totalPanelMembers} đã chấm
+                        </span>
+                      )}
+                      {interview.result && interview.result !== 'PENDING' && (
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          interview.result === 'PASS' ? 'bg-green-100 text-green-700 border border-green-200' :
+                          'bg-red-100 text-red-700 border border-red-200'
+                        }`}>
+                          {interview.result === 'PASS' ? '✅ ĐẠT' : '❌ KHÔNG ĐẠT'}
                         </span>
                       )}
                     </div>
@@ -442,7 +549,14 @@ const InterviewPanels = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Vị trí tuyển dụng *</label>
                 <select
                   value={panelFormData.job}
-                  onChange={(e) => setPanelFormData({ ...panelFormData, job: e.target.value })}
+                  onChange={(e) => {
+                    setPanelFormData({ 
+                      ...panelFormData, 
+                      job: e.target.value,
+                      application: '',
+                      interview: ''
+                    });
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                   required
                 >
@@ -452,12 +566,216 @@ const InterviewPanels = () => {
                   ))}
                 </select>
               </div>
+
+              {/* Chọn cách tạo hội đồng */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cách tạo hội đồng *</label>
+                <div className="space-y-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="createMethod"
+                      checked={panelFormData.createNewInterview}
+                      onChange={() => setPanelFormData({ ...panelFormData, createNewInterview: true, interview: '' })}
+                      className="w-4 h-4 text-green-600 focus:ring-green-500 mt-1"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-gray-900 block">Tạo interview mới</span>
+                      <p className="text-xs text-gray-600 mt-1">Tạo interview mới cho ứng viên và gán hội đồng vào đó. Dùng khi chưa có interview nào.</p>
+                    </div>
+                  </label>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="createMethod"
+                      checked={!panelFormData.createNewInterview}
+                      onChange={() => setPanelFormData({ ...panelFormData, createNewInterview: false, application: '', scheduled_at: '' })}
+                      className="w-4 h-4 text-green-600 focus:ring-green-500 mt-1"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-gray-900 block">Thêm hội đồng vào interview có sẵn</span>
+                      <p className="text-xs text-gray-600 mt-1">Nếu đã lên lịch phỏng vấn ở trang "Lên lịch phỏng vấn" rồi, chọn option này để thêm hội đồng vào interview đó.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {panelFormData.createNewInterview ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ứng viên *</label>
+                    <select
+                      value={panelFormData.application}
+                      onChange={(e) => setPanelFormData({ ...panelFormData, application: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                      required={panelFormData.createNewInterview}
+                    >
+                      <option value="">-- Chọn ứng viên --</option>
+                      {applications
+                        .filter(app => app.job === panelFormData.job && ['PENDING', 'SCREENING', 'INTERVIEW'].includes(app.status))
+                        .map(app => (
+                          <option key={app.id} value={app.id}>
+                            {app.candidate_name} - {app.job_title} ({app.status})
+                          </option>
+                        ))}
+                    </select>
+                    {panelFormData.job && applications.filter(app => app.job === panelFormData.job && ['PENDING', 'SCREENING', 'INTERVIEW'].includes(app.status)).length === 0 && (
+                      <p className="text-xs text-red-600 mt-1">
+                        ⚠️ Chưa có ứng viên nào cho vị trí này. Vui lòng chờ ứng viên nộp hồ sơ hoặc chọn vị trí khác.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Thời gian phỏng vấn *</label>
+                      <input
+                        type="datetime-local"
+                        value={panelFormData.scheduled_at}
+                        onChange={(e) => setPanelFormData({ ...panelFormData, scheduled_at: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                        required={panelFormData.createNewInterview}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Thời lượng (phút)</label>
+                      <input
+                        type="number"
+                        value={panelFormData.duration}
+                        onChange={(e) => setPanelFormData({ ...panelFormData, duration: parseInt(e.target.value) || 60 })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                        min="15"
+                        step="15"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Hình thức *</label>
+                      <select
+                        value={panelFormData.interview_type}
+                        onChange={(e) => setPanelFormData({ ...panelFormData, interview_type: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                        required={panelFormData.createNewInterview}
+                      >
+                        <option value="VIDEO">Video call</option>
+                        <option value="PHONE">Điện thoại</option>
+                        <option value="ONSITE">Tại văn phòng</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Địa điểm / Link</label>
+                      <input
+                        type="text"
+                        value={panelFormData.location}
+                        onChange={(e) => setPanelFormData({ ...panelFormData, location: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                        placeholder="VD: https://meet.google.com/xxx"
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Chọn interview có sẵn *
+                    <span className="ml-2 text-xs font-normal text-gray-500">(Nếu đã lên lịch phỏng vấn rồi)</span>
+                  </label>
+                  <select
+                    value={panelFormData.interview}
+                    onChange={(e) => setPanelFormData({ ...panelFormData, interview: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                    required={!panelFormData.createNewInterview}
+                  >
+                    <option value="">-- Chọn interview --</option>
+                    {interviews
+                      .filter(interview => {
+                        if (!panelFormData.job) return true;
+                        // Ưu tiên dùng job_id từ interview (nếu có) - đây là cách tốt nhất
+                        if (interview.job_id) {
+                          return String(interview.job_id) === String(panelFormData.job);
+                        }
+                        // Fallback: Tìm application của interview này và so sánh job
+                        const app = applications.find(a => {
+                          // So sánh cả ID dạng string và UUID
+                          return String(a.id) === String(interview.application) || 
+                                 a.id === interview.application;
+                        });
+                        if (app) {
+                          // So sánh job ID (có thể là string hoặc UUID)
+                          return String(app.job) === String(panelFormData.job) || 
+                                 String(app.job_id) === String(panelFormData.job) ||
+                                 app.job === panelFormData.job;
+                        }
+                        // Nếu không tìm thấy application, vẫn hiển thị interview nếu job_title khớp
+                        if (interview.job_title) {
+                          const selectedJob = jobs.find(j => String(j.id) === String(panelFormData.job));
+                          return selectedJob && selectedJob.title === interview.job_title;
+                        }
+                        return false;
+                      })
+                      .map(interview => (
+                        <option key={interview.id} value={interview.id}>
+                          {interview.candidate_name} - {interview.job_title} - {new Date(interview.scheduled_at).toLocaleString('vi-VN', { 
+                            day: '2-digit', 
+                            month: '2-digit', 
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </option>
+                      ))}
+                  </select>
+                  {panelFormData.job && interviews.filter(interview => {
+                    // Ưu tiên dùng job_id từ interview (nếu có)
+                    if (interview.job_id) {
+                      return String(interview.job_id) === String(panelFormData.job);
+                    }
+                    // Fallback: Tìm application
+                    const app = applications.find(a => {
+                      return String(a.id) === String(interview.application) || 
+                             a.id === interview.application;
+                    });
+                    if (app) {
+                      return String(app.job) === String(panelFormData.job) || 
+                             String(app.job_id) === String(panelFormData.job) ||
+                             app.job === panelFormData.job;
+                    }
+                    // Nếu không tìm thấy application, kiểm tra job_title
+                    if (interview.job_title) {
+                      const selectedJob = jobs.find(j => String(j.id) === String(panelFormData.job));
+                      return selectedJob && selectedJob.title === interview.job_title;
+                    }
+                    return false;
+                  }).length === 0 && (
+                    <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-xs text-yellow-800">
+                        <strong>💡 Gợi ý:</strong> Chưa có interview nào cho vị trí này. 
+                        <br />
+                        • Nếu chưa lên lịch phỏng vấn: Chọn <strong>"Tạo interview mới"</strong> ở trên
+                        <br />
+                        • Nếu đã lên lịch ở trang "Lên lịch phỏng vấn": Chọn <strong>"Thêm hội đồng vào interview có sẵn"</strong> và chọn interview từ danh sách
+                      </p>
+                    </div>
+                  )}
+                  {panelFormData.interview && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-xs text-blue-800">
+                        <strong>ℹ️ Lưu ý:</strong> Bạn đang thêm hội đồng vào interview đã có. 
+                        Các thành viên hội đồng sẽ được thêm vào interview này để chấm điểm.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Mục tiêu tuyển dụng</label>
                 <textarea
                   value={panelFormData.objective}
                   onChange={(e) => setPanelFormData({ ...panelFormData, objective: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 min-h-[100px]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 min-h-[80px]"
                   placeholder="Mô tả mục tiêu và yêu cầu của hội đồng..."
                 />
               </div>
@@ -472,6 +790,96 @@ const InterviewPanels = () => {
                   <option value="ROUND_2">Vòng 2</option>
                   <option value="FINAL">Vòng cuối</option>
                 </select>
+              </div>
+
+              {/* Thêm thành viên */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Thành viên hội đồng *</label>
+                <div className="space-y-2 mb-3">
+                  {panelFormData.members.map((member, index) => (
+                    <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                      <span className="flex-1 text-sm text-gray-700">{member.email || member.name}</span>
+                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">{member.role}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPanelFormData({
+                            ...panelFormData,
+                            members: panelFormData.members.filter((_, i) => i !== index)
+                          });
+                        }}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-2">
+                  <select
+                    value={memberFormData.email}
+                    onChange={(e) => {
+                      const selectedUser = users.find(u => u.email === e.target.value);
+                      setMemberFormData({
+                        ...memberFormData,
+                        email: e.target.value,
+                        interviewer_id: selectedUser?.id || null
+                      });
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                  >
+                    <option value="">-- Chọn thành viên --</option>
+                    {users
+                      .filter(u => !panelFormData.members.some(m => m.email === u.email))
+                      .map(user => {
+                        // Hiển thị tên theo format: "Họ tên - Chức vụ" hoặc "first_name last_name"
+                        // Ưu tiên full_name_with_position, sau đó name, sau đó first_name
+                        const displayName = user.full_name_with_position || 
+                                          user.name || 
+                                          (user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.first_name || user.email);
+                        return (
+                          <option key={user.id} value={user.email}>
+                            {displayName} ({user.email})
+                          </option>
+                        );
+                      })}
+                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      value={memberFormData.role}
+                      onChange={(e) => setMemberFormData({ ...memberFormData, role: e.target.value })}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
+                    >
+                      <option value="MEMBER">Thành viên</option>
+                      <option value="LEAD">Trưởng hội đồng</option>
+                      <option value="OBSERVER">Quan sát viên</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (memberFormData.email && memberFormData.interviewer_id) {
+                          const selectedUser = users.find(u => u.email === memberFormData.email);
+                          setPanelFormData({
+                            ...panelFormData,
+                            members: [...panelFormData.members, {
+                              email: memberFormData.email,
+                              interviewer_id: memberFormData.interviewer_id,
+                              name: selectedUser?.full_name_with_position || selectedUser?.name,
+                              role: memberFormData.role
+                            }]
+                          });
+                          setMemberFormData({ email: '', interviewer_id: null, role: 'MEMBER' });
+                        }
+                      }}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                {panelFormData.members.length === 0 && (
+                  <p className="text-xs text-red-600 mt-1">⚠️ Vui lòng thêm ít nhất một thành viên vào hội đồng</p>
+                )}
               </div>
               <div className="flex items-center justify-end gap-4 pt-4">
                 <button type="button" onClick={() => setShowCreatePanel(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">

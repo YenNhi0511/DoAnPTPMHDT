@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Job, RecruitmentProcess, ProcessStep
+from .models import Job, RecruitmentProcess, ProcessStep, SavedJob
 
 
 class ProcessStepSerializer(serializers.ModelSerializer):
@@ -81,6 +81,8 @@ class JobSerializer(serializers.ModelSerializer):
 
 class JobCreateSerializer(serializers.ModelSerializer):
     """Serializer để tạo Job mới"""
+    salary_min = serializers.DecimalField(max_digits=15, decimal_places=0, required=False, allow_null=True)
+    salary_max = serializers.DecimalField(max_digits=15, decimal_places=0, required=False, allow_null=True)
     
     class Meta:
         model = Job
@@ -90,6 +92,27 @@ class JobCreateSerializer(serializers.ModelSerializer):
             'location', 'employment_type', 'positions_count', 'experience_years',
             'status', 'deadline', 'recruitment_process'
         ]
+    
+    def validate(self, attrs):
+        # Convert empty strings to None
+        if attrs.get('salary_min') == '':
+            attrs['salary_min'] = None
+        if attrs.get('salary_max') == '':
+            attrs['salary_max'] = None
+        if attrs.get('salary') == '':
+            attrs['salary'] = None
+        
+        # Validate deadline phải trong tương lai khi publish
+        deadline = attrs.get('deadline')
+        status = attrs.get('status')
+        if deadline and status == Job.Status.OPEN:
+            from django.utils import timezone
+            if deadline < timezone.now():
+                raise serializers.ValidationError({
+                    'deadline': 'Deadline phải trong tương lai khi publish job.'
+                })
+        
+        return attrs
     
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
@@ -113,3 +136,22 @@ class JobListSerializer(serializers.ModelSerializer):
             'status', 'deadline', 'created_by_name', 'company_name', 'applications_count',
             'created_at', 'description'
         ]
+
+
+class SavedJobSerializer(serializers.ModelSerializer):
+    """Serializer cho SavedJob"""
+    job = JobListSerializer(read_only=True)
+    job_id = serializers.UUIDField(write_only=True)
+    
+    class Meta:
+        model = SavedJob
+        fields = ['id', 'job', 'job_id', 'saved_at']
+        read_only_fields = ['id', 'saved_at']
+    
+    def create(self, validated_data):
+        job_id = validated_data.pop('job_id')
+        validated_data['job_id'] = job_id
+        validated_data['user'] = self.context['request'].user
+        job = Job.objects.get(id=job_id)
+        validated_data['job'] = job
+        return super().create(validated_data)

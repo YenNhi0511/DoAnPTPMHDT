@@ -171,9 +171,20 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Email settings (use console backend for development)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'noreply@recruitment.com')
+# Email settings
+# Console backend: chỉ in ra terminal (development)
+# SMTP backend: gửi email thật (production)
+# 
+# Cấu hình email trong file .env (xem .env.example)
+# - Resend SMTP: EMAIL_HOST=smtp.resend.com, EMAIL_HOST_USER=resend
+# - Gmail SMTP: EMAIL_HOST=smtp.gmail.com, EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@recruitment.com')
 
 # Frontend URL for email links
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
@@ -227,3 +238,6 @@ if sys.platform == 'win32':
     CELERY_WORKER_POOL = 'solo'  # Single-threaded pool for Windows
 else:
     CELERY_WORKER_POOL = 'prefork'  # Multiprocessing pool for Linux/Mac
+
+# Gemini AI Configuration
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')

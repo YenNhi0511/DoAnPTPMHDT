@@ -111,7 +111,7 @@ const Jobs = () => {
       <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               value={search}
@@ -246,20 +246,20 @@ const Jobs = () => {
                 )}
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <MapPin className="w-4 h-4 text-gray-600" />
                     <span>{job.location}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4 text-gray-400" />
+                    <Briefcase className="w-4 h-4 text-gray-600" />
                     <span>{employmentTypeLabels[job.employment_type] || job.employment_type}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-gray-400" />
+                    <Clock className="w-4 h-4 text-gray-600" />
                     <span>Hạn: {new Date(job.deadline).toLocaleDateString('vi-VN')}</span>
                   </div>
                   {job.applications_count !== undefined && (
                     <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-400" />
+                      <Users className="w-4 h-4 text-gray-600" />
                       <span>{job.applications_count} ứng viên</span>
                     </div>
                   )}

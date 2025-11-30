@@ -66,13 +66,79 @@ const JobDetail = () => {
 
   const handleApply = async (e) => {
     e.preventDefault();
+    
+    // Validate
+    if (!applyData.cv_file) {
+      alert('Vui lòng chọn file CV');
+      return;
+    }
+    
+    // Validate file type
+    const fileExt = applyData.cv_file.name.split('.').pop().toLowerCase();
+    if (!['pdf', 'doc', 'docx'].includes(fileExt)) {
+      alert('File CV phải là PDF hoặc DOC/DOCX');
+      return;
+    }
+    
+    // Validate file size (max 10MB)
+    if (applyData.cv_file.size > 10 * 1024 * 1024) {
+      alert('File CV không được vượt quá 10MB');
+      return;
+    }
+    
     setApplying(true);
     try {
       await applyToJob(id, applyData);
       setApplySuccess(true);
       setShowApplyForm(false);
-    } catch (error) {
-      alert(error.response?.data?.detail || 'Không thể nộp hồ sơ');
+      setApplyData({
+        cv_file: null,
+        cover_letter: '',
+        candidate_email: '',
+        candidate_name: '',
+      });
+      alert('Nộp hồ sơ thành công!');
+      } catch (error) {
+        console.error('Apply error:', error);
+        console.error('Error response:', error.response?.data);
+        
+        // Hiển thị error message chi tiết hơn
+        let errorMessage = 'Không thể nộp hồ sơ';
+        if (error.response?.data?.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (error.response?.data?.cv_file) {
+          errorMessage = `CV: ${Array.isArray(error.response.data.cv_file) ? error.response.data.cv_file[0] : error.response.data.cv_file}`;
+        } else if (error.response?.data?.job) {
+          errorMessage = `Job: ${Array.isArray(error.response.data.job) ? error.response.data.job[0] : error.response.data.job}`;
+        } else if (error.response?.data?.candidate_email) {
+          errorMessage = `Email: ${Array.isArray(error.response.data.candidate_email) ? error.response.data.candidate_email[0] : error.response.data.candidate_email}`;
+        } else if (error.response?.data) {
+          // Lấy error đầu tiên
+          const firstKey = Object.keys(error.response.data)[0];
+          const firstError = error.response.data[firstKey];
+          errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        // Hiển thị error với màu đỏ rõ ràng
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-md';
+        errorDiv.innerHTML = `
+          <div class="flex items-center gap-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <p class="font-semibold">Lỗi nộp hồ sơ</p>
+              <p class="text-sm mt-1">${errorMessage}</p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(errorDiv);
+        setTimeout(() => {
+          errorDiv.remove();
+        }, 5000);
     } finally {
       setApplying(false);
     }
@@ -176,20 +242,20 @@ const JobDetail = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="flex items-center gap-3 text-gray-600">
-            <MapPin className="w-5 h-5 text-gray-500" />
+            <MapPin className="w-5 h-5 text-gray-700" />
             <span>{job.location}</span>
           </div>
           <div className="flex items-center gap-3 text-gray-600">
-            <Clock className="w-5 h-5 text-gray-500" />
+            <Clock className="w-5 h-5 text-gray-700" />
             <span>Hạn: {new Date(job.deadline).toLocaleDateString('vi-VN')}</span>
           </div>
           <div className="flex items-center gap-3 text-gray-600">
-            <Users className="w-5 h-5 text-gray-500" />
+            <Users className="w-5 h-5 text-gray-700" />
             <span>{job.positions_count || 1} vị trí</span>
           </div>
           {job.experience_years && (
             <div className="flex items-center gap-3 text-gray-600">
-              <Award className="w-5 h-5 text-gray-500" />
+              <Award className="w-5 h-5 text-gray-700" />
               <span>{job.experience_years} năm KN</span>
             </div>
           )}
@@ -231,29 +297,29 @@ const JobDetail = () => {
                 <FileText className="w-5 h-5" /> Ứng tuyển ngay
               </button>
             ) : (
-              <form onSubmit={handleApply} className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Nộp hồ sơ ứng tuyển</h3>
+              <form onSubmit={handleApply} className="space-y-4 bg-white p-6 rounded-lg border border-gray-200">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Nộp hồ sơ ứng tuyển</h3>
 
                 {!user && (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="label">Họ tên *</label>
+                        <label className="label text-gray-900 font-semibold">Họ tên *</label>
                         <input
                           type="text"
                           value={applyData.candidate_name}
                           onChange={(e) => setApplyData({ ...applyData, candidate_name: e.target.value })}
-                          className="input"
+                          className="input bg-white text-gray-900 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                           required
                         />
                       </div>
                       <div>
-                        <label className="label">Email *</label>
+                        <label className="label text-gray-900 font-semibold">Email *</label>
                         <input
                           type="email"
                           value={applyData.candidate_email}
                           onChange={(e) => setApplyData({ ...applyData, candidate_email: e.target.value })}
-                          className="input"
+                          className="input bg-white text-gray-900 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                           required
                         />
                       </div>
@@ -262,24 +328,24 @@ const JobDetail = () => {
                 )}
 
                 <div>
-                  <label className="label">CV (PDF/DOCX) *</label>
+                  <label className="label text-gray-900 font-semibold">CV (PDF/DOCX) *</label>
                   <div className="relative">
                     <input
                       type="file"
                       accept=".pdf,.doc,.docx"
                       onChange={(e) => setApplyData({ ...applyData, cv_file: e.target.files[0] })}
-                      className="input file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:cursor-pointer"
+                      className="input bg-white text-gray-900 border-gray-300 focus:border-blue-500 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:cursor-pointer hover:file:bg-blue-700"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="label">Thư xin việc</label>
+                  <label className="label text-gray-900 font-semibold">Thư xin việc</label>
                   <textarea
                     value={applyData.cover_letter}
                     onChange={(e) => setApplyData({ ...applyData, cover_letter: e.target.value })}
-                    className="input min-h-[100px]"
+                    className="input min-h-[100px] bg-white text-gray-900 border-gray-300 focus:border-blue-500 focus:ring-blue-500 placeholder:text-gray-500"
                     placeholder="Giới thiệu về bản thân và lý do bạn phù hợp với vị trí này..."
                   />
                 </div>
@@ -307,9 +373,9 @@ const JobDetail = () => {
         )}
 
         {applySuccess && (
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 flex items-center gap-3">
-            <CheckCircle className="w-5 h-5" />
-            <span>Hồ sơ của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ sớm.</span>
+          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            <span className="font-medium">Hồ sơ của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ sớm.</span>
           </div>
         )}
       </div>
@@ -327,11 +393,11 @@ const JobDetail = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ứng viên</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày nộp</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Điểm AI</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Ứng viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Ngày nộp</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Điểm AI</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Trạng thái</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"></th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

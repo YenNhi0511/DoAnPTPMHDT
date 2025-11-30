@@ -12,17 +12,17 @@ Mô tả: quy trình nộp hồ sơ (ứng viên) và xử lý phía server (syn
 Người dùng     Frontend       Backend API      Database       Worker(Celery)     External
 ------------   ----------     -------------    -----------    ---------------    ---------
 Fill form &    POST /api/     validate & create  INSERT         emit signal       call Gemini
-upload CV      jobs/{id}/      Application        application    (parse_cv,         send email
-               apply/                          (201 Created)   screen_cv)         via SMTP
+upload CV      jobs/{id}/      Application        application    (parse_cv,         API
+               apply/                          (201 Created)   screen_cv)
 
 Luồng:
 1) Người dùng -> Frontend: Fill form & Upload CV
 2) Frontend -> Backend API: POST /api/jobs/{id}/apply/
 3) Backend API validates -> save to Database (Application)
-4) Backend API triggers Signals -> Worker (Celery)
-5) Worker (Celery) executes: parse_cv_task -> screen_cv_task (call Gemini)
-6) Worker updates Database with ai_score & ai_analysis
-7) Worker triggers send_confirmation_email_task -> SMTP (External)
+4) Backend API creates System Notification for candidate
+5) Backend API triggers Signals -> Worker (Celery)
+6) Worker (Celery) executes: parse_cv_task -> screen_cv_task (call Gemini)
+7) Worker updates Database with ai_score & ai_analysis
 8) Recruiter sees updates on Recruiter Dashboard
 ```
 
@@ -38,13 +38,12 @@ Candidate        Frontend           Backend(API)       DB          Celery Worker
 Fill form &      POST /api/jobs/{id}/apply/ -->
 upload CV        --> Backend(API): create Application
                                 --> DB: INSERT application
+                                --> DB: CREATE notification
                                 <- 201 Created
-                                --> Celery: send_confirmation_email_task
                                 --> Celery: parse_cv_task, screen_cv_task
 Celery Worker    reads CV from DB
                  calls Gemini --> Gemini returns ai_score & ai_analysis
                  updates DB with ai_*
-                 triggers SMTP: send email -> delivered
 ```
 
 ---
@@ -57,8 +56,9 @@ Sử dụng flowchart để thể hiện quan hệ: Client, API, Model, Worker, 
 Candidate --> Frontend (apply)
 Frontend --> Backend(API): POST /api/jobs/{id}/apply/
 Backend(API) --> Application Model: create application
+Backend(API) --> Notification Model: create notification
 Application Model --emits--> Celery Worker (parse_cv_task, screen_cv_task)
-Celery Worker --> Gemini / SMTP: call AI / send emails
+Celery Worker --> Gemini API: call AI screening
 Recruiter --> Backend(API): view / action (review apps)
 ```
 
@@ -232,9 +232,9 @@ DFD Level 0: High-level context (ASCII)
   +----------------------+        +----------------------+
     ^     |    ^
     |     |    |
- manage|   |call|send email
+ manage|   |call|
     |     v    |
-  Recruiter    Gemini / SMTP (External)
+  Recruiter    Gemini API (External)
 ```
 
 - DFD Level 1: Decompose Application Management & Screening
@@ -245,10 +245,12 @@ DFD Level 1: Application Management & Screening (ASCII)
 Candidate -> Frontend UI
 Frontend -> Backend(API): POST /api/jobs/{id}/apply/
 Backend(API) -> DB: create Application record
+Backend(API) -> DB: create Notification record
 Backend(API) -> Celery Worker: trigger parse_cv_task & screen_cv_task
 Celery Worker -> Extractor: parse CV -> store extracted_text to DB
 Celery Worker -> AI Engine (Gemini) -> store ai_analysis & ai_score to DB
 DB -> Recruiter Dashboard -> Recruiter reviews applications
+DB -> Candidate Dashboard -> Candidate sees notification
 ```
 
 - DFD Level 2: Decompose AI Screening flow

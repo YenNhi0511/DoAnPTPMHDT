@@ -1,0 +1,24 @@
+Xin chào {{ candidate.name }},
+
+Chúc mừng! Chúng tôi rất vui mừng thông báo rằng hồ sơ ứng tuyển của bạn cho vị trí {{ job.title }} đã được chấp nhận.
+
+Chúng tôi đánh giá cao kinh nghiệm và kỹ năng của bạn, và chúng tôi muốn mời bạn tham gia buổi phỏng vấn để tìm hiểu thêm về bạn cũng như cơ hội làm việc tại {{ company_name }}.
+
+THÔNG TIN VỊ TRÍ:
+- Vị trí: {{ job.title }}
+- Phòng ban: {{ job.department|default:"Chưa xác định" }}
+- Địa điểm: {{ job.location }}
+
+BƯỚC TIẾP THEO:
+Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để sắp xếp lịch phỏng vấn phù hợp. Vui lòng kiểm tra email thường xuyên hoặc đăng nhập vào hệ thống để xem thông báo mới nhất.
+
+Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email này hoặc số điện thoại đã cung cấp.
+
+Chúng tôi mong chờ được gặp bạn và tìm hiểu thêm về bạn trong buổi phỏng vấn sắp tới.
+
+Trân trọng,
+{{ company_name }}
+Team Tuyển dụng
+
+---
+Email này được gửi tự động từ hệ thống tuyển dụng. Vui lòng không trả lời email này.

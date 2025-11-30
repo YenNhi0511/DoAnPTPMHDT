@@ -50,6 +50,8 @@ export const getMe = () => api.get('/users/me/');
 export const changePassword = (data) => api.post('/users/change_password/', data);
 export const verifyEmail = (token) => api.post('/users/verify_email/', { token });
 export const resendVerification = (email) => api.post('/users/resend_verification/', { email });
+export const generateOTP = (email) => api.post('/users/generate_otp/', { email });
+export const verifyOTP = (email, otp_code) => api.post('/users/verify_otp/', { email, otp_code });
 
 // Jobs APIs
 export const getJobs = (params) => api.get('/jobs/', { params });
@@ -61,6 +63,11 @@ export const publishJob = (id) => api.post(`/jobs/${id}/publish/`);
 export const closeJob = (id) => api.post(`/jobs/${id}/close/`);
 export const getJobStats = () => api.get('/jobs/stats/');
 export const getJobApplications = (id) => api.get(`/jobs/${id}/applications/`);
+export const saveJob = (id) => api.post(`/jobs/${id}/save/`);
+export const unsaveJob = (id) => api.delete(`/jobs/${id}/save/`);
+export const checkJobSaved = (id) => api.get(`/jobs/${id}/is_saved/`);
+export const getSavedJobs = (params) => api.get('/saved-jobs/', { params });
+export const deleteSavedJob = (id) => api.delete(`/saved-jobs/${id}/`);
 
 // Applications APIs
 export const getApplications = (params) => api.get('/applications/', { params });
@@ -89,6 +96,7 @@ export const applyToJob = (jobId, data) => {
 };
 export const updateApplicationStatus = (id, data) => api.patch(`/applications/${id}/update_status/`, data);
 export const screenApplication = (id) => api.post(`/applications/${id}/screen/`);
+export const inviteInterview = (id) => api.post(`/applications/${id}/invite_interview/`);
 
 // Interviews APIs
 export const getInterviews = (params) => api.get('/interviews/', { params });
@@ -97,12 +105,15 @@ export const createInterview = (data) => api.post('/interviews/', data);
 export const updateInterview = (id, data) => api.patch(`/interviews/${id}/`, data);
 export const deleteInterview = (id) => api.delete(`/interviews/${id}/`);
 export const submitInterviewFeedback = (id, data) => api.post(`/interviews/${id}/submit_feedback/`, data);
+export const sendInterviewResultEmail = (id) => api.post(`/interviews/${id}/send_result_email/`);
 
 // Interview Panels APIs
 export const getInterviewPanels = (params) => api.get('/interview-panels/', { params });
+export const getInterviewPanel = (id) => api.get(`/interview-panels/${id}/`);
 export const createInterviewPanel = (data) => api.post('/interview-panels/', data);
 export const updateInterviewPanel = (id, data) => api.patch(`/interview-panels/${id}/`, data);
 export const deleteInterviewPanel = (id) => api.delete(`/interview-panels/${id}/`);
+export const getPanelStats = () => api.get('/interview-panels/stats/');
 
 // Results APIs
 export const getResults = (params) => api.get('/results/', { params });
@@ -130,6 +141,7 @@ export const markAllNotificationsRead = () => api.post('/notifications/mark_all_
 // Users APIs
 export const getUsers = (params) => api.get('/users/', { params });
 export const getUser = (id) => api.get(`/users/${id}/`);
+export const createUser = (data) => api.post('/users/', data);
 export const updateUser = (id, data) => api.patch(`/users/${id}/`, data);
 export const updateMe = (data) => api.patch('/users/me/', data);
 export const deleteUser = (id) => api.delete(`/users/${id}/`);

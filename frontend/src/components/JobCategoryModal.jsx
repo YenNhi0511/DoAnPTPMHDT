@@ -62,7 +62,7 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
           <h2 className="text-2xl font-bold text-white">Chọn Nhóm nghề, Nghề hoặc Chuyên môn</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-400 hover:text-white"
+            className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-600 hover:text-white"
           >
             <X className="w-6 h-6" />
           </button>
@@ -71,7 +71,7 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
         {/* Search */}
         <div className="p-6 border-b border-slate-700">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               value={searchKeyword}
@@ -87,7 +87,7 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
           {/* Column 1: NHÓM NGHỀ */}
           <div className="w-1/3 border-r border-slate-700 overflow-y-auto">
             <div className="p-4 bg-slate-800/50">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase">NHÓM NGHỀ</h3>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">NHÓM NGHỀ</h3>
             </div>
             <div className="p-2">
               {searchKeyword && searchResults ? (
@@ -135,7 +135,7 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
           {/* Column 2: NGHỀ */}
           <div className="w-1/3 border-r border-slate-700 overflow-y-auto">
             <div className="p-4 bg-slate-800/50">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase">NGHỀ</h3>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">NGHỀ</h3>
             </div>
             <div className="p-2">
               {selectedGroup ? (
@@ -158,7 +158,7 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
                   ))}
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
+                <div className="flex items-center justify-center h-full text-gray-700">
                   <div className="text-center">
                     <p className="text-sm">Vui lòng chọn Nhóm nghề</p>
                   </div>
@@ -170,7 +170,7 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
           {/* Column 3: VỊ TRÍ CHUYÊN MÔN */}
           <div className="w-1/3 overflow-y-auto">
             <div className="p-4 bg-slate-800/50">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase">VỊ TRÍ CHUYÊN MÔN</h3>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">VỊ TRÍ CHUYÊN MÔN</h3>
             </div>
             <div className="p-2">
               {selectedGroup && selectedProfession ? (
@@ -200,7 +200,7 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
                   ))}
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
+                <div className="flex items-center justify-center h-full text-gray-700">
                   <div className="text-center">
                     <p className="text-sm">Vui lòng chọn Nghề</p>
                   </div>
@@ -215,13 +215,22 @@ const JobCategoryModal = ({ isOpen, onClose, onSelect, selectedCategories = [] }
           <div className="flex items-center gap-4">
             <button
               onClick={handleDeselectAll}
-              className="text-sm text-gray-400 hover:text-white"
+              className="text-sm text-gray-600 hover:text-white transition-colors"
             >
               Bỏ chọn tất cả
             </button>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-700">
               Đã chọn: {selectedPositions.size}
             </span>
+            {selectedPositions.size > 0 && (
+              <button
+                onClick={handleDeselectAll}
+                className="text-sm text-red-400 hover:text-red-300 transition-colors flex items-center gap-1"
+              >
+                <X className="w-4 h-4" />
+                Hủy các mục đã chọn
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <button

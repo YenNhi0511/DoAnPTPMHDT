@@ -154,7 +154,7 @@ const RecruitmentPipeline = () => {
               {/* Applications List */}
               <div className="flex-1 p-3 space-y-3 overflow-y-auto min-h-[400px] max-h-[600px]">
                 {stageApplications.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">
+                  <div className="text-center py-8 text-gray-600">
                     <p className="text-sm">Không có ứng viên</p>
                   </div>
                 ) : (
@@ -168,7 +168,7 @@ const RecruitmentPipeline = () => {
                         className="p-4 bg-white border-2 border-gray-200 rounded-lg hover:border-green-300 hover:shadow-md transition-all cursor-move group"
                       >
                         <div className="flex items-start gap-2 mb-3">
-                          <GripVertical className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                          <GripVertical className="w-4 h-4 text-gray-600 group-hover:text-gray-600" />
                           <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-lg flex items-center justify-center flex-shrink-0">
                             <span className="text-white font-semibold text-sm">
                               {application.candidate_name?.[0] || application.candidate_email?.[0] || 'U'}
@@ -178,7 +178,7 @@ const RecruitmentPipeline = () => {
                             <h4 className="font-semibold text-gray-900 text-sm mb-1 truncate">
                               {application.candidate_name || application.candidate_email}
                             </h4>
-                            <p className="text-xs text-gray-500 truncate">
+                            <p className="text-xs text-gray-700 truncate">
                               {application.job_title}
                             </p>
                           </div>
@@ -193,7 +193,7 @@ const RecruitmentPipeline = () => {
                               </span>
                             </div>
                           )}
-                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <div className="flex items-center gap-1 text-xs text-gray-700">
                             <Calendar className="w-3 h-3" />
                             <span>
                               {new Date(application.applied_at).toLocaleDateString('vi-VN')}

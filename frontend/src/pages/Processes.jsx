@@ -176,7 +176,7 @@ const Processes = () => {
                   {formData.steps.map((step, index) => (
                     <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2 mb-3">
-                        <GripVertical className="w-4 h-4 text-gray-400" />
+                        <GripVertical className="w-4 h-4 text-gray-600" />
                         <span className="text-sm text-gray-600 font-medium">Bước {index + 1}</span>
                         <button
                           type="button"
@@ -238,7 +238,7 @@ const Processes = () => {
                   ))}
 
                   {formData.steps.length === 0 && (
-                    <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-center py-8 text-gray-700 bg-gray-50 rounded-lg border border-gray-200">
                       Chưa có bước nào. Nhấn "Thêm bước" để bắt đầu.
                     </div>
                   )}
@@ -272,7 +272,7 @@ const Processes = () => {
         </div>
       ) : processes.length === 0 ? (
         <div className="bg-white rounded-xl shadow-md border border-gray-200 text-center py-12">
-          <ClipboardList className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <ClipboardList className="w-16 h-16 text-gray-600 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Chưa có quy trình nào</h3>
           <p className="text-gray-600">Tạo quy trình tuyển dụng đầu tiên của bạn</p>
         </div>

@@ -1,7 +1,7 @@
 Cách sử dụng
 Chạy từng role riêng:
 
-# ADMIN (Port 3000)
+# ADMIN (Port 3003)
 
 cd frontend
 npm run start:admin
@@ -15,7 +15,7 @@ npm run start:candidate
 npm run start:recruiter
 
 Hoặc double-click các file .bat:
-start-admin.bat → http://localhost:3000
+start-admin.bat → http://localhost:3003
 start-candidate.bat → http://localhost:3001
 start-recruiter.bat → http://localhost:3002
 start-all-roles.bat → Chạy cả 3 cùng lúc
@@ -72,6 +72,26 @@ Hệ thống quản lý tuyển dụng nhân sự toàn diện với AI-powered 
 - **Tailwind CSS** - Styling
 - **Recharts** - Charts & Analytics
 - **Axios** - HTTP client
+
+## ⚡ CHẠY PROJECT NHANH (1 CLICK)
+
+**Cách nhanh nhất để chạy project:**
+
+1. **Double-click file:** `START-PROJECT-COMPLETE.bat`
+2. **Đợi vài giây** - Script sẽ tự động setup và khởi động tất cả
+3. **Mở trình duyệt:**
+   - Admin: http://localhost:3003
+   - Recruiter: http://localhost:3002
+   - Candidate: http://localhost:3001
+
+**Tài khoản Admin:**
+
+- Email: `admin@goodcv.com`
+- Password: `admin123`
+
+> 💡 Xem chi tiết: [HUONG-DAN-CHAY-PROJECT.md](./HUONG-DAN-CHAY-PROJECT.md)
+
+---
 
 ## 🚀 Cài đặt nhanh (5 phút)
 
@@ -142,7 +162,7 @@ cd frontend
 npm start
 ```
 
-Truy cập: http://localhost:3000
+Truy cập: http://localhost:3003
 
 ## 📖 Cài đặt chi tiết
 
@@ -265,7 +285,7 @@ celery -A recruitment_system worker -l info
 
 ### Truy cập
 
-- **Frontend:** http://localhost:3000
+- **Frontend:** http://localhost:3003 (Admin), http://localhost:3001 (Candidate), http://localhost:3002 (Recruiter)
 - **Backend API:** http://localhost:8000/api
 - **Django Admin:** http://localhost:8000/admin
 

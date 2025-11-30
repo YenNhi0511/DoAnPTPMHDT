@@ -25,7 +25,7 @@ const RecruiterLayout = ({ children }) => {
     { path: '/jobs', icon: Briefcase, label: 'Quản lý việc làm', roles: ['RECRUITER'] },
     { path: '/applications', icon: FileText, label: 'Hồ sơ ứng tuyển', roles: ['RECRUITER'] },
     { path: '/pipeline', icon: ClipboardList, label: 'Pipeline tuyển dụng', roles: ['RECRUITER'] },
-    { path: '/dashboard', icon: Calendar, label: 'Lịch phỏng vấn', roles: ['RECRUITER'], hash: '#interviews' },
+    { path: '/interviews', icon: Calendar, label: 'Lịch phỏng vấn', roles: ['RECRUITER'] },
     { path: '/panels', icon: Users, label: 'Hội đồng tuyển dụng', roles: ['RECRUITER'] },
     { path: '/results', icon: Award, label: 'Kết quả tuyển dụng', roles: ['RECRUITER'] },
     { path: '/processes', icon: ClipboardList, label: 'Quy trình tuyển dụng', roles: ['RECRUITER'] },
@@ -72,7 +72,7 @@ const RecruiterLayout = ({ children }) => {
                       {user?.first_name} {user?.last_name}
                     </p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                  <ChevronDown className="w-4 h-4 text-gray-700" />
                 </button>
 
                 {userMenuOpen && (
@@ -84,7 +84,7 @@ const RecruiterLayout = ({ children }) => {
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                       <div className="px-4 py-2 border-b border-gray-100">
                         <p className="text-sm font-medium text-gray-900">{user?.first_name} {user?.last_name}</p>
-                        <p className="text-xs text-gray-500">{user?.email}</p>
+                        <p className="text-xs text-gray-700">{user?.email}</p>
                       </div>
                       
                       <Link
@@ -154,14 +154,33 @@ const RecruiterLayout = ({ children }) => {
           <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto min-h-0">
             {recruiterMenuItems.map((item) => {
               const Icon = item.icon;
+              // Check if path contains hash
+              const hasHash = item.path.includes('#');
+              const [basePath, hash] = hasHash ? item.path.split('#') : [item.path, null];
+              
               // Check if active - for dashboard with hash, check if we're on dashboard
-              const isActive = item.hash 
-                ? location.pathname === item.path && location.hash === item.hash
-                : location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+              const isActive = hasHash
+                ? location.pathname === basePath && (location.hash === `#${hash}` || location.hash === '')
+                : location.pathname === basePath || location.pathname.startsWith(basePath + '/');
+              
+              const handleClick = (e) => {
+                if (hasHash) {
+                  e.preventDefault();
+                  navigate(basePath);
+                  setTimeout(() => {
+                    const element = document.getElementById(hash);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }, 200);
+                }
+              };
+              
               return (
                 <Link
-                  key={`${item.path}${item.hash || ''}`}
-                  to={item.hash ? `${item.path}${item.hash}` : item.path}
+                  key={item.path}
+                  to={hasHash ? basePath : item.path}
+                  onClick={handleClick}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                     isActive
                       ? 'bg-green-50 text-green-700 border-2 border-green-300 font-semibold'

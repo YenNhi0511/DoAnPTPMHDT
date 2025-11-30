@@ -14,6 +14,7 @@ import JobForm from './pages/JobForm';
 import JobDetail from './pages/JobDetail';
 import Applications from './pages/Applications';
 import InterviewPanels from './pages/InterviewPanels';
+import Interviews from './pages/Interviews';
 import Results from './pages/Results';
 import Processes from './pages/Processes';
 import Reports from './pages/Reports';
@@ -24,6 +25,7 @@ import AdminUsers from './pages/AdminUsers';
 import AdminSettings from './pages/AdminSettings';
 import Profile from './pages/Profile';
 import VerifyEmail from './pages/VerifyEmail';
+import VerifyOTP from './pages/VerifyOTP';
 import Settings from './pages/Settings';
 import SavedJobs from './pages/SavedJobs';
 import CandidateInterviews from './pages/CandidateInterviews';
@@ -32,7 +34,7 @@ import CompanyPage from './pages/CompanyPage';
 import RecruitmentPipeline from './pages/RecruitmentPipeline';
 import AdminCompanies from './pages/AdminCompanies';
 import AdminJobs from './pages/AdminJobs';
-import AdminCandidates from './pages/AdminCandidates';
+import AdminInterviewers from './pages/AdminInterviewers';
 
 // Lấy role từ environment variable
 const APP_ROLE = process.env.REACT_APP_ROLE || 'ALL';
@@ -54,9 +56,9 @@ const ProtectedRoute = ({ children, roles, useCandidateLayout = false }) => {
   }
 
   if (roles && !roles.includes(user.role)) {
-    // Redirect về dashboard phù hợp với role (3 roles chính)
-    if (user.role === 'CANDIDATE') {
-      return <Navigate to="/candidate/dashboard" replace />;
+      // Redirect về dashboard phù hợp với role (3 roles chính)
+      if (user.role === 'CANDIDATE') {
+        return <Navigate to="/careers" replace />;
     } else if (user.role === 'ADMIN') {
       return <Navigate to="/admin/dashboard" replace />;
     } else if (user.role === 'RECRUITER') {
@@ -103,7 +105,7 @@ const PublicRoute = ({ children }) => {
     if (user.role === 'ADMIN') {
       return <Navigate to="/admin/dashboard" replace />;
     } else if (user.role === 'CANDIDATE') {
-      return <Navigate to="/candidate/dashboard" replace />;
+      return <Navigate to="/careers" replace />;
     } else if (user.role === 'RECRUITER') {
       return <Navigate to="/dashboard" replace />;
     } else {
@@ -119,15 +121,24 @@ function AppRoutes() {
   // Hiển thị TẤT CẢ routes - Phân quyền dựa trên user đã đăng nhập
   // Cho phép chạy 3 roles trên cùng 1 port, test bằng cách đăng nhập với tài khoản khác nhau
 
+  // Redirect root path based on APP_ROLE
+  const RootRedirect = () => {
+    if (APP_ROLE === 'ADMIN') {
+      return <Navigate to="/login" replace />;
+    }
+    return <Home />;
+  };
+
   return (
     <Routes>
       {/* ============================================
           PUBLIC ROUTES (Không cần đăng nhập)
           ============================================ */}
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<RootRedirect />} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
       <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/verify-otp" element={<VerifyOTP />} />
       <Route path="/careers" element={<Careers />} />
       <Route path="/jobs/:id" element={<JobDetail />} />
       <Route path="/companies/:id" element={<CompanyPage />} />
@@ -136,9 +147,10 @@ function AppRoutes() {
           CANDIDATE ROUTES (Ứng viên)
           Phân quyền: ProtectedRoute sẽ check role của user
           ============================================ */}
+      {/* Candidate dashboard removed - redirect to careers */}
       <Route 
         path="/candidate/dashboard" 
-        element={<ProtectedRoute useCandidateLayout><CandidateDashboard /></ProtectedRoute>} 
+        element={<Navigate to="/careers" replace />} 
       />
       <Route 
         path="/profile" 
@@ -149,7 +161,7 @@ function AppRoutes() {
         element={<ProtectedRoute useCandidateLayout><SavedJobs /></ProtectedRoute>} 
       />
       <Route 
-        path="/interviews" 
+        path="/candidate/interviews" 
         element={<ProtectedRoute useCandidateLayout><CandidateInterviews /></ProtectedRoute>} 
       />
       <Route 
@@ -192,6 +204,11 @@ function AppRoutes() {
         element={<ProtectedRoute roles={['RECRUITER']}><RecruitmentPipeline /></ProtectedRoute>} 
       />
 
+      {/* Interviews */}
+      <Route 
+        path="/interviews" 
+        element={<ProtectedRoute roles={['RECRUITER']}><Interviews /></ProtectedRoute>} 
+      />
 
       {/* Interview Panels */}
       <Route 
@@ -246,10 +263,6 @@ function AppRoutes() {
       <Route 
         path="/admin/jobs" 
         element={<ProtectedRoute roles={['ADMIN']}><AdminJobs /></ProtectedRoute>} 
-      />
-      <Route 
-        path="/admin/candidates" 
-        element={<ProtectedRoute roles={['ADMIN']}><AdminCandidates /></ProtectedRoute>} 
       />
 
       {/* ============================================

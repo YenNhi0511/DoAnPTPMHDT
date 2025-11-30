@@ -112,12 +112,12 @@ const CompanyInfo = () => {
           }`}
         >
           <div className="flex items-center gap-3">
-            <Search className={`w-6 h-6 ${searchMode === 'search' ? 'text-green-600' : 'text-gray-400'}`} />
+            <Search className={`w-6 h-6 ${searchMode === 'search' ? 'text-green-600' : 'text-gray-600'}`} />
             <div className="text-left">
               <p className={`font-medium ${searchMode === 'search' ? 'text-green-700' : 'text-gray-700'}`}>
                 Tìm kiếm thông tin công ty
               </p>
-              <p className="text-xs text-gray-500">Dành cho Doanh nghiệp đã có trên TopCV</p>
+              <p className="text-xs text-gray-700">Dành cho Doanh nghiệp đã có trên TopCV</p>
             </div>
           </div>
         </button>
@@ -131,12 +131,12 @@ const CompanyInfo = () => {
           }`}
         >
           <div className="flex items-center gap-3">
-            <Plus className={`w-6 h-6 ${searchMode === 'create' ? 'text-green-600' : 'text-gray-400'}`} />
+            <Plus className={`w-6 h-6 ${searchMode === 'create' ? 'text-green-600' : 'text-gray-600'}`} />
             <div className="text-left">
               <p className={`font-medium ${searchMode === 'create' ? 'text-green-700' : 'text-gray-700'}`}>
                 Tạo công ty mới
               </p>
-              <p className="text-xs text-gray-500">Dành cho Doanh nghiệp lần đầu sử dụng TopCV</p>
+              <p className="text-xs text-gray-700">Dành cho Doanh nghiệp lần đầu sử dụng TopCV</p>
             </div>
           </div>
           {searchMode === 'create' && (
@@ -150,7 +150,7 @@ const CompanyInfo = () => {
         <label className="block text-sm font-medium text-gray-700 mb-2">Logo công ty</label>
         <div className="flex items-center gap-4">
           <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300">
-            <Building className="w-12 h-12 text-gray-400" />
+            <Building className="w-12 h-12 text-gray-600" />
           </div>
           <button
             type="button"
@@ -240,7 +240,7 @@ const CompanyInfo = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
               <div className="flex items-center">
-                <span className="px-3 py-2 bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg text-gray-500 text-sm">
+                <span className="px-3 py-2 bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg text-gray-700 text-sm">
                   https://
                 </span>
                 <input
@@ -302,7 +302,7 @@ const CompanyInfo = () => {
                 placeholder="Nhập mô tả về công ty..."
                 className="input w-full"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-700 mt-1">
                 TopCV khuyến khích độ dài tối thiểu 100 từ
               </p>
             </div>

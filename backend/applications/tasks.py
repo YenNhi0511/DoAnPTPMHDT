@@ -1,38 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 from recruitment_system.celery import app
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.conf import settings
 from .models import Application
 import os
 import json
-
-@app.task(bind=True)
-def send_confirmation_email_task(self, application_id):
-    try:
-        app_obj = Application.objects.get(id=application_id)
-    except Application.DoesNotExist:
-        return
-
-    subject = f"Xác nhận hồ sơ - {app_obj.job.title}"
-    to_email = [app_obj.candidate.email]
-    context = {
-        'candidate': app_obj.candidate,
-        'job': app_obj.job,
-        'application': app_obj,
-    }
-
-    # Render text and html (simple fallback)
-    text_content = render_to_string('email/application_received.txt', context)
-    html_content = render_to_string('email/application_received.html', context)
-
-    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, to_email)
-    if html_content:
-        msg.attach_alternative(html_content, 'text/html')
-    try:
-        msg.send()
-    except Exception as e:
-        print('Failed to send confirmation email:', e)
+import re
 
 
 @app.task(bind=True)
@@ -71,90 +42,148 @@ def parse_cv_task(self, application_id):
 
 @app.task(bind=True)
 def screen_cv_task(self, application_id):
+    """AI Screening CV sử dụng Google Gemini API"""
     try:
         app_obj = Application.objects.get(id=application_id)
     except Application.DoesNotExist:
+        print(f'Application {application_id} not found')
         return
 
-    # If GEMINI API configured, call it, otherwise fake a result
-    score = None
+    # Get extracted CV text
     analysis = app_obj.ai_analysis or {}
+    cv_text = analysis.get('extracted_cv_text', '')
+    
+    if not cv_text:
+        print(f'No CV text extracted for application {application_id}')
+        # Set default score if no CV text
+        app_obj.ai_score = 0.0
+        app_obj.ai_analysis = {
+            **analysis,
+            'ai_response': 'Không thể đọc được nội dung CV. Vui lòng kiểm tra lại file CV.',
+            'error': 'No CV text extracted'
+        }
+        app_obj.status = Application.Status.SCREENING
+        app_obj.save()
+        return
 
+    # Get Gemini API key from settings
     from django.conf import settings
-    gemini_key = getattr(settings, 'GEMINI_API_KEY', '')
+    gemini_key = os.environ.get('GEMINI_API_KEY', getattr(settings, 'GEMINI_API_KEY', ''))
 
-    if gemini_key:
+    if not gemini_key:
+        print('GEMINI_API_KEY not configured, using fallback scoring')
+        # Fallback: Simple rule-based scoring
+        score = calculate_fallback_score(cv_text, app_obj.job)
+        analysis['ai_response'] = 'AI chưa được cấu hình. Sử dụng đánh giá cơ bản.'
+        analysis['method'] = 'fallback'
+    else:
         try:
             import google.generativeai as genai
             genai.configure(api_key=gemini_key)
-            prompt = f"Rate candidate for job {app_obj.job.title} with JD: {app_obj.job.requirements}\nCV: {analysis.get('extracted_cv_text','')[:1000]}"
-            # A very simple usage - check the API docs to implement properly
-            resp = genai.generate_text(model='gemini-1.0', input=prompt)
-            # Parse resp - this depends on the API's response schema (adjust accordingly)
-            text = str(resp)
-            # naive parsing for demo
-            analysis['ai_response'] = text
-            score = 50
-        except Exception as e:
-            print('Gemini error:', e)
-            score = 50
-    else:
-        # Fake score
-        score = 55
-        analysis['ai_response'] = 'No AI key provided — generated demo score.'
+            
+            # Use Gemini 1.5 Pro model
+            model = genai.GenerativeModel('gemini-1.5-pro')
+            
+            # Create comprehensive prompt for CV evaluation
+            prompt = f"""Bạn là chuyên gia tuyển dụng. Hãy đánh giá CV của ứng viên cho vị trí "{app_obj.job.title}".
 
+THÔNG TIN VỊ TRÍ:
+- Tiêu đề: {app_obj.job.title}
+- Mô tả: {app_obj.job.description[:500]}
+- Yêu cầu: {app_obj.job.requirements[:1000]}
+- Kinh nghiệm yêu cầu: {app_obj.job.experience_years or 'Không yêu cầu'} năm
+
+NỘI DUNG CV:
+{cv_text[:4000]}
+
+Hãy đánh giá CV và trả về kết quả theo format JSON:
+{{
+    "score": <số điểm từ 0-100>,
+    "strengths": ["điểm mạnh 1", "điểm mạnh 2", ...],
+    "weaknesses": ["điểm yếu 1", "điểm yếu 2", ...],
+    "match_level": "<Rất phù hợp/Phù hợp/Không phù hợp>",
+    "recommendation": "<Nên phỏng vấn/Nên xem xét/Không phù hợp>",
+    "summary": "<tóm tắt ngắn gọn về ứng viên>"
+}}
+
+Chỉ trả về JSON, không có text thêm."""
+
+            # Generate response
+            response = model.generate_content(prompt)
+            response_text = response.text.strip()
+            
+            # Parse JSON response
+            # Extract JSON from response (remove markdown code blocks if any)
+            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+            if json_match:
+                response_json = json.loads(json_match.group())
+                score = float(response_json.get('score', 50))
+                analysis['ai_response'] = response_text
+                analysis['parsed_response'] = response_json
+                analysis['method'] = 'gemini-1.5-pro'
+            else:
+                # Fallback if JSON parsing fails
+                print('Failed to parse Gemini response as JSON, using fallback')
+                score = calculate_fallback_score(cv_text, app_obj.job)
+                analysis['ai_response'] = response_text
+                analysis['method'] = 'gemini-fallback'
+                
+        except json.JSONDecodeError as e:
+            print(f'JSON decode error: {e}')
+            score = calculate_fallback_score(cv_text, app_obj.job)
+            analysis['ai_response'] = f'Lỗi phân tích phản hồi AI: {str(e)}'
+            analysis['method'] = 'fallback'
+        except Exception as e:
+            print(f'Gemini API error: {e}')
+            import traceback
+            traceback.print_exc()
+            # Fallback scoring
+            score = calculate_fallback_score(cv_text, app_obj.job)
+            analysis['ai_response'] = f'Lỗi khi gọi Gemini API: {str(e)}. Sử dụng đánh giá cơ bản.'
+            analysis['error'] = str(e)
+            analysis['method'] = 'fallback'
+
+    # Update application
     app_obj.ai_score = float(score)
     app_obj.ai_analysis = analysis
+    app_obj.status = Application.Status.SCREENING
     app_obj.save()
+    
+    print(f'✅ CV screening completed for application {application_id}: Score = {score}')
 
 
-@app.task(bind=True)
-def send_result_email_task(self, result_id):
-    # Placeholder for sending recruitment result emails
-    from .models import RecruitmentResult
-    try:
-        res = RecruitmentResult.objects.get(id=result_id)
-    except Exception:
-        return
+def calculate_fallback_score(cv_text, job):
+    """Fallback scoring khi không có Gemini API"""
+    score = 50.0  # Base score
+    
+    # Simple keyword matching
+    cv_lower = cv_text.lower()
+    job_title_lower = job.title.lower()
+    job_req_lower = job.requirements.lower() if job.requirements else ''
+    
+    # Check if CV contains job title keywords
+    title_words = job_title_lower.split()
+    title_matches = sum(1 for word in title_words if len(word) > 3 and word in cv_lower)
+    if title_matches > 0:
+        score += min(20, title_matches * 5)
+    
+    # Check for experience keywords
+    exp_keywords = ['kinh nghiệm', 'experience', 'năm', 'year', 'thực tập', 'intern']
+    exp_matches = sum(1 for kw in exp_keywords if kw in cv_lower)
+    if exp_matches > 0:
+        score += min(15, exp_matches * 3)
+    
+    # Check for skills keywords
+    skill_keywords = ['kỹ năng', 'skill', 'thành thạo', 'proficient', 'chứng chỉ', 'certificate']
+    skill_matches = sum(1 for kw in skill_keywords if kw in cv_lower)
+    if skill_matches > 0:
+        score += min(15, skill_matches * 3)
+    
+    return min(100, max(0, score))
 
-    to_email = [res.application.candidate.email]
-    subject = f"Kết quả tuyển dụng cho {res.application.job.title}: {res.final_decision}"
-    context = {'result': res}
-    text_content = render_to_string('email/result_notification.txt', context)
-    html_content = render_to_string('email/result_notification.html', context)
 
-    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, to_email)
-    if html_content:
-        msg.attach_alternative(html_content, 'text/html')
-    try:
-        msg.send()
-    except Exception as e:
-        print('Failed to send result email:', e)
-
-
-@app.task(bind=True)
-def send_interview_email_task(self, interview_id):
-    from applications.models import Interview
-    try:
-        interview = Interview.objects.select_related('application__candidate', 'application__job').get(id=interview_id)
-    except Exception:
-        return
-
-    to_candidate = [interview.application.candidate.email]
-    to_panel = [p.interviewer.email for p in interview.panel_set.all()] if hasattr(interview, 'panel_set') else []
-    subject = f"Thông báo phỏng vấn: {interview.application.job.title}"
-    context = {'interview': interview}
-    text_content = render_to_string('email/interview_notification.txt', context)
-    html_content = render_to_string('email/interview_notification.html', context)
-
-    recipients = list(set(to_candidate + to_panel))
-    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, recipients)
-    if html_content:
-        msg.attach_alternative(html_content, 'text/html')
-    try:
-        msg.send()
-    except Exception as e:
-        print('Failed to send interview email:', e)
+# Email tasks removed - chỉ dùng notification
+# Notification được tạo trực tiếp trong views.py
 
 
 @app.task(bind=True)

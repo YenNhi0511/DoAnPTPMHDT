@@ -28,9 +28,9 @@ const AdminUsers = () => {
   };
 
   const roleColors = {
-    ADMIN: 'bg-red-100 text-red-700 border-red-200',
-    RECRUITER: 'bg-blue-100 text-blue-700 border-blue-200',
-    CANDIDATE: 'bg-green-100 text-green-700 border-green-200',
+    ADMIN: 'bg-purple-100 text-purple-700 border-purple-200',
+    RECRUITER: 'bg-green-100 text-green-700 border-green-200',
+    CANDIDATE: 'bg-blue-100 text-blue-700 border-blue-200',
   };
 
   useEffect(() => {
@@ -262,7 +262,7 @@ const AdminUsers = () => {
       <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="text"
               placeholder="Tìm kiếm theo email, tên, username..."
@@ -303,7 +303,7 @@ const AdminUsers = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-12 text-gray-500">
+                  <td colSpan="6" className="text-center py-12 text-gray-700">
                     Không tìm thấy người dùng nào
                   </td>
                 </tr>
@@ -324,13 +324,13 @@ const AdminUsers = () => {
                           <p className="font-semibold text-gray-900">
                             {user.first_name} {user.last_name}
                           </p>
-                          <p className="text-sm text-gray-500">@{user.username}</p>
+                          <p className="text-sm text-gray-700">@{user.username}</p>
                         </div>
                       </div>
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2 text-gray-700">
-                        <Mail className="w-4 h-4 text-gray-400" />
+                        <Mail className="w-4 h-4 text-gray-600" />
                         {user.email}
                       </div>
                     </td>
@@ -341,7 +341,7 @@ const AdminUsers = () => {
                     </td>
                     <td className="py-4 px-6 text-gray-700">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-400" />
+                        <Calendar className="w-4 h-4 text-gray-600" />
                         {user.date_joined
                           ? new Date(user.date_joined).toLocaleDateString('vi-VN')
                           : 'N/A'}
@@ -440,7 +440,7 @@ const AdminUsers = () => {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Số điện thoại</label>
                     <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <Phone className="w-4 h-4 text-gray-400" />
+                      <Phone className="w-4 h-4 text-gray-600" />
                       <span className="text-gray-900">{selectedUser.phone}</span>
                     </div>
                   </div>

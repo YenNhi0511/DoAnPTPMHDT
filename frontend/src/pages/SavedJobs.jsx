@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { getSavedJobs, unsaveJob } from '../services/api';
 import {
   Heart, MapPin, Briefcase, Calendar, DollarSign, Building2,
   Trash2, Eye, Clock, TrendingUp, Search
@@ -12,17 +13,34 @@ const SavedJobs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Implement API call to get saved jobs
-    // For now, using localStorage as placeholder
-    const saved = JSON.parse(localStorage.getItem('savedJobs') || '[]');
-    setSavedJobs(saved);
-    setLoading(false);
-  }, []);
+    if (user) {
+      fetchSavedJobs();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
-  const handleRemoveSaved = (jobId) => {
-    const updated = savedJobs.filter(job => job.id !== jobId);
-    setSavedJobs(updated);
-    localStorage.setItem('savedJobs', JSON.stringify(updated));
+  const fetchSavedJobs = async () => {
+    try {
+      setLoading(true);
+      const res = await getSavedJobs();
+      const jobs = Array.isArray(res.data) ? res.data : res.data.results || [];
+      setSavedJobs(jobs.map(item => item.job));
+    } catch (error) {
+      console.error('Error fetching saved jobs:', error);
+      setSavedJobs([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveSaved = async (jobId) => {
+    try {
+      await unsaveJob(jobId);
+      setSavedJobs(savedJobs.filter(job => job.id !== jobId));
+    } catch (error) {
+      console.error('Error removing saved job:', error);
+    }
   };
 
   if (loading) {
@@ -99,7 +117,7 @@ const SavedJobs = () => {
           {savedJobs.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Heart className="w-10 h-10 text-gray-400" />
+                <Heart className="w-10 h-10 text-gray-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Chưa có việc làm đã lưu</h3>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">

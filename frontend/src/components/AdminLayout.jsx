@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   Shield, Users, Settings, Building2, FileText, User as UserIcon,
-  LogOut, Menu, X, ChevronDown, Bell, Database, ExternalLink
+  LogOut, Menu, X, ChevronDown, Bell, Database, ExternalLink, UserCheck
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -24,17 +24,17 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/users', icon: Users, label: 'Quản lý người dùng', roles: ['ADMIN'] },
     { path: '/admin/companies', icon: Building2, label: 'Quản lý công ty', roles: ['ADMIN'] },
     { path: '/admin/jobs', icon: FileText, label: 'Quản lý tin tuyển dụng', roles: ['ADMIN'] },
-    { path: '/admin/candidates', icon: UserIcon, label: 'Quản lý ứng viên', roles: ['ADMIN'] },
+    { path: '/admin/interviewers', icon: UserCheck, label: 'Quản lý thành viên hội đồng', roles: ['ADMIN'] },
     { path: '/admin/settings', icon: Settings, label: 'Cài đặt hệ thống', roles: ['ADMIN'] },
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
       {/* Top Accent Bar - Purple for Admin */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-700 h-1 w-full"></div>
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-700 h-1 w-full flex-shrink-0"></div>
       
-      {/* Admin Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      {/* Admin Header - Fixed */}
+      <header className="bg-white shadow-sm border-b border-gray-200 z-50 flex-shrink-0">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo - Link to Admin Dashboard */}
@@ -46,7 +46,7 @@ const AdminLayout = ({ children }) => {
                 <span className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-700 bg-clip-text text-transparent block truncate">
                   Quản lý hệ thống tuyển dụng GoodCV
                 </span>
-                <p className="text-xs text-gray-500 -mt-1 truncate">Hệ thống quản trị</p>
+                <p className="text-xs text-gray-700 -mt-1 truncate">Hệ thống quản trị</p>
               </div>
             </Link>
 
@@ -71,9 +71,9 @@ const AdminLayout = ({ children }) => {
                     <p className="text-sm font-medium text-gray-900">
                       {user?.first_name} {user?.last_name}
                     </p>
-                    <p className="text-xs text-gray-500">Quản trị viên</p>
+                    <p className="text-xs text-gray-700">Quản trị viên</p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                  <ChevronDown className="w-4 h-4 text-gray-700" />
                 </button>
 
                 {userMenuOpen && (
@@ -85,7 +85,7 @@ const AdminLayout = ({ children }) => {
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                       <div className="px-4 py-2 border-b border-gray-100">
                         <p className="text-sm font-medium text-gray-900">{user?.first_name} {user?.last_name}</p>
-                        <p className="text-xs text-gray-500">{user?.email}</p>
+                        <p className="text-xs text-gray-700">{user?.email}</p>
                         <span className="inline-flex mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
                           Quản trị viên
                         </span>
@@ -129,9 +129,9 @@ const AdminLayout = ({ children }) => {
         </div>
       </header>
 
-      <div className="flex flex-1">
-        {/* Sidebar - Purple theme for Admin - Cân đối với màn hình (280px khi mở) */}
-        <aside className={`${sidebarOpen ? 'w-[280px]' : 'w-20'} bg-purple-50 border-r border-purple-200 transition-all duration-300 flex flex-col shadow-sm flex-shrink-0`}>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar - Purple theme for Admin - Fixed */}
+        <aside className={`${sidebarOpen ? 'w-[280px]' : 'w-20'} bg-purple-50 border-r border-purple-200 transition-all duration-300 flex flex-col shadow-sm flex-shrink-0 h-full overflow-hidden`}>
           {/* Sidebar Header */}
           <div className="p-4 border-b border-purple-200 flex items-center justify-between">
             {sidebarOpen && (
@@ -156,7 +156,7 @@ const AdminLayout = ({ children }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden">
             {adminMenuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
@@ -198,8 +198,8 @@ const AdminLayout = ({ children }) => {
           )}
         </aside>
 
-        {/* Main Content - Cân đối với sidebar */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        {/* Main Content - Scrollable */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50">
           <div className="p-6">
             {children}
           </div>

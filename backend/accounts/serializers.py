@@ -5,14 +5,41 @@ from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer cho User model"""
+    name = serializers.SerializerMethodField()
+    full_name_with_position = serializers.SerializerMethodField()
+    
+    def get_name(self, obj):
+        """Trả về tên đầy đủ hoặc first_name + last_name"""
+        if obj.first_name and obj.last_name:
+            return f"{obj.first_name} {obj.last_name}".strip()
+        elif obj.first_name:
+            return obj.first_name
+        elif obj.last_name:
+            return obj.last_name
+        return obj.username or obj.email
+    
+    def get_full_name_with_position(self, obj):
+        """Trả về tên với format: "Họ tên - Chức vụ" nếu first_name có chứa dấu '-'"""
+        if obj.first_name and ' - ' in obj.first_name:
+            # Nếu first_name đã có format "Họ tên - Chức vụ", trả về nguyên
+            return obj.first_name
+        elif obj.first_name and obj.last_name:
+            return f"{obj.first_name} {obj.last_name}".strip()
+        elif obj.first_name:
+            return obj.first_name
+        return obj.username or obj.email
     
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'username', 'first_name', 'last_name',
-            'role', 'avatar', 'phone', 'date_joined', 'last_login'
+            'id', 'email', 'username', 'first_name', 'last_name', 'name', 'full_name_with_position',
+            'role', 'avatar', 'phone', 'date_joined', 'last_login',
+            'is_active', 'is_email_verified', 'company_name',
+            'field_of_activity', 'work_location_province', 'work_location_district',
+            'scale', 'address', 'website', 'tax_id', 'company_email',
+            'company_description'
         ]
-        read_only_fields = ['id', 'date_joined', 'last_login']
+        read_only_fields = ['id', 'date_joined', 'last_login', 'name', 'full_name_with_position']
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -37,6 +64,22 @@ class UserCreateSerializer(serializers.ModelSerializer):
             'first_name', 'last_name', 'phone', 'role', 'account_type',
             'company_name', 'gender', 'work_location_province', 'work_location_district'
         ]
+    
+    def validate_email(self, value):
+        """Validate email - kiểm tra đã tồn tại chưa"""
+        if value:
+            value = value.strip().lower()
+            if User.objects.filter(email__iexact=value).exists():
+                raise serializers.ValidationError("Email này đã được sử dụng. Vui lòng sử dụng email khác hoặc đăng nhập.")
+        return value
+    
+    def validate_username(self, value):
+        """Validate username - kiểm tra đã tồn tại chưa"""
+        if value:
+            value = value.strip()
+            if User.objects.filter(username__iexact=value).exists():
+                raise serializers.ValidationError("Tên người dùng này đã được sử dụng. Vui lòng chọn tên khác.")
+        return value
     
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -66,9 +109,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
         # Tạo user
         user = User.objects.create_user(**validated_data)
         
-        # Gửi email verification cho cả CANDIDATE và ADMIN (nhà tuyển dụng)
-        from .tasks import send_verification_email_task
-        send_verification_email_task.delay(str(user.id))
+        # Tự động verify email ngay khi đăng ký (không cần xác thực email)
+        user.is_email_verified = True
+        user.save()
+        
+        print(f'✅ User {user.email} đã được tạo và tự động verify email')
         
         return user
 

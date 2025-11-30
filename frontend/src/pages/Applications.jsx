@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { getApplications, getApplication, updateApplicationStatus, screenApplication } from '../services/api';
+import { getApplications, getApplication, updateApplicationStatus, screenApplication, inviteInterview } from '../services/api';
 import {
   FileText, Search, Filter, Eye, Brain, Mail, CheckCircle,
-  XCircle, Clock, Calendar, Download, User, X
+  XCircle, Clock, Calendar, Download, User, X, Send
 } from 'lucide-react';
 
 const Applications = () => {
@@ -51,6 +51,25 @@ const Applications = () => {
       fetchApplications();
     } catch (error) {
       alert('Không thể cập nhật trạng thái');
+    }
+  };
+
+  const handleInviteInterview = async (applicationId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn gửi email mời phỏng vấn đến ứng viên này?')) {
+      return;
+    }
+    
+    try {
+      await inviteInterview(applicationId);
+      alert('Đã gửi email mời phỏng vấn thành công!');
+      fetchApplications();
+      // Đóng modal nếu đang mở
+      if (selectedApplication && selectedApplication.id === applicationId) {
+        handleCloseCV();
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Không thể gửi email mời phỏng vấn';
+      alert(errorMsg);
     }
   };
 
@@ -169,7 +188,7 @@ const Applications = () => {
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">{app.candidate_name || 'N/A'}</p>
-                          <p className="text-sm text-gray-500">{app.candidate_email}</p>
+                          <p className="text-sm text-gray-700">{app.candidate_email}</p>
                         </div>
                       </div>
                     </td>
@@ -178,7 +197,7 @@ const Applications = () => {
                     </td>
                     <td className="py-4 px-6 text-gray-700">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-400" />
+                        <Calendar className="w-4 h-4 text-gray-600" />
                         {new Date(app.applied_at).toLocaleDateString('vi-VN')}
                       </div>
                     </td>
@@ -192,7 +211,7 @@ const Applications = () => {
                           {app.ai_score.toFixed(0)}
                         </span>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-gray-600">-</span>
                       )}
                     </td>
                     <td className="py-4 px-6">
@@ -245,11 +264,19 @@ const Applications = () => {
                 <p className="text-sm text-gray-600 mt-1">{selectedApplication.job_title}</p>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleInviteInterview(selectedApplication.id)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                  title="Gửi email mời phỏng vấn"
+                >
+                  <Send className="w-4 h-4" />
+                  Mời phỏng vấn
+                </button>
                 <a
                   href={cvUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Download className="w-4 h-4" />
@@ -265,17 +292,33 @@ const Applications = () => {
             </div>
 
             {/* CV Viewer */}
-            <div className="flex-1 overflow-auto p-6">
+            <div className="flex-1 overflow-auto p-6 bg-gray-50">
               {loadingCv ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
                 </div>
               ) : (
-                <iframe
-                  src={cvUrl}
-                  className="w-full h-full min-h-[600px] border border-gray-200 rounded-lg"
-                  title="CV Viewer"
-                />
+                <div className="w-full h-full min-h-[600px] bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  {cvUrl && (
+                    <iframe
+                      src={cvUrl}
+                      className="w-full h-full border-0"
+                      title="CV Viewer"
+                      onError={(e) => {
+                        console.error('CV iframe load error:', e);
+                        // Fallback: show download link
+                        e.target.style.display = 'none';
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'p-8 text-center';
+                        errorDiv.innerHTML = `
+                          <p class="text-gray-600 mb-4">Không thể hiển thị CV trong trình duyệt.</p>
+                          <a href="${cvUrl}" target="_blank" class="text-blue-600 hover:text-blue-700 underline">Tải CV về để xem</a>
+                        `;
+                        e.target.parentElement.appendChild(errorDiv);
+                      }}
+                    />
+                  )}
+                </div>
               )}
             </div>
           </div>

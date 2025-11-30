@@ -101,7 +101,6 @@
 
 ### External Services
 
-- **Email:** Resend (100 emails/day free) hoặc SendGrid
 - **PDF Generation:** jsPDF hoặc react-pdf
 - **Monitoring:** Sentry (errors), Vercel Analytics
 
@@ -203,8 +202,7 @@
 
 ### Module 7: Notifications
 
-- Email notifications (Resend)
-- In-app notifications
+- System notifications (in-app)
 - Real-time updates
 
 ### Module 8: Reports & Analytics

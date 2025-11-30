@@ -66,7 +66,7 @@ const Header = () => {
                 <span className={`text-xl font-bold bg-gradient-to-r ${getAccentColor()} bg-clip-text text-transparent`}>
                   GoodCV
                 </span>
-                <p className="text-xs text-gray-500 -mt-1">Tuyển dụng thông minh</p>
+                <p className="text-xs text-gray-700 -mt-1">Tuyển dụng thông minh</p>
               </div>
             </Link>
 
@@ -90,16 +90,6 @@ const Header = () => {
               {isCandidate && (
                 <>
                   <Link
-                    to="/candidate/dashboard"
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname.startsWith('/candidate/dashboard')
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                  >
-                    Trang chủ
-                  </Link>
-                  <Link
                     to="/saved-jobs"
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       location.pathname === '/saved-jobs'
@@ -110,24 +100,14 @@ const Header = () => {
                     Việc đã lưu
                   </Link>
                   <Link
-                    to="/interviews"
+                    to="/candidate/interviews"
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === '/interviews'
+                      location.pathname === '/candidate/interviews'
                         ? 'bg-blue-50 text-blue-600'
                         : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                   >
                     Lịch phỏng vấn
-                  </Link>
-                  <Link
-                    to="/notifications"
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === '/notifications'
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                  >
-                    Thông báo
                   </Link>
                   <Link
                     to="/profile"
@@ -230,10 +210,13 @@ const Header = () => {
               {user ? (
                 <>
                   {/* Notifications */}
-                  <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Link
+                    to="/notifications"
+                    className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
                     <Bell className="w-5 h-5" />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                  </button>
+                  </Link>
 
                   {/* User Menu */}
                   <div className="relative">
@@ -252,9 +235,9 @@ const Header = () => {
                         <p className="text-sm font-medium text-gray-900">
                           {user.first_name} {user.last_name}
                         </p>
-                        <p className="text-xs text-gray-500">{roleNames[user.role]}</p>
+                        <p className="text-xs text-gray-700">{roleNames[user.role]}</p>
                       </div>
-                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                      <ChevronDown className="w-4 h-4 text-gray-700" />
                     </button>
 
                     {userMenuOpen && (
@@ -266,7 +249,7 @@ const Header = () => {
                         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                           <div className="px-4 py-2 border-b border-gray-100">
                             <p className="text-sm font-medium text-gray-900">{user.first_name} {user.last_name}</p>
-                            <p className="text-xs text-gray-500">{user.email}</p>
+                            <p className="text-xs text-gray-700">{user.email}</p>
                             <span className={`inline-flex mt-1 px-2 py-0.5 text-xs font-medium rounded-full ${
                               isCandidate ? 'bg-blue-100 text-blue-700' :
                               isRecruiter ? 'bg-green-100 text-green-700' :
@@ -366,13 +349,6 @@ const Header = () => {
                 {isCandidate && (
                   <>
                     <Link
-                      to="/candidate/dashboard"
-                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Trang chủ
-                    </Link>
-                    <Link
                       to="/saved-jobs"
                       className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                       onClick={() => setMobileMenuOpen(false)}
@@ -385,13 +361,6 @@ const Header = () => {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Lịch phỏng vấn
-                    </Link>
-                    <Link
-                      to="/notifications"
-                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Thông báo
                     </Link>
                     <Link
                       to="/profile"
@@ -456,13 +425,6 @@ const Header = () => {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Quản lý tin tuyển dụng
-                    </Link>
-                    <Link
-                      to="/admin/candidates"
-                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Quản lý ứng viên
                     </Link>
                   </>
                 )}

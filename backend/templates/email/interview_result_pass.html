@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #ffffff;
+            padding: 30px;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+        }
+        .result-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .footer {
+            background: #f9fafb;
+            padding: 20px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            border-radius: 0 0 10px 10px;
+        }
+        .button {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 Chúc mừng bạn!</h1>
+    </div>
+    <div class="content">
+        <p>Xin chào <strong>{{ candidate.get_full_name }}</strong>,</p>
+        
+        <p>Chúng tôi rất vui mừng thông báo rằng bạn đã <span class="result-badge">VƯỢT QUA</span> vòng phỏng vấn cho vị trí:</p>
+        
+        <div class="info-box">
+            <h2 style="margin-top: 0; color: #059669;">{{ job.title }}</h2>
+            <p><strong>Địa điểm:</strong> {{ job.location }}</p>
+        </div>
+        
+        {% if feedback %}
+        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #374151;">Nhận xét từ hội đồng phỏng vấn:</h3>
+            <p style="white-space: pre-wrap;">{{ feedback }}</p>
+        </div>
+        {% endif %}
+        
+        <p><strong>Bước tiếp theo:</strong></p>
+        <ul>
+            <li>Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để thảo luận về thư mời nhận việc (Offer Letter)</li>
+            <li>Vui lòng chuẩn bị các giấy tờ cần thiết theo yêu cầu</li>
+            <li>Nếu có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi</li>
+        </ul>
+        
+        <p>Một lần nữa, chúc mừng bạn và chúng tôi mong được chào đón bạn vào đội ngũ!</p>
+        
+        <p>Trân trọng,<br>
+        <strong>Team tuyển dụng</strong></p>
+    </div>
+    <div class="footer">
+        <p>Email này được gửi tự động từ hệ thống tuyển dụng. Vui lòng không trả lời email này.</p>
+    </div>
+</body>
+</html>
+

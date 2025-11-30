@@ -179,7 +179,7 @@ const CandidateDashboard = () => {
           {applications.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileText className="w-10 h-10 text-gray-400" />
+                <FileText className="w-10 h-10 text-gray-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Chưa có hồ sơ ứng tuyển</h3>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">
@@ -219,7 +219,7 @@ const CandidateDashboard = () => {
                                 <span className="font-medium">{app.company_name}</span>
                               </div>
                             </div>
-                            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-700">
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-3.5 h-3.5" />
                                 <span>Nộp: {new Date(app.applied_at).toLocaleDateString('vi-VN')}</span>

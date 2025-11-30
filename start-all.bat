@@ -41,7 +41,7 @@ echo ========================================
 echo.
 echo URLs:
 echo   Backend:    http://localhost:8000
-echo   Admin:      http://localhost:3000
+echo   Admin:      http://localhost:3003
 echo   Candidate:  http://localhost:3001
 echo   Recruiter:  http://localhost:3002
 echo.

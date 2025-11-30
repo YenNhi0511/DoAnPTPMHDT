@@ -1,0 +1,25 @@
+Xin chào {{ candidate.get_full_name }},
+
+Chúng tôi rất vui mừng thông báo rằng bạn đã VƯỢT QUA vòng phỏng vấn cho vị trí:
+
+{{ job.title }}
+Địa điểm: {{ job.location }}
+
+{% if feedback %}
+Nhận xét từ hội đồng phỏng vấn:
+{{ feedback }}
+{% endif %}
+
+Bước tiếp theo:
+- Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để thảo luận về thư mời nhận việc (Offer Letter)
+- Vui lòng chuẩn bị các giấy tờ cần thiết theo yêu cầu
+- Nếu có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi
+
+Một lần nữa, chúc mừng bạn và chúng tôi mong được chào đón bạn vào đội ngũ!
+
+Trân trọng,
+Team tuyển dụng
+
+---
+Email này được gửi tự động từ hệ thống tuyển dụng. Vui lòng không trả lời email này.
+

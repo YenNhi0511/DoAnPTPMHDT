@@ -35,6 +35,26 @@ default_process, _ = RecruitmentProcess.objects.get_or_create(
     }
 )
 
+# Danh sách các tỉnh/thành phố để phân bổ đều
+provinces = [
+    'Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng',
+    'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu',
+    'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước',
+    'Bình Thuận', 'Cà Mau', 'Cao Bằng', 'Đắk Lắk', 'Đắk Nông',
+    'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 'Gia Lai', 'Hà Giang',
+    'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hậu Giang', 'Hòa Bình',
+    'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu',
+    'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định',
+    'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên',
+    'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị',
+    'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên',
+    'Thanh Hóa', 'Thừa Thiên Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang',
+    'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái'
+]
+
+# Kinh nghiệm từ 1-5 năm để phân bổ đều
+experience_years_list = [1, 2, 3, 4, 5]
+
 # Danh sách jobs với JD chi tiết
 jobs_data = [
     {
@@ -358,9 +378,20 @@ Trách nhiệm:
     },
 ]
 
-# Tạo jobs
+# Tạo jobs với phân bổ đều địa điểm và kinh nghiệm
 created_count = 0
+province_index = 0
+experience_index = 0
+
 for job_data in jobs_data:
+    # Phân bổ đều địa điểm
+    job_data['location'] = provinces[province_index % len(provinces)]
+    province_index += 1
+    
+    # Phân bổ đều kinh nghiệm từ 1-5 năm
+    job_data['experience_years'] = experience_years_list[experience_index % len(experience_years_list)]
+    experience_index += 1
+    
     job, created = Job.objects.get_or_create(
         title=job_data['title'],
         defaults={
@@ -371,7 +402,7 @@ for job_data in jobs_data:
     )
     if created:
         created_count += 1
-        print(f"✅ Created: {job.title}")
+        print(f"✅ Created: {job.title} - {job.location} - {job.experience_years} năm")
     else:
         print(f"⏭️  Already exists: {job.title}")
 

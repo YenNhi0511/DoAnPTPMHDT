@@ -134,8 +134,8 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
         className="input w-full flex items-center justify-between cursor-pointer"
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0" />
-          <span className={`truncate ${tempProvinces.length > 0 ? 'text-white' : 'text-gray-400'}`}>
+          <MapPin className="w-5 h-5 text-gray-600 flex-shrink-0" />
+          <span className={`truncate ${tempProvinces.length > 0 ? 'text-white' : 'text-gray-600'}`}>
             {displayText}
           </span>
           {tempProvinces.length > 0 && (
@@ -152,12 +152,12 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                 e.stopPropagation();
                 handleClear();
               }}
-              className="p-1 rounded hover:bg-slate-700 text-gray-400 hover:text-white"
+              className="p-1 rounded hover:bg-slate-700 text-gray-600 hover:text-white"
             >
               <X className="w-4 h-4" />
             </button>
           )}
-          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </div>
       </button>
 
@@ -174,7 +174,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
             {/* Header with Search */}
             <div className="p-4 border-b border-slate-600 bg-slate-800/50">
               <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
                 <input
                   type="text"
                   value={searchProvince}
@@ -187,7 +187,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                 <button
                   type="button"
                   onClick={handleDeselectAll}
-                  className="text-sm text-gray-400 hover:text-white"
+                  className="text-sm text-gray-600 hover:text-white"
                 >
                   Bỏ chọn tất cả
                 </button>
@@ -239,7 +239,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                           />
                           <span className={`flex-1 text-sm ${isSelected ? 'text-white font-semibold' : 'text-gray-200'}`}>
                             {province} {isSelected && districts.length > 0 && (
-                              <span className="text-gray-500">Tất cả</span>
+                              <span className="text-gray-700">Tất cả</span>
                             )}
                           </span>
                           {isSelected && districts.length > 0 && (
@@ -251,7 +251,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                         {isSelected && districts.length > 0 && (
                           <div className="ml-6 mt-1 mb-2">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs text-gray-500">QUẬN/HUYỆN</span>
+                              <span className="text-xs text-gray-700">QUẬN/HUYỆN</span>
                               <div className="flex items-center gap-2">
                                 <button
                                   type="button"
@@ -263,7 +263,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                                 <button
                                   type="button"
                                   onClick={() => handleDeselectAllDistricts(province)}
-                                  className="text-xs text-gray-400 hover:text-gray-300"
+                                  className="text-xs text-gray-600 hover:text-gray-300"
                                 >
                                   Bỏ chọn
                                 </button>
@@ -315,7 +315,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                                 </label>
                               ))}
                               {districts.length > 10 && (
-                                <p className="text-xs text-gray-500 px-1.5">+{districts.length - 10} quận/huyện khác</p>
+                                <p className="text-xs text-gray-700 px-1.5">+{districts.length - 10} quận/huyện khác</p>
                               )}
                             </div>
                           </div>
@@ -335,7 +335,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                 </div>
                 <div className="p-2">
                   {tempProvinces.length === 0 ? (
-                    <div className="text-center text-gray-500 py-8">
+                    <div className="text-center text-gray-700 py-8">
                       <p className="text-sm">Vui lòng chọn Tỉnh/Thành phố</p>
                     </div>
                   ) : tempProvinces.length === 1 ? (
@@ -459,7 +459,7 @@ const LocationSelector = ({ selectedProvince, selectedDistrict, onChange, placeh
                                 </label>
                               ))}
                               {districts.length > 8 && (
-                                <p className="text-xs text-gray-500 px-1.5">+{districts.length - 8} quận/huyện khác</p>
+                                <p className="text-xs text-gray-700 px-1.5">+{districts.length - 8} quận/huyện khác</p>
                               )}
                             </div>
                           </div>

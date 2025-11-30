@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start:admin": "cross-env PORT=3000 REACT_APP_ROLE=ADMIN react-scripts start",
+    "start:admin": "cross-env PORT=3003 REACT_APP_ROLE=ADMIN react-scripts start",
     "start:candidate": "cross-env PORT=3001 REACT_APP_ROLE=CANDIDATE react-scripts start",
     "start:recruiter": "cross-env PORT=3002 REACT_APP_ROLE=RECRUITER react-scripts start",
     "build": "react-scripts build",
