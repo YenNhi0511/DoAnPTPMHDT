@@ -1,3 +1,25 @@
+Cách sử dụng
+Chạy từng role riêng:
+
+# ADMIN (Port 3000)
+
+cd frontend
+npm run start:admin
+
+# CANDIDATE (Port 3001)
+
+npm run start:candidate
+
+# RECRUITER (Port 3002)
+
+npm run start:recruiter
+
+Hoặc double-click các file .bat:
+start-admin.bat → http://localhost:3000
+start-candidate.bat → http://localhost:3001
+start-recruiter.bat → http://localhost:3002
+start-all-roles.bat → Chạy cả 3 cùng lúc
+
 # 🎯 Hệ thống Tuyển dụng Nhân sự
 
 Hệ thống quản lý tuyển dụng nhân sự toàn diện với AI-powered CV screening, quản lý phỏng vấn, và báo cáo thống kê.

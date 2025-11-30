@@ -99,23 +99,25 @@ const JobForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-400 hover:text-white"
+          className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="page-header mb-0">
-          <Briefcase className="w-8 h-8 text-blue-400" />
-          {isEdit ? 'Chỉnh sửa việc làm' : 'Đăng tin tuyển dụng'}
-        </h1>
+        <div className="flex items-center gap-3">
+          <Briefcase className="w-8 h-8 text-green-600" />
+          <h1 className="text-3xl font-bold text-gray-900">
+            {isEdit ? 'Chỉnh sửa việc làm' : 'Đăng tin tuyển dụng'}
+          </h1>
+        </div>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3 text-red-400">
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -123,54 +125,54 @@ const JobForm = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
-        <div className="card">
-          <h2 className="section-title">Thông tin cơ bản</h2>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Thông tin cơ bản</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="label">Tiêu đề vị trí *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề vị trí *</label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="VD: Senior Frontend Developer"
                 required
               />
             </div>
 
             <div>
-              <label className="label">Phòng ban</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Phòng ban</label>
               <input
                 type="text"
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="VD: Engineering"
               />
             </div>
 
             <div>
-              <label className="label">Địa điểm *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Địa điểm *</label>
               <input
                 type="text"
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="VD: Hồ Chí Minh"
                 required
               />
             </div>
 
             <div>
-              <label className="label">Loại hình công việc *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Loại hình công việc *</label>
               <select
                 name="employment_type"
                 value={formData.employment_type}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                 required
               >
                 <option value="FULLTIME">Toàn thời gian</option>
@@ -181,38 +183,38 @@ const JobForm = () => {
             </div>
 
             <div>
-              <label className="label">Số lượng tuyển</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Số lượng tuyển</label>
               <input
                 type="number"
                 name="positions_count"
                 value={formData.positions_count}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                 min="1"
               />
             </div>
 
             <div>
-              <label className="label">Kinh nghiệm (năm)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Kinh nghiệm (năm)</label>
               <input
                 type="number"
                 name="experience_years"
                 value={formData.experience_years}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="VD: 3"
                 min="0"
               />
             </div>
 
             <div>
-              <label className="label">Hạn nộp hồ sơ *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Hạn nộp hồ sơ *</label>
               <input
                 type="datetime-local"
                 name="deadline"
                 value={formData.deadline}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                 required
               />
             </div>
@@ -220,41 +222,41 @@ const JobForm = () => {
         </div>
 
         {/* Salary */}
-        <div className="card">
-          <h2 className="section-title">Mức lương</h2>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Mức lương</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="label">Lương tối thiểu (VNĐ)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Lương tối thiểu (VNĐ)</label>
               <input
                 type="number"
                 name="salary_min"
                 value={formData.salary_min}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="VD: 15000000"
               />
             </div>
 
             <div>
-              <label className="label">Lương tối đa (VNĐ)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Lương tối đa (VNĐ)</label>
               <input
                 type="number"
                 name="salary_max"
                 value={formData.salary_max}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="VD: 25000000"
               />
             </div>
 
             <div>
-              <label className="label">Hoặc mô tả lương</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Hoặc mô tả lương</label>
               <input
                 type="text"
                 name="salary"
                 value={formData.salary}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500"
                 placeholder="VD: Thỏa thuận, Cạnh tranh"
               />
             </div>
@@ -262,28 +264,28 @@ const JobForm = () => {
         </div>
 
         {/* Description */}
-        <div className="card">
-          <h2 className="section-title">Mô tả công việc</h2>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Mô tả công việc</h2>
           <div className="space-y-6">
             <div>
-              <label className="label">Mô tả *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Mô tả *</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                className="input min-h-[150px]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500 min-h-[150px]"
                 placeholder="Mô tả chi tiết về vị trí công việc..."
                 required
               />
             </div>
 
             <div>
-              <label className="label">Yêu cầu công việc (JD) *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Yêu cầu công việc (JD) *</label>
               <textarea
                 name="requirements"
                 value={formData.requirements}
                 onChange={handleChange}
-                className="input min-h-[150px]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 placeholder-gray-500 min-h-[150px]"
                 placeholder="- Tốt nghiệp đại học chuyên ngành CNTT&#10;- Có ít nhất 3 năm kinh nghiệm..."
                 required
               />
@@ -292,16 +294,16 @@ const JobForm = () => {
         </div>
 
         {/* Process & Status */}
-        <div className="card">
-          <h2 className="section-title">Quy trình & Trạng thái</h2>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Quy trình & Trạng thái</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="label">Quy trình tuyển dụng</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Quy trình tuyển dụng</label>
               <select
                 name="recruitment_process"
                 value={formData.recruitment_process}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
               >
                 <option value="">-- Chọn quy trình --</option>
                 {processes.map((p) => (
@@ -313,12 +315,12 @@ const JobForm = () => {
             </div>
 
             <div>
-              <label className="label">Trạng thái</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="input"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
               >
                 <option value="DRAFT">Nháp</option>
                 <option value="OPEN">Đang tuyển</option>
@@ -333,14 +335,14 @@ const JobForm = () => {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="btn-ghost"
+            className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium"
           >
             Hủy
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary flex items-center gap-2"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="w-5 h-5" />
             {loading ? 'Đang lưu...' : isEdit ? 'Cập nhật' : 'Đăng tin'}

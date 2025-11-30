@@ -7,12 +7,24 @@ class ApplicationSerializer(serializers.ModelSerializer):
     candidate_name = serializers.CharField(source='candidate.name', read_only=True)
     candidate_email = serializers.EmailField(source='candidate.email', read_only=True)
     job_title = serializers.CharField(source='job.title', read_only=True)
+    cv_file_url = serializers.SerializerMethodField()
+    
+    def get_cv_file_url(self, obj):
+        """Trả về full URL cho CV file"""
+        if obj.cv_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.cv_file.url)
+            # Fallback nếu không có request
+            from django.conf import settings
+            return f"{settings.MEDIA_URL}{obj.cv_file.name}"
+        return None
     
     class Meta:
         model = Application
         fields = [
             'id', 'job', 'job_title', 'candidate', 'candidate_name',
-            'candidate_email', 'cv_file', 'cover_letter', 'status',
+            'candidate_email', 'cv_file', 'cv_file_url', 'cover_letter', 'status',
             'ai_score', 'ai_analysis', 'screener_notes',
             'applied_at', 'updated_at'
         ]
@@ -83,11 +95,35 @@ class InterviewSerializer(serializers.ModelSerializer):
         source='application.job.title',
         read_only=True
     )
+    candidate_email = serializers.EmailField(
+        source='application.candidate.email',
+        read_only=True
+    )
+    application_cv_file = serializers.SerializerMethodField()
+    application_cv_file_url = serializers.SerializerMethodField()
+    
+    def get_application_cv_file(self, obj):
+        """Trả về CV file path"""
+        if obj.application and obj.application.cv_file:
+            return obj.application.cv_file.name
+        return None
+    
+    def get_application_cv_file_url(self, obj):
+        """Trả về full URL cho CV file"""
+        if obj.application and obj.application.cv_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.application.cv_file.url)
+            # Fallback nếu không có request
+            from django.conf import settings
+            return f"{settings.MEDIA_URL}{obj.application.cv_file.name}"
+        return None
     
     class Meta:
         model = Interview
         fields = [
-            'id', 'application', 'candidate_name', 'job_title',
+            'id', 'application', 'candidate_name', 'candidate_email', 'job_title',
+            'application_cv_file', 'application_cv_file_url',
             'scheduled_at', 'duration', 'location', 'interview_type',
             'status', 'feedback', 'result', 'created_at', 'updated_at'
         ]

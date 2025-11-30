@@ -148,25 +148,63 @@ const Profile = () => {
     );
   }
 
+  // Xác định màu sắc dựa trên role
+  const getRoleColor = () => {
+    if (user.role === 'ADMIN') return 'purple';
+    if (user.role === 'RECRUITER') return 'green';
+    return 'blue';
+  };
+
+  const roleColor = getRoleColor();
+  const colorClasses = {
+    purple: {
+      bg: 'bg-purple-600',
+      bgLight: 'bg-purple-50',
+      text: 'text-purple-600',
+      border: 'border-purple-200',
+      hover: 'hover:bg-purple-700',
+      ring: 'focus:ring-purple-500',
+    },
+    green: {
+      bg: 'bg-green-600',
+      bgLight: 'bg-green-50',
+      text: 'text-green-600',
+      border: 'border-green-200',
+      hover: 'hover:bg-green-700',
+      ring: 'focus:ring-green-500',
+    },
+    blue: {
+      bg: 'bg-blue-600',
+      bgLight: 'bg-blue-50',
+      text: 'text-blue-600',
+      border: 'border-blue-200',
+      hover: 'hover:bg-blue-700',
+      ring: 'focus:ring-blue-500',
+    },
+  };
+
+  const colors = colorClasses[roleColor];
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Hồ sơ cá nhân</h1>
-          <p className="text-gray-400">Quản lý thông tin tài khoản của bạn</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Hồ sơ cá nhân</h1>
+          <p className="text-gray-600">Quản lý thông tin tài khoản của bạn</p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-slate-700">
+      {/* Tabs - Đồng nhất tone màu */}
+      <div className="flex gap-2 border-b border-gray-200">
         <button
           onClick={() => setActiveTab('profile')}
-          className={`px-4 py-2 font-medium transition-colors ${
+          className={`px-4 py-2 font-medium transition-colors relative ${
             activeTab === 'profile'
-              ? 'text-blue-400 border-b-2 border-blue-400'
-              : 'text-gray-400 hover:text-white'
+              ? `${colors.text} border-b-2 ${colors.border}`
+              : 'text-gray-500 hover:text-gray-700'
           }`}
+          style={activeTab === 'profile' ? { borderBottomColor: `var(--color-${roleColor})` } : {}}
         >
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
@@ -175,11 +213,12 @@ const Profile = () => {
         </button>
         <button
           onClick={() => setActiveTab('password')}
-          className={`px-4 py-2 font-medium transition-colors ${
+          className={`px-4 py-2 font-medium transition-colors relative ${
             activeTab === 'password'
-              ? 'text-blue-400 border-b-2 border-blue-400'
-              : 'text-gray-400 hover:text-white'
+              ? `${colors.text} border-b-2 ${colors.border}`
+              : 'text-gray-500 hover:text-gray-700'
           }`}
+          style={activeTab === 'password' ? { borderBottomColor: `var(--color-${roleColor})` } : {}}
         >
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4" />
@@ -190,14 +229,14 @@ const Profile = () => {
 
       {/* Messages */}
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3 text-red-400">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {success && (
-        <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-3 text-green-400">
+        <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-green-700">
           <CheckCircle className="w-5 h-5 flex-shrink-0" />
           <span>{success}</span>
         </div>
@@ -205,23 +244,23 @@ const Profile = () => {
 
       {/* Profile Tab */}
       {activeTab === 'profile' && (
-        <div className="card">
-          <div className="flex items-center gap-6 mb-6 pb-6 border-b border-slate-700">
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+          <div className="flex items-center gap-6 mb-6 pb-6 border-b border-gray-200">
             <div className="relative">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              <div className={`w-24 h-24 ${colors.bg} rounded-full flex items-center justify-center text-white text-2xl font-bold`}>
                 {user.first_name?.[0]?.toUpperCase() || user.username?.[0]?.toUpperCase() || 'U'}
               </div>
-              <button className="absolute bottom-0 right-0 p-2 bg-blue-500 rounded-full hover:bg-blue-600 transition-colors">
+              <button className={`absolute bottom-0 right-0 p-2 ${colors.bg} rounded-full ${colors.hover} transition-colors`}>
                 <Camera className="w-4 h-4 text-white" />
               </button>
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white mb-1">
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">
                 {user.first_name} {user.last_name}
               </h2>
-              <p className="text-gray-400">{user.email}</p>
-              <span className="inline-block mt-2 px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
-                {user.role}
+              <p className="text-gray-600">{user.email}</p>
+              <span className={`inline-block mt-2 px-3 py-1 ${colors.bgLight} ${colors.text} rounded-full text-sm font-medium`}>
+                {user.role === 'ADMIN' ? 'Quản trị viên' : user.role === 'RECRUITER' ? 'Nhà tuyển dụng' : 'Ứng viên'}
               </span>
             </div>
           </div>
@@ -229,25 +268,27 @@ const Profile = () => {
           <form onSubmit={handleUpdateProfile} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="label">Họ</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Họ</label>
                 <input
                   type="text"
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleInputChange}
-                  className="input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  style={{ '--tw-ring-color': colors.ring }}
                   placeholder="Nguyễn"
                   required
                 />
               </div>
               <div>
-                <label className="label">Tên</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tên</label>
                 <input
                   type="text"
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleInputChange}
-                  className="input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  style={{ '--tw-ring-color': colors.ring }}
                   placeholder="Văn A"
                   required
                 />
@@ -255,7 +296,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="label">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -263,7 +304,7 @@ const Profile = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="input pl-11"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-gray-50"
                   placeholder="your@email.com"
                   required
                   disabled
@@ -275,7 +316,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="label">Tên đăng nhập</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tên đăng nhập</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -283,7 +324,7 @@ const Profile = () => {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="input pl-11"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg bg-gray-50"
                   placeholder="username"
                   required
                   disabled
@@ -295,7 +336,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="label">Số điện thoại</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -303,7 +344,8 @@ const Profile = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="input pl-11"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  style={{ '--tw-ring-color': colors.ring }}
                   placeholder="0901234567"
                 />
               </div>
@@ -313,7 +355,7 @@ const Profile = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`px-6 py-2 ${colors.bg} text-white rounded-lg font-semibold ${colors.hover} transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {saving ? (
                   <>
@@ -334,12 +376,12 @@ const Profile = () => {
 
       {/* Password Tab */}
       {activeTab === 'password' && (
-        <div className="card">
-          <h2 className="text-xl font-semibold text-white mb-6">Đổi mật khẩu</h2>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Đổi mật khẩu</h2>
 
           <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
             <div>
-              <label className="label">Mật khẩu hiện tại</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu hiện tại</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -347,7 +389,8 @@ const Profile = () => {
                   name="old_password"
                   value={passwordData.old_password}
                   onChange={handlePasswordChange}
-                  className="input pl-11"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  style={{ '--tw-ring-color': colors.ring }}
                   placeholder="••••••••"
                   required
                 />
@@ -355,7 +398,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="label">Mật khẩu mới</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu mới</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -363,7 +406,8 @@ const Profile = () => {
                   name="new_password"
                   value={passwordData.new_password}
                   onChange={handlePasswordChange}
-                  className="input pl-11"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  style={{ '--tw-ring-color': colors.ring }}
                   placeholder="••••••••"
                   required
                   minLength={8}
@@ -373,7 +417,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="label">Xác nhận mật khẩu mới</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Xác nhận mật khẩu mới</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -381,7 +425,8 @@ const Profile = () => {
                   name="new_password2"
                   value={passwordData.new_password2}
                   onChange={handlePasswordChange}
-                  className="input pl-11"
+                  className="w-full px-4 py-2 pl-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent"
+                  style={{ '--tw-ring-color': colors.ring }}
                   placeholder="••••••••"
                   required
                   minLength={8}
@@ -392,7 +437,7 @@ const Profile = () => {
             <button
               type="submit"
               disabled={saving}
-              className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`px-6 py-2 ${colors.bg} text-white rounded-lg font-semibold ${colors.hover} transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {saving ? (
                 <>
@@ -414,4 +459,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

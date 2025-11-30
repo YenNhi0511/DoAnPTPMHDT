@@ -180,14 +180,14 @@ const AdminUsers = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Quản lý người dùng</h1>
           <p className="text-gray-600">Quản lý tất cả người dùng trong hệ thống</p>
         </div>
-        <button className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+        <button className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 flex-shrink-0">
           <UserPlus className="w-5 h-5" />
           Thêm người dùng
         </button>

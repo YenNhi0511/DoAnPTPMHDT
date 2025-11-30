@@ -47,6 +47,12 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             return ApplicationCreateSerializer
         return ApplicationSerializer
     
+    def get_serializer_context(self):
+        """Thêm request vào context để build absolute URL"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
     @action(detail=True, methods=['post'])
     def screen(self, request, pk=None):
         """Trigger AI screening cho application"""
@@ -87,6 +93,12 @@ class InterviewViewSet(viewsets.ModelViewSet):
     filterset_fields = ['status', 'interview_type', 'result']
     ordering_fields = ['scheduled_at']
     ordering = ['scheduled_at']
+    
+    def get_serializer_context(self):
+        """Thêm request vào context để build absolute URL"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
     
     @action(detail=True, methods=['post'])
     def submit_feedback(self, request, pk=None):

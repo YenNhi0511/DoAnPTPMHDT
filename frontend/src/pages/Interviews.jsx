@@ -112,26 +112,33 @@ const Interviews = () => {
   };
 
   const statusColors = {
-    SCHEDULED: 'badge-info',
-    COMPLETED: 'badge-success',
-    CANCELLED: 'badge-danger',
-    RESCHEDULED: 'badge-warning',
+    SCHEDULED: 'bg-blue-100 text-blue-700',
+    COMPLETED: 'bg-green-100 text-green-700',
+    CANCELLED: 'bg-red-100 text-red-700',
+    RESCHEDULED: 'bg-yellow-100 text-yellow-700',
+  };
+
+  const interviewStatusLabels = {
+    SCHEDULED: 'Đã lên lịch',
+    COMPLETED: 'Hoàn thành',
+    CANCELLED: 'Đã hủy',
+    RESCHEDULED: 'Đổi lịch',
   };
 
   const resultColors = {
-    PASS: 'text-green-400',
-    FAIL: 'text-red-400',
-    PENDING: 'text-gray-400',
+    PASS: 'text-green-600',
+    FAIL: 'text-red-600',
+    PENDING: 'text-gray-500',
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="page-header mb-0">
-          <Calendar className="w-8 h-8 text-blue-400" />
-          Lịch phỏng vấn
-        </h1>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Lịch phỏng vấn</h1>
+          <p className="text-gray-600">Quản lý lịch phỏng vấn ứng viên</p>
+        </div>
         <button
           onClick={() => {
             setShowForm(true);
@@ -144,7 +151,7 @@ const Interviews = () => {
               interview_type: 'VIDEO',
             });
           }}
-          className="btn-primary flex items-center gap-2"
+          className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Đặt lịch phỏng vấn
@@ -153,16 +160,16 @@ const Interviews = () => {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="card w-full max-w-lg animate-fade-in">
-            <h2 className="section-title">{editingId ? 'Chỉnh sửa lịch' : 'Đặt lịch phỏng vấn'}</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{editingId ? 'Chỉnh sửa lịch' : 'Đặt lịch phỏng vấn'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="label">Ứng viên *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Ứng viên *</label>
                 <select
                   value={formData.application}
                   onChange={(e) => setFormData({ ...formData, application: e.target.value })}
-                  className="input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   required
                 >
                   <option value="">-- Chọn ứng viên --</option>
@@ -176,22 +183,22 @@ const Interviews = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="label">Thời gian *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Thời gian *</label>
                   <input
                     type="datetime-local"
                     value={formData.scheduled_at}
                     onChange={(e) => setFormData({ ...formData, scheduled_at: e.target.value })}
-                    className="input"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="label">Thời lượng (phút)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Thời lượng (phút)</label>
                   <input
                     type="number"
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
-                    className="input"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     min="15"
                     step="15"
                   />
@@ -199,11 +206,11 @@ const Interviews = () => {
               </div>
 
               <div>
-                <label className="label">Hình thức *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Hình thức *</label>
                 <select
                   value={formData.interview_type}
                   onChange={(e) => setFormData({ ...formData, interview_type: e.target.value })}
-                  className="input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   required
                 >
                   <option value="VIDEO">Video call</option>
@@ -213,21 +220,28 @@ const Interviews = () => {
               </div>
 
               <div>
-                <label className="label">Địa điểm / Link</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Địa điểm / Link</label>
                 <input
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   placeholder="VD: https://meet.google.com/xxx hoặc Phòng họp A"
                 />
               </div>
 
               <div className="flex items-center justify-end gap-4 pt-4">
-                <button type="button" onClick={() => setShowForm(false)} className="btn-ghost">
+                <button 
+                  type="button" 
+                  onClick={() => setShowForm(false)} 
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
                   Hủy
                 </button>
-                <button type="submit" className="btn-primary">
+                <button 
+                  type="submit" 
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                >
                   {editingId ? 'Cập nhật' : 'Đặt lịch'}
                 </button>
               </div>
@@ -238,16 +252,16 @@ const Interviews = () => {
 
       {/* Feedback Modal */}
       {showFeedback && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="card w-full max-w-lg animate-fade-in">
-            <h2 className="section-title">Nhập kết quả phỏng vấn</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Nhập kết quả phỏng vấn</h2>
             <form onSubmit={handleFeedbackSubmit} className="space-y-4">
               <div>
-                <label className="label">Kết quả *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Kết quả *</label>
                 <select
                   value={feedbackData.result}
                   onChange={(e) => setFeedbackData({ ...feedbackData, result: e.target.value })}
-                  className="input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   required
                 >
                   <option value="">-- Chọn kết quả --</option>
@@ -257,20 +271,27 @@ const Interviews = () => {
               </div>
 
               <div>
-                <label className="label">Nhận xét</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nhận xét</label>
                 <textarea
                   value={feedbackData.feedback}
                   onChange={(e) => setFeedbackData({ ...feedbackData, feedback: e.target.value })}
-                  className="input min-h-[100px]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 min-h-[100px]"
                   placeholder="Nhận xét về ứng viên..."
                 />
               </div>
 
               <div className="flex items-center justify-end gap-4 pt-4">
-                <button type="button" onClick={() => setShowFeedback(null)} className="btn-ghost">
+                <button 
+                  type="button" 
+                  onClick={() => setShowFeedback(null)} 
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
                   Hủy
                 </button>
-                <button type="submit" className="btn-primary">
+                <button 
+                  type="submit" 
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                >
                   Lưu kết quả
                 </button>
               </div>
@@ -282,32 +303,30 @@ const Interviews = () => {
       {/* Interviews List */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
         </div>
       ) : interviews.length === 0 ? (
-        <div className="card text-center py-12">
-          <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">Chưa có lịch phỏng vấn</h3>
-          <p className="text-gray-400">Đặt lịch phỏng vấn cho các ứng viên phù hợp</p>
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 text-center py-12">
+          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Chưa có lịch phỏng vấn</h3>
+          <p className="text-gray-600">Đặt lịch phỏng vấn cho các ứng viên phù hợp</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {interviews.map((interview) => {
             const TypeIcon = typeIcons[interview.interview_type] || Video;
             return (
-              <div key={interview.id} className="card">
+              <div key={interview.id} className="bg-white rounded-xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-4">
-                  <span className={`badge ${statusColors[interview.status]}`}>
-                    {interview.status === 'SCHEDULED' ? 'Đã lên lịch' :
-                     interview.status === 'COMPLETED' ? 'Hoàn thành' :
-                     interview.status === 'CANCELLED' ? 'Đã hủy' : interview.status}
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[interview.status] || 'bg-gray-100 text-gray-700'}`}>
+                    {interviewStatusLabels[interview.status] || interview.status}
                   </span>
                   <div className="flex items-center gap-1">
                     {interview.status === 'SCHEDULED' && (
                       <>
                         <button
                           onClick={() => handleEdit(interview)}
-                          className="p-2 rounded-lg hover:bg-slate-700/50 text-gray-400 hover:text-white"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
@@ -316,7 +335,7 @@ const Interviews = () => {
                             setShowFeedback(interview.id);
                             setFeedbackData({ feedback: '', result: '' });
                           }}
-                          className="p-2 rounded-lg hover:bg-slate-700/50 text-green-400 hover:text-green-300"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-green-600 hover:text-green-700 transition-colors"
                         >
                           <MessageSquare className="w-4 h-4" />
                         </button>
@@ -324,7 +343,7 @@ const Interviews = () => {
                     )}
                     <button
                       onClick={() => handleDelete(interview.id)}
-                      className="p-2 rounded-lg hover:bg-slate-700/50 text-red-400 hover:text-red-300"
+                      className="p-2 rounded-lg hover:bg-gray-100 text-red-600 hover:text-red-700 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -332,18 +351,18 @@ const Interviews = () => {
                 </div>
 
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                    <User className="w-5 h-5 text-blue-400" />
+                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <User className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-white">{interview.candidate_name}</h3>
-                    <p className="text-sm text-gray-400">{interview.job_title}</p>
+                    <h3 className="font-semibold text-gray-900">{interview.candidate_name}</h3>
+                    <p className="text-sm text-gray-600">{interview.job_title}</p>
                   </div>
                 </div>
 
-                <div className="space-y-2 text-sm text-gray-400">
+                <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="w-4 h-4 text-gray-400" />
                     <span>
                       {new Date(interview.scheduled_at).toLocaleString('vi-VN', {
                         dateStyle: 'short',
@@ -352,19 +371,19 @@ const Interviews = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <TypeIcon className="w-4 h-4" />
+                    <TypeIcon className="w-4 h-4 text-gray-400" />
                     <span>{typeLabels[interview.interview_type]}</span>
                   </div>
                   {interview.location && (
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
+                      <MapPin className="w-4 h-4 text-gray-400" />
                       <span className="truncate">{interview.location}</span>
                     </div>
                   )}
                 </div>
 
                 {interview.result && interview.result !== 'PENDING' && (
-                  <div className={`mt-4 pt-4 border-t border-slate-700 ${resultColors[interview.result]}`}>
+                  <div className={`mt-4 pt-4 border-t border-gray-200 ${resultColors[interview.result]}`}>
                     <div className="flex items-center gap-2">
                       {interview.result === 'PASS' ? (
                         <CheckCircle className="w-5 h-5" />
@@ -376,7 +395,7 @@ const Interviews = () => {
                       </span>
                     </div>
                     {interview.feedback && (
-                      <p className="text-gray-400 text-sm mt-2">{interview.feedback}</p>
+                      <p className="text-gray-600 text-sm mt-2">{interview.feedback}</p>
                     )}
                   </div>
                 )}
@@ -390,4 +409,3 @@ const Interviews = () => {
 };
 
 export default Interviews;
-

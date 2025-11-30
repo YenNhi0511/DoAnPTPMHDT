@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { getApplications, updateApplicationStatus, screenApplication } from '../services/api';
+import { getApplications, getApplication, updateApplicationStatus, screenApplication } from '../services/api';
 import {
   FileText, Search, Filter, Eye, Brain, Mail, CheckCircle,
-  XCircle, Clock, Calendar, Download, User
+  XCircle, Clock, Calendar, Download, User, X
 } from 'lucide-react';
 
 const Applications = () => {
@@ -12,6 +12,9 @@ const Applications = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
   const [jobFilter, setJobFilter] = useState(searchParams.get('job') || '');
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [cvUrl, setCvUrl] = useState(null);
+  const [loadingCv, setLoadingCv] = useState(false);
 
   const fetchApplications = async () => {
     try {
@@ -49,6 +52,39 @@ const Applications = () => {
     } catch (error) {
       alert('Không thể cập nhật trạng thái');
     }
+  };
+
+  const handleViewCV = async (applicationId) => {
+    setLoadingCv(true);
+    try {
+      const res = await getApplication(applicationId);
+      const application = res.data;
+      // Sử dụng cv_file_url nếu có, nếu không thì build từ cv_file
+      const cvUrlToUse = application.cv_file_url || application.cv_file;
+      if (cvUrlToUse) {
+        // Đảm bảo URL đầy đủ
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+        const cvFullUrl = cvUrlToUse.startsWith('http') 
+          ? cvUrlToUse 
+          : cvUrlToUse.startsWith('/')
+          ? `${apiUrl}${cvUrlToUse}`
+          : `${apiUrl}/media/${cvUrlToUse}`;
+        setCvUrl(cvFullUrl);
+        setSelectedApplication(application);
+      } else {
+        alert('CV không tồn tại');
+      }
+    } catch (error) {
+      console.error('Error loading CV:', error);
+      alert('Không thể tải CV');
+    } finally {
+      setLoadingCv(false);
+    }
+  };
+
+  const handleCloseCV = () => {
+    setCvUrl(null);
+    setSelectedApplication(null);
   };
 
   const statusLabels = {
@@ -166,20 +202,24 @@ const Applications = () => {
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex items-center justify-end gap-2">
-                        <Link
-                          to={`/applications/${app.id}`}
+                        <button
+                          onClick={() => handleViewCV(app.id)}
                           className="p-2 rounded-lg hover:bg-green-50 text-gray-600 hover:text-green-600 transition-colors"
-                          title="Xem chi tiết"
+                          title="Xem CV"
                         >
                           <Eye className="w-4 h-4" />
-                        </Link>
-                        {app.cv_file && (
+                        </button>
+                        {(app.cv_file || app.cv_file_url) && (
                           <a
-                            href={app.cv_file}
+                            href={(app.cv_file_url || app.cv_file).startsWith('http') 
+                              ? (app.cv_file_url || app.cv_file)
+                              : `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}${app.cv_file_url || app.cv_file}`}
                             target="_blank"
                             rel="noopener noreferrer"
+                            download
                             className="p-2 rounded-lg hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
                             title="Tải CV"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Download className="w-4 h-4" />
                           </a>
@@ -190,6 +230,54 @@ const Applications = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* CV Viewer Modal */}
+      {cvUrl && selectedApplication && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4" onClick={handleCloseCV}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">CV của {selectedApplication.candidate_name}</h2>
+                <p className="text-sm text-gray-600 mt-1">{selectedApplication.job_title}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <a
+                  href={cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Download className="w-4 h-4" />
+                  Tải xuống
+                </a>
+                <button
+                  onClick={handleCloseCV}
+                  className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* CV Viewer */}
+            <div className="flex-1 overflow-auto p-6">
+              {loadingCv ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
+                </div>
+              ) : (
+                <iframe
+                  src={cvUrl}
+                  className="w-full h-full min-h-[600px] border border-gray-200 rounded-lg"
+                  title="CV Viewer"
+                />
+              )}
+            </div>
           </div>
         </div>
       )}

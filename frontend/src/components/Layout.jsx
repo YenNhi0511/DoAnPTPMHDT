@@ -26,6 +26,7 @@ const Layout = ({ children }) => {
     { path: '/dashboard', icon: Home, label: 'Dashboard', roles: ['RECRUITER'] },
     { path: '/jobs', icon: Briefcase, label: 'Quản lý việc làm', roles: ['RECRUITER'] },
     { path: '/applications', icon: FileText, label: 'Hồ sơ ứng tuyển', roles: ['RECRUITER'] },
+    { path: '/pipeline', icon: ClipboardList, label: 'Pipeline tuyển dụng', roles: ['RECRUITER'] },
     { path: '/interviews', icon: Calendar, label: 'Lịch phỏng vấn', roles: ['RECRUITER'] },
     { path: '/panels', icon: Users, label: 'Hội đồng tuyển dụng', roles: ['RECRUITER'] },
     { path: '/results', icon: Award, label: 'Kết quả tuyển dụng', roles: ['RECRUITER'] },
@@ -37,6 +38,9 @@ const Layout = ({ children }) => {
   const adminMenuItems = [
     { path: '/admin/dashboard', icon: Shield, label: 'Admin Dashboard', roles: ['ADMIN'] },
     { path: '/admin/users', icon: Users, label: 'Quản lý người dùng', roles: ['ADMIN'] },
+    { path: '/admin/companies', icon: Briefcase, label: 'Quản lý công ty', roles: ['ADMIN'] },
+    { path: '/admin/jobs', icon: FileText, label: 'Quản lý tin tuyển dụng', roles: ['ADMIN'] },
+    { path: '/admin/candidates', icon: User, label: 'Quản lý ứng viên', roles: ['ADMIN'] },
     { path: '/admin/settings', icon: Settings, label: 'Cài đặt hệ thống', roles: ['ADMIN'] },
   ];
 

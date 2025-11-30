@@ -100,6 +100,36 @@ const Header = () => {
                     Trang chủ
                   </Link>
                   <Link
+                    to="/saved-jobs"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === '/saved-jobs'
+                        ? 'bg-blue-50 text-blue-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    Việc đã lưu
+                  </Link>
+                  <Link
+                    to="/interviews"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === '/interviews'
+                        ? 'bg-blue-50 text-blue-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    Lịch phỏng vấn
+                  </Link>
+                  <Link
+                    to="/notifications"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === '/notifications'
+                        ? 'bg-blue-50 text-blue-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    Thông báo
+                  </Link>
+                  <Link
                     to="/profile"
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       location.pathname === '/profile'
@@ -170,6 +200,26 @@ const Header = () => {
                     }`}
                   >
                     Quản lý người dùng
+                  </Link>
+                  <Link
+                    to="/admin/companies"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname.startsWith('/admin/companies')
+                        ? 'bg-purple-50 text-purple-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    Quản lý công ty
+                  </Link>
+                  <Link
+                    to="/admin/jobs"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname.startsWith('/admin/jobs')
+                        ? 'bg-purple-50 text-purple-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    Quản lý tin tuyển dụng
                   </Link>
                 </>
               )}
@@ -323,6 +373,27 @@ const Header = () => {
                       Trang chủ
                     </Link>
                     <Link
+                      to="/saved-jobs"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Việc đã lưu
+                    </Link>
+                    <Link
+                      to="/interviews"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Lịch phỏng vấn
+                    </Link>
+                    <Link
+                      to="/notifications"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Thông báo
+                    </Link>
+                    <Link
                       to="/profile"
                       className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                       onClick={() => setMobileMenuOpen(false)}
@@ -371,6 +442,27 @@ const Header = () => {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Quản lý người dùng
+                    </Link>
+                    <Link
+                      to="/admin/companies"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Quản lý công ty
+                    </Link>
+                    <Link
+                      to="/admin/jobs"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Quản lý tin tuyển dụng
+                    </Link>
+                    <Link
+                      to="/admin/candidates"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Quản lý ứng viên
                     </Link>
                   </>
                 )}
