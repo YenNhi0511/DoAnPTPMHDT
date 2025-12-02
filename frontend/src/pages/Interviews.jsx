@@ -485,7 +485,7 @@ const Interviews = () => {
                             <XCircle className="w-4 h-4" />
                           )}
                           <span className="font-medium text-sm">
-                            {interview.result === 'PASS' ? 'Đạt' : 'Không đạt'}
+                            {interview.result === 'PASS' ? '✅ ĐẬU' : '❌ KHÔNG ĐẬU'}
                           </span>
                         </div>
                       </div>
@@ -830,8 +830,8 @@ const Interviews = () => {
                   required
                 >
                   <option value="">-- Chọn kết quả --</option>
-                  <option value="PASS">Đạt</option>
-                  <option value="FAIL">Không đạt</option>
+                  <option value="PASS">✅ ĐẬU</option>
+                  <option value="FAIL">❌ KHÔNG ĐẬU</option>
                 </select>
               </div>
 

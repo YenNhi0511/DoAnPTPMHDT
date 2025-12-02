@@ -1,6 +1,39 @@
 Xin chào {{ result.application.candidate.get_full_name }},
 
-Kết quả tuyển dụng cho vị trí {{ result.application.job.title }}: {{ result.final_decision }}.
+{% if result.final_decision == 'OFFER' %}
+Chúng tôi rất vui mừng thông báo rằng bạn đã ✅ ĐẬU và được nhận vào vị trí:
+
+{{ result.application.job.title }}
+Địa điểm: {{ result.application.job.location }}
+
+{% if result.salary %}
+Mức lương đề xuất: {{ result.salary }}
+{% endif %}
+{% if result.start_date %}
+Ngày bắt đầu: {{ result.start_date|date:"d/m/Y" }}
+{% endif %}
+
+Bước tiếp theo:
+- Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để thảo luận về thư mời nhận việc (Offer Letter)
+- Vui lòng chuẩn bị các giấy tờ cần thiết theo yêu cầu
+- Nếu có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi
+
+Một lần nữa, chúc mừng bạn và chúng tôi mong được chào đón bạn vào đội ngũ!
+{% else %}
+Sau khi xem xét kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng bạn ❌ KHÔNG ĐẬU cho vị trí:
+
+{{ result.application.job.title }}
+Địa điểm: {{ result.application.job.location }}
+
+{% if result.notes %}
+{{ result.notes }}
+{% endif %}
+
+Chúng tôi đánh giá cao sự quan tâm của bạn đến vị trí này và chúc bạn thành công trong các cơ hội nghề nghiệp khác.
+{% endif %}
 
 Trân trọng,
 Team tuyển dụng
+
+---
+Email này được gửi tự động từ hệ thống tuyển dụng. Vui lòng không trả lời email này.

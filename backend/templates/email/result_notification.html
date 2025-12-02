@@ -1,7 +1,122 @@
-<p>Xin chào {{ result.application.candidate.get_full_name }},</p>
-<p>
-  Kết quả tuyển dụng cho vị trí
-  <strong>{{ result.application.job.title }}</strong>:
-  <strong>{{ result.final_decision }}</strong>.
-</p>
-<p>Trân trọng,<br />Team tuyển dụng</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            {% if result.final_decision == 'OFFER' %}
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            {% else %}
+            background: #f3f4f6;
+            {% endif %}
+            color: {% if result.final_decision == 'OFFER' %}white{% else %}#374151{% endif %};
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #ffffff;
+            padding: 30px;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+        }
+        .result-badge {
+            display: inline-block;
+            {% if result.final_decision == 'OFFER' %}
+            background: #10b981;
+            {% else %}
+            background: #ef4444;
+            {% endif %}
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .info-box {
+            {% if result.final_decision == 'OFFER' %}
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            {% else %}
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            {% endif %}
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .footer {
+            background: #f9fafb;
+            padding: 20px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if result.final_decision == 'OFFER' %}
+        <h1>🎉 Chúc mừng bạn!</h1>
+        {% else %}
+        <h1>Kết quả tuyển dụng</h1>
+        {% endif %}
+    </div>
+    <div class="content">
+        <p>Xin chào <strong>{{ result.application.candidate.get_full_name }}</strong>,</p>
+        
+        {% if result.final_decision == 'OFFER' %}
+        <p>Chúng tôi rất vui mừng thông báo rằng bạn đã <span class="result-badge">✅ ĐẬU</span> và được nhận vào vị trí:</p>
+        {% else %}
+        <p>Sau khi xem xét kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng bạn <span class="result-badge">❌ KHÔNG ĐẬU</span> cho vị trí:</p>
+        {% endif %}
+        
+        <div class="info-box">
+            <h2 style="margin-top: 0; {% if result.final_decision == 'OFFER' %}color: #059669;{% else %}color: #dc2626;{% endif %}">{{ result.application.job.title }}</h2>
+            <p><strong>Địa điểm:</strong> {{ result.application.job.location }}</p>
+        </div>
+        
+        {% if result.final_decision == 'OFFER' %}
+        {% if result.salary %}
+        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <p><strong>Mức lương đề xuất:</strong> {{ result.salary }}</p>
+            {% if result.start_date %}
+            <p><strong>Ngày bắt đầu:</strong> {{ result.start_date|date:"d/m/Y" }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <p><strong>Bước tiếp theo:</strong></p>
+        <ul>
+            <li>Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để thảo luận về thư mời nhận việc (Offer Letter)</li>
+            <li>Vui lòng chuẩn bị các giấy tờ cần thiết theo yêu cầu</li>
+            <li>Nếu có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi</li>
+        </ul>
+        
+        <p>Một lần nữa, chúc mừng bạn và chúng tôi mong được chào đón bạn vào đội ngũ!</p>
+        {% else %}
+        {% if result.notes %}
+        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <p style="white-space: pre-wrap;">{{ result.notes }}</p>
+        </div>
+        {% endif %}
+        
+        <p>Chúng tôi đánh giá cao sự quan tâm của bạn đến vị trí này và chúc bạn thành công trong các cơ hội nghề nghiệp khác.</p>
+        {% endif %}
+        
+        <p>Trân trọng,<br>
+        <strong>Team tuyển dụng</strong></p>
+    </div>
+    <div class="footer">
+        <p>Email này được gửi tự động từ hệ thống tuyển dụng. Vui lòng không trả lời email này.</p>
+    </div>
+</body>
+</html>

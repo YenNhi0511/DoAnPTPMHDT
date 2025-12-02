@@ -5,7 +5,7 @@ Cảm ơn bạn đã dành thời gian tham gia phỏng vấn cho vị trí:
 {{ job.title }}
 Địa điểm: {{ job.location }}
 
-Sau khi xem xét kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng chúng tôi đã quyết định không tiếp tục với đơn ứng tuyển của bạn tại thời điểm này.
+Sau khi xem xét kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng bạn ❌ KHÔNG ĐẬU vòng phỏng vấn cho vị trí này.
 
 {% if feedback %}
 Nhận xét từ hội đồng phỏng vấn:

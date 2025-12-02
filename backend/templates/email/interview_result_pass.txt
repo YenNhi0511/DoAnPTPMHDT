@@ -1,6 +1,6 @@
 Xin chào {{ candidate.get_full_name }},
 
-Chúng tôi rất vui mừng thông báo rằng bạn đã VƯỢT QUA vòng phỏng vấn cho vị trí:
+Chúng tôi rất vui mừng thông báo rằng bạn đã ✅ ĐẬU vòng phỏng vấn cho vị trí:
 
 {{ job.title }}
 Địa điểm: {{ job.location }}

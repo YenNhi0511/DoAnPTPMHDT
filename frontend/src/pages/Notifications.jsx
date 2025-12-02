@@ -219,26 +219,64 @@ const Notifications = () => {
             filteredNotifications.map((notification) => {
               const Icon = getNotificationIcon(notification.notification_type);
               const isUnread = !notification.is_read;
+              
+              // Kiểm tra xem có phải notification về kết quả tuyển dụng không
+              const isResultNotification = notification.title?.includes('Kết quả tuyển dụng') || 
+                                          notification.title?.includes('ĐẬU') || 
+                                          notification.title?.includes('KHÔNG ĐẬU');
+              const isPassResult = notification.title?.includes('✅ ĐẬU') || notification.content?.includes('✅ ĐẬU');
+              const isFailResult = notification.title?.includes('❌ KHÔNG ĐẬU') || notification.content?.includes('❌ KHÔNG ĐẬU');
 
               return (
                 <div
                   key={notification.id}
                   className={`p-6 hover:bg-gray-50 transition-colors ${
                     isUnread ? 'bg-blue-50/30' : ''
+                  } ${isResultNotification && isPassResult ? 'border-l-4 border-green-500' : ''} ${
+                    isResultNotification && isFailResult ? 'border-l-4 border-red-500' : ''
                   }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${getNotificationColor(notification.notification_type)}`}>
-                      <Icon className="w-6 h-6" />
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      isResultNotification && isPassResult 
+                        ? 'bg-green-100 text-green-600' 
+                        : isResultNotification && isFailResult
+                        ? 'bg-red-100 text-red-600'
+                        : getNotificationColor(notification.notification_type)
+                    }`}>
+                      {isResultNotification && isPassResult ? (
+                        <CheckCircle className="w-6 h-6" />
+                      ) : isResultNotification && isFailResult ? (
+                        <XCircle className="w-6 h-6" />
+                      ) : (
+                        <Icon className="w-6 h-6" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4 mb-2">
                         <div className="flex-1">
-                          <h3 className={`text-lg font-semibold mb-1 ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>
-                            {notification.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-2">
-                            {notification.message}
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className={`text-lg font-semibold ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>
+                              {notification.title}
+                            </h3>
+                            {isResultNotification && (
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                                isPassResult 
+                                  ? 'bg-green-100 text-green-700 border border-green-300' 
+                                  : 'bg-red-100 text-red-700 border border-red-300'
+                              }`}>
+                                {isPassResult ? '✅ ĐẬU' : '❌ KHÔNG ĐẬU'}
+                              </span>
+                            )}
+                          </div>
+                          <p className={`text-sm mb-2 ${
+                            isResultNotification && isPassResult 
+                              ? 'text-green-700 font-medium' 
+                              : isResultNotification && isFailResult
+                              ? 'text-red-700 font-medium'
+                              : 'text-gray-600'
+                          }`}>
+                            {notification.content}
                           </p>
                           <div className="flex items-center gap-3 text-xs text-gray-700">
                             <span>

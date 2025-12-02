@@ -271,8 +271,8 @@ class InterviewViewSet(viewsets.ModelViewSet):
                         Notification.objects.create(
                             user=candidate,
                             notification_type=Notification.Type.SYSTEM,
-                            title=f"Chúc mừng! Bạn đã được nhận - {job.title}",
-                            content=f"Chúc mừng! Bạn đã vượt qua vòng phỏng vấn và được nhận vào vị trí {job.title} tại {job.location}. Vui lòng kiểm tra email để biết thêm chi tiết về offer.",
+                            title=f"✅ ĐẬU - Chúc mừng! Bạn đã được nhận - {job.title}",
+                            content=f"✅ ĐẬU - Chúc mừng! Bạn đã vượt qua vòng phỏng vấn và được nhận vào vị trí {job.title} tại {job.location}. Vui lòng kiểm tra email để biết thêm chi tiết về offer.",
                             related_id=application.id
                         )
                     except Exception as e:
@@ -409,11 +409,11 @@ class InterviewViewSet(viewsets.ModelViewSet):
         from notifications.models import Notification
         try:
             if interview.result == Interview.Result.PASS:
-                title = f"Chúc mừng! Bạn đã vượt qua vòng phỏng vấn - {job.title}"
-                content = f"Chúc mừng! Bạn đã vượt qua vòng phỏng vấn cho vị trí {job.title}. Vui lòng kiểm tra email để biết thêm chi tiết về bước tiếp theo."
+                title = f"✅ ĐẬU - Chúc mừng! Bạn đã vượt qua vòng phỏng vấn - {job.title}"
+                content = f"✅ ĐẬU - Chúc mừng! Bạn đã vượt qua vòng phỏng vấn cho vị trí {job.title}. Vui lòng kiểm tra email để biết thêm chi tiết về bước tiếp theo."
             else:
-                title = f"Kết quả phỏng vấn - {job.title}"
-                content = f"Kết quả phỏng vấn cho vị trí {job.title} đã được cập nhật. Vui lòng kiểm tra email để biết thêm chi tiết."
+                title = f"❌ KHÔNG ĐẬU - Kết quả phỏng vấn - {job.title}"
+                content = f"❌ KHÔNG ĐẬU - Kết quả phỏng vấn cho vị trí {job.title} đã được cập nhật. Vui lòng kiểm tra email để biết thêm chi tiết."
             
             Notification.objects.create(
                 user=candidate,
@@ -532,8 +532,8 @@ class InterviewPanelViewSet(viewsets.ModelViewSet):
                             Notification.objects.create(
                                 user=candidate,
                                 notification_type=Notification.Type.SYSTEM,
-                                title=f"Chúc mừng! Bạn đã được nhận - {job.title}",
-                                content=f"Chúc mừng! Bạn đã vượt qua vòng phỏng vấn với điểm số {avg_score:.1f}/100 và được nhận vào vị trí {job.title} tại {job.location}. Vui lòng kiểm tra email để biết thêm chi tiết về offer.",
+                                title=f"✅ ĐẬU - Chúc mừng! Bạn đã được nhận - {job.title}",
+                                content=f"✅ ĐẬU - Chúc mừng! Bạn đã vượt qua vòng phỏng vấn với điểm số {avg_score:.1f}/100 và được nhận vào vị trí {job.title} tại {job.location}. Vui lòng kiểm tra email để biết thêm chi tiết về offer.",
                                 related_id=application.id
                             )
                         except Exception as e:
@@ -712,14 +712,18 @@ class RecruitmentResultViewSet(viewsets.ModelViewSet):
             candidate = result.application.candidate
             job = result.application.job
             decision_text = {
-                'OFFER': 'Chúc mừng! Bạn đã được nhận vào vị trí',
-                'REJECT': 'Cảm ơn bạn đã quan tâm đến vị trí',
+                'OFFER': '✅ ĐẬU - Chúc mừng! Bạn đã được nhận vào vị trí',
+                'REJECT': '❌ KHÔNG ĐẬU - Cảm ơn bạn đã quan tâm đến vị trí',
             }.get(result.final_decision, 'Kết quả tuyển dụng cho vị trí')
+            
+            # Tạo title rõ ràng với kết quả
+            result_badge = "✅ ĐẬU" if result.final_decision == 'OFFER' else "❌ KHÔNG ĐẬU"
+            notification_title = f"{result_badge} - Kết quả tuyển dụng - {job.title}"
             
             Notification.objects.create(
                 user=candidate,
                 notification_type=Notification.Type.SYSTEM,
-                title=f"Kết quả tuyển dụng - {job.title}",
+                title=notification_title,
                 content=f"{decision_text} {job.title}. {result.notes or ''}",
                 related_id=result.application.id
             )

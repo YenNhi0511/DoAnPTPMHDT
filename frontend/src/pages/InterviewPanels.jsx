@@ -973,8 +973,8 @@ const InterviewPanels = () => {
                   required
                 >
                   <option value="PENDING">Chờ xem xét</option>
-                  <option value="PASS">Đậu</option>
-                  <option value="FAIL">Rớt</option>
+                  <option value="PASS">✅ ĐẬU</option>
+                  <option value="FAIL">❌ KHÔNG ĐẬU</option>
                 </select>
               </div>
               <div className="flex items-center justify-end gap-4 pt-4">

@@ -99,9 +99,9 @@ const SavedJobs = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">
-                {savedJobs.filter(job => job.is_featured).length}
+                {savedJobs.filter(job => job.status === 'OPEN').length}
               </p>
-              <p className="text-sm text-gray-600">Việc làm nổi bật</p>
+              <p className="text-sm text-gray-600">Đang tuyển</p>
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@ const SavedJobs = () => {
                               <div className="flex items-center gap-3 text-sm text-gray-600 mb-2">
                                 <div className="flex items-center gap-1">
                                   <Building2 className="w-4 h-4" />
-                                  <span className="font-medium">{job.company_name}</span>
+                                  <span className="font-medium">{job.created_by_name || job.company_name || 'Công ty'}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <MapPin className="w-4 h-4" />
@@ -166,12 +166,17 @@ const SavedJobs = () => {
                             </div>
                           </div>
                           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
-                            {job.salary_min && job.salary_max && (
+                            {(job.salary_min && job.salary_max) ? (
                               <div className="flex items-center gap-1">
                                 <DollarSign className="w-4 h-4" />
                                 <span>
-                                  {job.salary_min.toLocaleString('vi-VN')} - {job.salary_max.toLocaleString('vi-VN')} VNĐ
+                                  {Number(job.salary_min).toLocaleString('vi-VN')} - {Number(job.salary_max).toLocaleString('vi-VN')} VNĐ
                                 </span>
+                              </div>
+                            ) : job.salary && (
+                              <div className="flex items-center gap-1">
+                                <DollarSign className="w-4 h-4" />
+                                <span>{job.salary}</span>
                               </div>
                             )}
                             {job.experience_years && (

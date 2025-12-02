@@ -132,8 +132,8 @@ const Results = () => {
                   required
                 >
                   <option value="">-- Chọn quyết định --</option>
-                  <option value="OFFER">Gửi Offer</option>
-                  <option value="REJECT">Từ chối</option>
+                  <option value="OFFER">✅ ĐẬU (Gửi Offer)</option>
+                  <option value="REJECT">❌ KHÔNG ĐẬU (Từ chối)</option>
                 </select>
               </div>
 
@@ -213,7 +213,7 @@ const Results = () => {
                     ? 'bg-green-100 text-green-700 border-green-200' 
                     : 'bg-red-100 text-red-700 border-red-200'
                 }`}>
-                  {result.final_decision === 'OFFER' ? 'Đã gửi Offer' : 'Từ chối'}
+                  {result.final_decision === 'OFFER' ? '✅ ĐẬU' : '❌ KHÔNG ĐẬU'}
                 </span>
                 <span className="text-sm text-gray-600">
                   {new Date(result.decided_at).toLocaleDateString('vi-VN')}
@@ -221,7 +221,16 @@ const Results = () => {
               </div>
 
               <h3 className="font-semibold text-gray-900 mb-1">{result.candidate_name}</h3>
-              <p className="text-sm text-gray-600 mb-4">{result.job_title}</p>
+              <p className="text-sm text-gray-600 mb-2">{result.job_title}</p>
+              <div className={`mb-4 p-2 rounded-lg text-sm font-medium ${
+                result.final_decision === 'OFFER' 
+                  ? 'bg-green-50 text-green-800 border border-green-200' 
+                  : 'bg-red-50 text-red-800 border border-red-200'
+              }`}>
+                <span className="font-bold">
+                  Kết quả: {result.final_decision === 'OFFER' ? '✅ ĐẬU' : '❌ KHÔNG ĐẬU'}
+                </span>
+              </div>
 
               {result.final_decision === 'OFFER' && (
                 <div className="space-y-2 text-sm mb-4">
