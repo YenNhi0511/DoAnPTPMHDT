@@ -4,11 +4,14 @@ FROM nginx:alpine
 # Copy pre-built React app
 COPY build /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx configuration template
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
-# Expose port
-EXPOSE 80
+# Railway uses dynamic PORT
+ENV PORT=80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Expose port (Railway will override)
+EXPOSE ${PORT}
+
+# Start nginx with envsubst for dynamic PORT
+CMD sh -c "envsubst '\$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
