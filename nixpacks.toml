@@ -1,14 +1,21 @@
+# Nixpacks configuration for Django backend
+# Railway detects this file when Root Directory = "/" or empty
+
 [phases.setup]
-nixPkgs = ["python310", "postgresql"]
+nixPkgs = ["python310", "postgresql", "gcc"]
 
 [phases.install]
-cmds = ["cd backend && pip install -r requirements.txt"]
+cmds = [
+  "cd backend",
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
+]
 
 [phases.build]
 cmds = [
-  "cd backend && python manage.py collectstatic --noinput",
-  "cd backend && python manage.py migrate"
+  "cd backend",
+  "python manage.py collectstatic --noinput"
 ]
 
 [start]
-cmd = "cd backend && gunicorn recruitment_system.wsgi --bind 0.0.0.0:$PORT"
+cmd = "cd backend && gunicorn recruitment_system.wsgi --bind 0.0.0.0:$PORT --workers 2"
