@@ -2,12 +2,17 @@ import axios from 'axios';
 
 // Auto-detect API URL based on environment
 const getApiUrl = () => {
-  // If env var is set (for local dev), use it
+  // If env var is set, use it (highest priority)
   if (process.env.REACT_APP_API_URL) {
     return process.env.REACT_APP_API_URL;
   }
   
-  // For production deployment, auto-detect from hostname
+  // For production deployment with custom domain
+  if (window.location.hostname.includes('recruitmentpro.live')) {
+    return 'https://api.recruitmentpro.live/api';
+  }
+  
+  // For Railway deployment
   if (window.location.hostname.includes('railway.app')) {
     return 'https://doanptpmhdtbackend-production.up.railway.app/api';
   }
