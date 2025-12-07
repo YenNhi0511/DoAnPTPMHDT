@@ -1,29 +1,8 @@
-# Build stage
-FROM node:18-alpine AS build
-
-WORKDIR /app
-
-# Accept build-time environment variables
-ARG REACT_APP_API_URL
-ENV REACT_APP_API_URL=$REACT_APP_API_URL
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci
-
-# Copy source code
-COPY . .
-
-# Build the app with environment variables
-RUN npm run build
-
-# Production stage
+# Simple production stage - use pre-built files
 FROM nginx:alpine
 
-# Copy built assets from build stage
-COPY --from=build /app/build /usr/share/nginx/html
+# Copy pre-built React app
+COPY build /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
