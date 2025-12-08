@@ -1,0 +1,170 @@
+@startuml Sơ đồ Tuần Tự - Đánh Giá Ứng Viên
+skinparam monochrome true
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title Sơ đồ Tuần Tự: Đánh Giá Ứng Viên (Sau Phỏng Vấn)
+
+actor "Interviewer" as INT
+participant "<<Boundary>>\nInterviewFeedbackForm" as IFF
+participant "<<Control>>\nInterviewController" as IC
+participant "<<Entity>>\nInterview" as I
+participant "<<Entity>>\nInterviewPanel" as IP
+participant "<<Entity>>\nApplication" as A
+participant "<<Service>>\nEmailService" as ES
+database "Database" as DB
+
+== Giai đoạn 1: Truy cập form đánh giá ==
+INT -> IFF: Truy cập trang đánh giá\nsau khi hoàn thành phỏng vấn
+activate IFF
+
+IFF -> IC: getInterviewDetails(interview_id, interviewer_id)
+activate IC
+
+IC -> I: findById(interview_id)
+activate I
+I -> DB: SELECT * FROM interviews\nWHERE id = interview_id
+activate DB
+DB --> I: interview_data
+deactivate DB
+I --> IC: Interview object
+deactivate I
+
+IC -> IP: getPanelMember(interview_id, interviewer_id)
+activate IP
+IP -> DB: SELECT * FROM interview_panels\nWHERE interview_id = ?\nAND interviewer_id = ?
+activate DB
+DB --> IP: panel_member_data
+deactivate DB
+IP --> IC: InterviewPanel object
+deactivate IP
+
+IC --> IFF: Interview + Panel details
+deactivate IC
+IFF --> INT: Hiển thị form đánh giá\n+ Thông tin ứng viên
+deactivate IFF
+
+== Giai đoạn 2: Nhập đánh giá ==
+INT -> IFF: Nhập feedback:\n- Technical skills score (0-100)\n- Communication score (0-100)\n- Problem solving score (0-100)\n- Cultural fit score (0-100)\n- Overall score (0-100)\n- Detailed feedback (text)\n- Result: PASS/FAIL/PENDING\n- Recommendations
+activate IFF
+
+IFF -> IFF: Validate dữ liệu:\n- Scores trong khoảng 0-100\n- Feedback không trống\n- Result được chọn
+
+alt Validation failed
+    IFF --> INT: Hiển thị lỗi validation
+else Validation passed
+    IFF -> IC: submitFeedback(interview_id,\ninterviewer_id, feedbackData)
+    activate IC
+    
+    == Giai đoạn 3: Lưu feedback ==
+    IC -> IP: updateFeedback(feedbackData)
+    activate IP
+    IP -> IP: Calculate overall score:\navg(technical, communication,\nproblem_solving, cultural_fit)
+    IP -> DB: UPDATE interview_panels\nSET feedback = ?,\nscore = ?,\nupdated_at = NOW()\nWHERE interview_id = ?\nAND interviewer_id = ?
+    activate DB
+    DB --> IP: success
+    deactivate DB
+    IP --> IC: InterviewPanel updated
+    deactivate IP
+    
+    == Giai đoạn 4: Kiểm tra tất cả interviewers đã đánh giá ==
+    IC -> IC: checkAllFeedbackCompleted(interview_id)
+    activate IC
+    IC -> DB: SELECT COUNT(*) as total,\nCOUNT(CASE WHEN feedback IS NOT NULL)\nas completed\nFROM interview_panels\nWHERE interview_id = ?
+    activate DB
+    DB --> IC: total, completed
+    deactivate DB
+    
+    alt Tất cả đã đánh giá
+        deactivate IC
+        
+        == Giai đoạn 5: Tính điểm tổng hợp ==
+        IC -> IC: calculateAggregateScore(interview_id)
+        activate IC
+        IC -> DB: SELECT AVG(score) as avg_score,\nAVG(technical_score) as avg_technical,\nAVG(communication_score) as avg_communication\nFROM interview_panels\nWHERE interview_id = ?
+        activate DB
+        DB --> IC: aggregate_scores
+        deactivate DB
+        deactivate IC
+        
+        == Giai đoạn 6: Xác định kết quả ==
+        IC -> IC: determineInterviewResult(aggregate_scores)
+        activate IC
+        note right
+          Logic:
+          - avg_score >= 70: PASS
+          - avg_score < 50: FAIL
+          - 50-70: PENDING (cần review thêm)
+        end note
+        deactivate IC
+        
+        IC -> I: updateResult(result, aggregate_scores)
+        activate I
+        I -> DB: UPDATE interviews\nSET status = 'COMPLETED',\nresult = ?,\nfeedback = aggregate_json\nWHERE id = ?
+        activate DB
+        DB --> I: success
+        deactivate DB
+        I --> IC: Interview updated
+        deactivate I
+        
+        == Giai đoạn 7: Cập nhật Application status ==
+        alt Result = PASS
+            IC -> A: updateStatus(SCREENING_PASSED)
+            activate A
+            A -> DB: UPDATE applications\nSET status = 'SCREENING_PASSED'\nWHERE id = application_id
+            activate DB
+            DB --> A: success
+            deactivate DB
+            A --> IC: Application updated
+            deactivate A
+            
+            IC -> ES: notifyRecruiter(interview, result)
+            activate ES
+            ES -> ES: Tạo email thông báo:\n"Ứng viên [Name] đạt phỏng vấn"\n+ Link xem chi tiết feedback
+            ES --> IC: email sent
+            deactivate ES
+            
+        else Result = FAIL
+            IC -> A: updateStatus(REJECTED)
+            activate A
+            A -> DB: UPDATE applications\nSET status = 'REJECTED'\nWHERE id = application_id
+            activate DB
+            DB --> A: success
+            deactivate DB
+            A --> IC: Application updated
+            deactivate A
+            
+            IC -> ES: notifyRecruiter(interview, result)
+            activate ES
+            ES -> ES: Tạo email thông báo:\n"Ứng viên [Name] không đạt phỏng vấn"
+            ES --> IC: email sent
+            deactivate ES
+        end
+        
+        IC --> IFF: Feedback submitted.\nAll reviews completed.\nInterview result: [PASS/FAIL]
+        deactivate IC
+        IFF --> INT: Hiển thị thông báo:\n"Đánh giá đã được lưu"\n"Tất cả interviewer đã đánh giá"\n"Kết quả: [PASS/FAIL]"
+        deactivate IFF
+        
+    else Chưa đủ feedback
+        deactivate IC
+        IC --> IFF: Feedback submitted.\nWaiting for other interviewers.
+        deactivate IC
+        IFF --> INT: Hiển thị thông báo:\n"Đánh giá đã được lưu"\n"Đang chờ đánh giá từ interviewer khác"
+        deactivate IFF
+    end
+end
+
+== Ghi chú ==
+note over INT, DB
+  **Business Rules:**
+  1. Mỗi interviewer chỉ được đánh giá sau khi interview hoàn thành
+  2. Score range: 0-100 cho mỗi tiêu chí
+  3. Kết quả cuối: Trung bình của tất cả interviewers
+  4. Pass threshold: avg_score >= 70
+  5. Fail threshold: avg_score < 50
+  6. Auto notification: Thông báo recruiter khi có kết quả
+  7. Application status: Tự động cập nhật dựa trên result
+end note
+
+@enduml

@@ -21,7 +21,7 @@ const RecruiterLayout = ({ children }) => {
 
   // Menu items CHỈ cho RECRUITER
   const recruiterMenuItems = [
-    { path: '/dashboard', icon: Home, label: 'Dashboard', roles: ['RECRUITER'] },
+    { path: '/dashboard', icon: Home, label: 'Trang chủ', roles: ['RECRUITER'] },
     { path: '/jobs', icon: Briefcase, label: 'Quản lý việc làm', roles: ['RECRUITER'] },
     { path: '/applications', icon: FileText, label: 'Hồ sơ ứng tuyển', roles: ['RECRUITER'] },
     { path: '/pipeline', icon: ClipboardList, label: 'Pipeline tuyển dụng', roles: ['RECRUITER'] },

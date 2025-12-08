@@ -2,6 +2,16 @@
 
 > Django 5.0 + React 18 + PostgreSQL + AI Screening (Google Gemini)
 
+## ✨ Chức năng chính
+
+| Vai trò         | Chức năng                                                                    |
+| --------------- | ---------------------------------------------------------------------------- |
+| **Candidate**   | Đăng ký/đăng nhập, tìm kiếm việc làm, nộp CV, theo dõi trạng thái ứng tuyển  |
+| **Recruiter**   | Đăng tin tuyển dụng, xem CV + điểm AI, lên lịch phỏng vấn, gửi kết quả email |
+| **Interviewer** | Xem lịch phỏng vấn, chấm điểm ứng viên                                       |
+| **Admin**       | Quản lý user, công ty, tin tuyển dụng, xem thống kê                          |
+| **AI**          | Tự động sàng lọc CV, chấm điểm phù hợp với job (Google Gemini)               |
+
 ## 📋 Yêu cầu
 
 - **Python** 3.10+
@@ -26,13 +36,19 @@ DATABASE_URL=postgresql://neondb_owner:xxx@xxx.neon.tech/recruitment_db?sslmode=
 SECRET_KEY=django-insecure-your-secret-key
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
+GEMINI_API_KEY=your_gemini_api_key
+
+# Email API (Recommended)
+RESEND_API_KEY=re_your_resend_api_key  # Get from https://resend.com (100 emails/day free)
+
+# Email SMTP (Optional backup)
 EMAIL_HOST_USER=your_email@gmail.com
 EMAIL_HOST_PASSWORD=your_app_password
-GEMINI_API_KEY=your_gemini_api_key
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
+
 FRONTEND_URL=http://localhost:3000
 BACKEND_URL=http://localhost:8000
 ```

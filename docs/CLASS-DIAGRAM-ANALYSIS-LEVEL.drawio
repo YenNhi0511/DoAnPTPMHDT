@@ -1,0 +1,490 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Class Diagram - Mức Phân Tích" id="class-diagram">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title -->
+        <mxCell id="title" value="HỆ THỐNG TUYỂN DỤNG NHÂN SỰ THÔNG MINH&lt;br&gt;Class Diagram - Mức Phân Tích" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="527" y="20" width="600" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Class: Job -->
+        <mxCell id="Job" value="&amp;lt;&amp;lt;Entity&amp;gt;&amp;gt;&lt;br&gt;Job" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="240" height="410" as="geometry"/>
+        </mxCell>
+        <mxCell id="Job-attr" value="id: UUID (PK)&lt;br&gt;title: String&lt;br&gt;department: String&lt;br&gt;description: Text&lt;br&gt;requirements: Text&lt;br&gt;salary_min: Decimal&lt;br&gt;salary_max: Decimal&lt;br&gt;quantity: Integer&lt;br&gt;location: String&lt;br&gt;employment_type: Enum&lt;br&gt;  • FULLTIME&lt;br&gt;  • PARTTIME&lt;br&gt;  • CONTRACT&lt;br&gt;  • INTERNSHIP&lt;br&gt;status: Enum&lt;br&gt;  • DRAFT&lt;br&gt;  • OPEN&lt;br&gt;  • CLOSED&lt;br&gt;experience_count: Integer&lt;br&gt;experience_years: Integer&lt;br&gt;deadline: DateTime&lt;br&gt;created_by: FK(User)&lt;br&gt;created_at: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Job">
+          <mxGeometry y="40" width="240" height="330" as="geometry"/>
+        </mxCell>
+        <mxCell id="Job-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="Job">
+          <mxGeometry y="370" width="240" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="Job-methods" value="+ dang_tin()&lt;br&gt;+ dong_tin()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Job">
+          <mxGeometry y="378" width="240" height="32" as="geometry"/>
+        </mxCell>
+
+        <!-- Class: Application -->
+        <mxCell id="Application" value="&lt;&lt;Entity&gt;&gt;&#xa;Application" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="400" y="120" width="240" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="Application-attr" value="id: UUID (PK)&#xa;job: FK(Job)&#xa;candidate: FK(User)&#xa;cv_file: File&#xa;cover_letter: Text&#xa;ai_score: Float&#xa;ai_analysis: Text&#xa;status: Enum&#xa;  • PENDING&#xa;  • SCREENING&#xa;  • INTERVIEW&#xa;  • OFFER&#xa;  • ACCEPTED&#xa;  • REJECTED&#xa;applied_at: DateTime&#xa;screener_notes: Text" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Application">
+          <mxGeometry y="40" width="240" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="Application-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="Application">
+          <mxGeometry y="310" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="Application-methods" value="+ nop_ho_so()&#xa;+ cap_nhat_trang_thai()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Application">
+          <mxGeometry y="318" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Class: Interview -->
+        <mxCell id="Interview" value="&lt;&lt;Entity&gt;&gt;&#xa;Interview" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="720" y="120" width="240" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="Interview-attr" value="id: UUID (PK)&#xa;application: FK(Application)&#xa;scheduled_at: DateTime&#xa;duration: Integer (min)&#xa;location_link: String&#xa;type: Enum&#xa;  • TECHNICAL&#xa;  • HR&#xa;  • ONLINE&#xa;  • OFFLINE&#xa;  • ONSITE&#xa;round: String&#xa;status: Enum&#xa;  • SCHEDULED&#xa;  • ONGOING&#xa;  • COMPLETED&#xa;  • CANCELLED&#xa;result: Enum&#xa;  • PASS&#xa;  • FAIL&#xa;  • PENDING" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Interview">
+          <mxGeometry y="40" width="240" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="Interview-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="Interview">
+          <mxGeometry y="310" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="Interview-methods" value="+ dat_lich()&#xa;+ huy_lich()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Interview">
+          <mxGeometry y="318" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Class: User -->
+        <mxCell id="User" value="&lt;&lt;Entity&gt;&gt;&#xa;User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="240" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="User-attr" value="id: UUID (PK)&#xa;email: String (unique)&#xa;password_hash: String&#xa;role: Enum&#xa;  • ADMIN&#xa;  • RECRUITER&#xa;  • CANDIDATE&#xa;  • INTERVIEWER&#xa;is_active: Boolean&#xa;full_name: String&#xa;phone: String&#xa;avatar: URL&#xa;company_name: String&#xa;website: URL&#xa;address: Text&#xa;created_at: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="User">
+          <mxGeometry y="40" width="240" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="User-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="User">
+          <mxGeometry y="240" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="User-methods" value="+ get_full_name(): String&#xa;+ has_role(): String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="User">
+          <mxGeometry y="248" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Class: SavedJob -->
+        <mxCell id="SavedJob" value="&lt;&lt;Entity&gt;&gt;&#xa;SavedJob" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="80" y="950" width="240" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="SavedJob-attr" value="id: UUID (PK)&#xa;user: FK(User)&#xa;job: FK(Job)&#xa;saved_at: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="SavedJob">
+          <mxGeometry y="40" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SavedJob-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="SavedJob">
+          <mxGeometry y="100" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="SavedJob-methods" value="(Many-to-Many)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=2" vertex="1" parent="SavedJob">
+          <mxGeometry y="108" width="240" height="12" as="geometry" />
+        </mxCell>
+
+        <!-- Class: RecruitmentResult -->
+        <mxCell id="RecruitmentResult" value="&lt;&lt;Entity&gt;&gt;&#xa;RecruitmentResult" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="400" y="580" width="240" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="RecruitmentResult-attr" value="id: UUID (PK)&#xa;application: FK (1:1)&#xa;final_decision: Enum&#xa;  • OFFER&#xa;  • REJECT&#xa;salary_offer: Decimal&#xa;offer_letter_file: File&#xa;reason: String&#xa;notes: Text&#xa;decided_by: FK(User)&#xa;decided_at: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="RecruitmentResult">
+          <mxGeometry y="40" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="RecruitmentResult-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="RecruitmentResult">
+          <mxGeometry y="180" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="RecruitmentResult-methods" value="+ gui_offer()&#xa;+ tu_choi()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="RecruitmentResult">
+          <mxGeometry y="188" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Class: InterviewPanel -->
+        <mxCell id="InterviewPanel" value="&lt;&lt;Entity&gt;&gt;&#xa;InterviewPanel" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="120" width="240" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="InterviewPanel-attr" value="id: UUID (PK)&#xa;interview: FK(Interview)&#xa;interviewer: FK(User)&#xa;score: Enum&#xa;  • EXCELLENT&#xa;  • GOOD&#xa;  • AVERAGE&#xa;  • OBSERVER&#xa;  • POOR&#xa;feedback: Text&#xa;score_technical: Float(10)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="InterviewPanel">
+          <mxGeometry y="40" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="InterviewPanel-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="InterviewPanel">
+          <mxGeometry y="180" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="InterviewPanel-methods" value="+ danh_gia()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="InterviewPanel">
+          <mxGeometry y="188" width="240" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- Class: Notification -->
+        <mxCell id="Notification" value="&lt;&lt;Entity&gt;&gt;&#xa;Notification" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="400" y="880" width="240" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="Notification-attr" value="id: UUID (PK)&#xa;user: FK(User)&#xa;type: Enum&#xa;  • EMAIL&#xa;  • SYSTEM&#xa;  • SMS&#xa;title: String&#xa;content: Text&#xa;is_read: Boolean&#xa;created_at: DateTime&#xa;sent_at: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Notification">
+          <mxGeometry y="40" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="Notification-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="Notification">
+          <mxGeometry y="150" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="Notification-methods" value="+ gui_thong_bao()&#xa;+ danh_dau_da_doc()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="Notification">
+          <mxGeometry y="158" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Class: RecruitmentProcess -->
+        <mxCell id="RecruitmentProcess" value="&lt;&lt;Entity&gt;&gt;&#xa;RecruitmentProcess" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="420" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="RecruitmentProcess-attr" value="id: UUID (PK)&#xa;name: String&#xa;description: Text&#xa;is_default: Boolean&#xa;created_by: FK(User)&#xa;created_at: DateTime&#xa;updated_at: DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="RecruitmentProcess">
+          <mxGeometry y="40" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="RecruitmentProcess-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="RecruitmentProcess">
+          <mxGeometry y="140" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="RecruitmentProcess-methods" value="+ tao_quy_trinh()&#xa;+ cap_nhat()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="RecruitmentProcess">
+          <mxGeometry y="148" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Class: ProcessStep -->
+        <mxCell id="ProcessStep" value="&lt;&lt;Entity&gt;&gt;&#xa;ProcessStep" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="420" width="240" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="ProcessStep-attr" value="id: UUID (PK)&#xa;process: FK(Process)&#xa;step_name: String&#xa;step_type: Enum&#xa;  • SCREENING&#xa;  • CV_REVIEW&#xa;  • TECHNICAL_TEST&#xa;  • INTERVIEW&#xa;  • HR_INTERVIEW&#xa;  • FINAL_REVIEW&#xa;  • OFFER&#xa;order: Integer&#xa;description: Text&#xa;is_required: Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="ProcessStep">
+          <mxGeometry y="40" width="240" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ProcessStep-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="ProcessStep">
+          <mxGeometry y="200" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="ProcessStep-methods" value="+ them_buoc()&#xa;+ xoa_buoc()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="ProcessStep">
+          <mxGeometry y="208" width="240" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- RELATIONSHIPS -->
+
+        <!-- 1. User ◇------ Job (Aggregation) -->
+        <mxCell id="rel-user-job" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="User" target="Job">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="200" y="580" as="sourcePoint" />
+            <mxPoint x="360" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-job-label" value="creates" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-job">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-job-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-job">
+          <mxGeometry x="0.8" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-job-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-job">
+          <mxGeometry x="-0.8" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 2. Job ◆------ Application (Composition) -->
+        <mxCell id="rel-job-app" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Job-attr" target="Application-attr">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="330" y="290" as="sourcePoint" />
+            <mxPoint x="490" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-job-app-label" value="has" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-job-app">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-job-app-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-job-app">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-job-app-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-job-app">
+          <mxGeometry x="-0.7" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 3. Application ◆------ Interview (Composition) -->
+        <mxCell id="rel-app-interview" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Application-attr" target="Interview-attr">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="650" y="290" as="sourcePoint" />
+            <mxPoint x="810" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-interview-label" value="has" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-interview">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-interview-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-interview">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-interview-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-interview">
+          <mxGeometry x="-0.7" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 4. Interview ◆------ InterviewPanel (Composition) -->
+        <mxCell id="rel-interview-panel" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Interview-attr" target="InterviewPanel-attr">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="970" y="250" as="sourcePoint" />
+            <mxPoint x="1130" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-interview-panel-label" value="evaluated by" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-interview-panel">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-interview-panel-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-interview-panel">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-interview-panel-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-interview-panel">
+          <mxGeometry x="-0.7" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 5. Application ◆------ RecruitmentResult (Composition) -->
+        <mxCell id="rel-app-result" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Application" target="RecruitmentResult">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="520" y="490" as="sourcePoint" />
+            <mxPoint x="520" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-result-label" value="has one" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-result">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-result-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-result">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-20" y="-5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-result-mult2" value="0..1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-result">
+          <mxGeometry x="-0.7" y="-1" relative="1" as="geometry">
+            <mxPoint x="20" y="5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 6. User ◆------ Notification (Composition) -->
+        <mxCell id="rel-user-notif" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="User-attr" target="Notification-attr">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="330" y="750" as="sourcePoint" />
+            <mxPoint x="490" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-notif-label" value="receives" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-notif">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-notif-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-notif">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-notif-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-notif">
+          <mxGeometry x="-0.7" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 7. User ◇------ RecruitmentProcess (Aggregation) -->
+        <mxCell id="rel-user-process" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="User" target="RecruitmentProcess-attr">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="400" y="670" as="sourcePoint" />
+            <mxPoint x="1040" y="500" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="800" y="670" />
+              <mxPoint x="800" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-process-label" value="creates" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-process">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-process-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-process">
+          <mxGeometry x="0.8" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-process-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-user-process">
+          <mxGeometry x="-0.8" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 8. RecruitmentProcess ◆------ ProcessStep (Composition) -->
+        <mxCell id="rel-process-step" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RecruitmentProcess-attr" target="ProcessStep-attr">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1290" y="510" as="sourcePoint" />
+            <mxPoint x="1450" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-process-step-label" value="has" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-process-step">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-process-step-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-process-step">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-process-step-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-process-step">
+          <mxGeometry x="-0.7" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 9. Application ----> User (Dependency - candidate) -->
+        <mxCell id="rel-app-user" value="" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="Application-attr" target="User">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="380" y="285" as="sourcePoint" />
+            <mxPoint x="340" y="750" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="360" y="285" />
+              <mxPoint x="360" y="810" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-user-label" value="applies" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-user">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-user-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-user">
+          <mxGeometry x="0.8" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-app-user-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-app-user">
+          <mxGeometry x="-0.8" y="-1" relative="1" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 10. InterviewPanel ----> User (Dependency - interviewer) -->
+        <mxCell id="rel-panel-user" value="" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="InterviewPanel-attr" target="User">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1020" y="230" as="sourcePoint" />
+            <mxPoint x="340" y="670" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="900" y="230" />
+              <mxPoint x="900" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-panel-user-label" value="evaluates" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-panel-user">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-panel-user-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-panel-user">
+          <mxGeometry x="0.8" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-panel-user-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-panel-user">
+          <mxGeometry x="-0.8" y="-1" relative="1" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 11. RecruitmentResult ----> User (Dependency - decided_by) -->
+        <mxCell id="rel-result-user" value="" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="RecruitmentResult-attr" target="User">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="380" y="690" as="sourcePoint" />
+            <mxPoint x="200" y="900" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="200" y="690" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-result-user-label" value="decided by" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-result-user">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-result-user-mult1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-result-user">
+          <mxGeometry x="0.8" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-result-user-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-result-user">
+          <mxGeometry x="-0.8" y="-1" relative="1" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 12. SavedJob <----> User (Association) -->
+        <mxCell id="rel-savedjob-user" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="SavedJob" target="User">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="200" y="930" as="sourcePoint" />
+            <mxPoint x="200" y="900" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-savedjob-user-mult1" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-savedjob-user">
+          <mxGeometry x="0.6" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-savedjob-user-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-savedjob-user">
+          <mxGeometry x="-0.6" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 13. SavedJob <----> Job (Association) -->
+        <mxCell id="rel-savedjob-job" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="SavedJob" target="Job">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="200" y="930" as="sourcePoint" />
+            <mxPoint x="80" y="550" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="200" y="920" />
+              <mxPoint x="60" y="920" />
+              <mxPoint x="60" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-savedjob-job-mult1" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-savedjob-job">
+          <mxGeometry x="0.8" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-savedjob-job-mult2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rel-savedjob-job">
+          <mxGeometry x="-0.8" y="-1" relative="1" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="720" width="240" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="KÝ HIỆU" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1360" y="730" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-agg" value="◇ Aggregation: Part tồn tại độc lập" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1370" y="770" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-comp" value="◆ Composition: Part phụ thuộc vòng đời" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1370" y="800" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-dep" value="- - → Dependency: Tham chiếu FK" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1370" y="830" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-assoc" value="←→ Association: Many-to-Many" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1370" y="860" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-note" value="Màu xanh: Entity chính&#xa;Màu vàng: Junction Table&#xa;Màu xanh lá: Process/Template" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="1370" y="885" width="220" height="25" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

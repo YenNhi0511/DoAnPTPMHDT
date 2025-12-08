@@ -1,0 +1,317 @@
+@startuml Sơ đồ Hoạt Động - Quyết Định Tuyển Dụng
+skinparam monochrome true
+
+title Sơ đồ Hoạt Động: Quyết Định Tuyển Dụng (Final Decision & Offer)
+
+|HR Manager|
+start
+:Xem danh sách ứng viên
+đã hoàn thành phỏng vấn
+(status = SCREENING_PASSED);
+
+:Chọn ứng viên để review;
+
+|System|
+:Load thông tin ứng viên:
+- CV & application
+- Interview feedbacks
+- Aggregate scores
+- AI screening results
+- Interview history;
+
+|HR Manager|
+:Review toàn bộ thông tin:
+- CV phù hợp: ✓
+- AI screening: Pass (85%)
+- Interview avg score: 78/100
+- Technical: 80
+- Communication: 75
+- Problem solving: 82
+- Cultural fit: 76;
+
+:Đánh giá tổng thể;
+
+if (Quyết định?) then (REJECT)
+  |System|
+  :Tạo RecruitmentResult
+  với final_decision = 'REJECTED';
+  
+  :Cập nhật Application
+  status = 'REJECTED';
+  
+  fork
+    |EmailService|
+    :Gửi email rejection
+    đến Candidate
+    (nếu policy cho phép):
+    - Thank you message
+    - Encourage future applications;
+  fork again
+    |System|
+    :Lưu feedback vào database
+    để phân tích sau;
+  endfork
+  
+  |HR Manager|
+  :Đóng hồ sơ ứng viên;
+  stop
+
+else (APPROVE - Tạo Offer)
+  |HR Manager|
+  :Mở form tạo offer letter;
+  
+  :Điền thông tin offer:
+  - Proposed salary
+  - Benefits package
+  - Start date
+  - Contract type (FULL_TIME/PART_TIME)
+  - Probation period
+  - Response deadline
+  - Additional terms;
+  
+  |System|
+  :Validate offer data:
+  - Salary > 0 và trong budget
+  - Start date > current date
+  - Deadline < start date
+  - Required fields filled;
+  
+  if (Valid?) then (no)
+    :Hiển thị lỗi validation;
+    stop
+  else (yes)
+    :Kiểm tra approval workflow;
+    
+    if (Salary > threshold?) then (yes - Cần approval)
+      |Senior Manager|
+      :Nhận request approval
+      qua email/notification;
+      
+      :Review offer details;
+      
+      if (Approve?) then (no)
+        :Reject với lý do;
+        
+        |System|
+        :Gửi notification rejection
+        về HR Manager;
+        
+        |HR Manager|
+        :Điều chỉnh offer
+        hoặc reject candidate;
+        stop
+      else (yes)
+        |Senior Manager|
+        :Approve offer;
+        
+        |System|
+        :Update approval status;
+      endif
+    endif
+    
+    |System|
+    :Tạo RecruitmentResult record:
+    - final_decision = 'APPROVED'
+    - offer_letter_url = null (chưa có)
+    - salary_offer
+    - benefits
+    - start_date
+    - deadline
+    - status = 'PENDING';
+    
+    :Gọi PDFGeneratorService;
+    
+    |PDFGeneratorService|
+    :Load offer letter template;
+    
+    :Generate PDF với thông tin:
+    - Company logo & info
+    - Candidate name
+    - Job title & description
+    - Salary & benefits details
+    - Start date & contract terms
+    - Probation period
+    - Terms & conditions
+    - Signature section;
+    
+    :Upload PDF to storage
+    (Azure Blob / AWS S3);
+    
+    :Return offer_letter_url;
+    
+    |System|
+    :Update RecruitmentResult
+    với offer_letter_url;
+    
+    fork
+      |EmailService|
+      :Tạo email offer:
+      To: Candidate
+      Subject: "Thư mời nhận việc - [Job Title]"
+      Body:
+      - Congratulations message
+      - Offer summary
+      - PDF attachment
+      - Accept/Decline links
+      - Deadline reminder;
+      
+      :Gửi email với
+      offer letter PDF attachment;
+      
+    fork again
+      |System|
+      :Cập nhật Application
+      status = 'OFFER_EXTENDED';
+      
+    fork again
+      |System|
+      :Set reminder job:
+      - 3 ngày trước deadline:
+        Gửi reminder email
+      - Ngày deadline:
+        Check response status;
+    endfork
+    
+    |HR Manager|
+    :Nhận confirmation:
+    "Offer letter đã gửi thành công";
+    
+    :Monitor candidate response;
+  endif
+endif
+
+== Candidate Response ==
+
+|Candidate|
+:Nhận email offer letter;
+
+:Đọc và review offer details;
+
+:Truy cập portal
+qua link trong email;
+
+if (Quyết định?) then (ACCEPT)
+  :Click "Accept Offer" button;
+  
+  |System|
+  :Update RecruitmentResult:
+  - candidate_response = 'ACCEPTED'
+  - accepted_at = NOW();
+  
+  :Cập nhật Application
+  status = 'HIRED';
+  
+  fork
+    |EmailService|
+    :Gửi confirmation email
+    đến Candidate:
+    - Welcome message
+    - Onboarding instructions
+    - Next steps
+    - HR contact info;
+  fork again
+    |EmailService|
+    :Gửi notification đến HR:
+    "Candidate [Name] đã
+    accept offer";
+  fork again
+    |System|
+    :Trigger onboarding workflow:
+    - Create employee record
+    - Setup accounts
+    - Schedule orientation;
+  endfork
+  
+  |HR Manager|
+  :Nhận notification;
+  :Bắt đầu onboarding process;
+  stop
+
+else (DECLINE)
+  :Click "Decline Offer" button;
+  :Nhập lý do decline (optional);
+  
+  |System|
+  :Update RecruitmentResult:
+  - candidate_response = 'DECLINED'
+  - decline_reason;
+  
+  :Cập nhật Application
+  status = 'OFFER_DECLINED';
+  
+  |EmailService|
+  :Gửi notification đến HR:
+  "Candidate [Name] đã
+  decline offer"
+  + Lý do (nếu có);
+  
+  |HR Manager|
+  :Nhận notification;
+  
+  :Review lý do decline;
+  
+  if (Negotiate?) then (yes)
+    :Liên hệ candidate
+    để negotiate lại offer;
+    note right
+      Có thể điều chỉnh:
+      - Salary
+      - Start date
+      - Benefits
+      - Work arrangement
+    end note
+  else (no)
+    :Chuyển sang candidate khác
+    hoặc đóng position;
+  endif
+  stop
+
+else (NO RESPONSE)
+  |System|
+  :Chờ đến deadline;
+  
+  :Check response daily;
+  
+  if (3 ngày trước deadline?) then (yes)
+    |EmailService|
+    :Gửi reminder email:
+    "Vui lòng phản hồi
+    offer trước [deadline]";
+  endif
+  
+  if (Đến deadline?) then (yes)
+    if (Vẫn chưa có response?) then (yes)
+      :Auto-update:
+      - status = 'EXPIRED'
+      - candidate_response = 'NO_RESPONSE';
+      
+      |EmailService|
+      :Gửi notification đến HR:
+      "Offer expired - No response
+      from candidate [Name]";
+      
+      |HR Manager|
+      :Quyết định:
+      - Extend deadline
+      - Chuyển candidate khác;
+      stop
+    endif
+  endif
+endif
+
+== Ghi chú ==
+note right
+  **Business Rules:**
+  1. Final decision: HR Manager review
+  2. Offer approval: Required nếu salary > threshold
+  3. Auto PDF generation: Từ template
+  4. Email notification: Auto gửi kèm PDF
+  5. Response tracking: Accept/Decline/No response
+  6. Deadline reminder: 3 ngày trước
+  7. Auto expire: Nếu quá deadline không phản hồi
+  8. Negotiation support: HR có thể adjust offer
+  9. Onboarding trigger: Auto khi candidate accept
+  10. Analytics: Track decline reasons
+end note
+
+@enduml

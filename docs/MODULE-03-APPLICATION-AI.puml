@@ -1,0 +1,395 @@
+@startuml Module 3: Application & AI Screening
+
+' ==========================================
+' CẤU HÌNH TỐI ƯU CHO WORD / GIẤY A4 DỌC
+' ==========================================
+top to bottom direction
+skinparam linetype ortho
+skinparam shadow false
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+' --- 1. CẤU HÌNH FONT CHỮ (ĐÃ TĂNG TITLE) ---
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+skinparam titleFontSize 30
+skinparam titleFontStyle bold
+
+skinparam classFontSize 18
+skinparam classAttributeFontSize 16
+
+!define ENTITY_COLOR #ffffff
+!define CONTROLLER_COLOR #ffffff
+!define BOUNDARY_COLOR #ffffff
+
+title Analysis Class Diagram - Module 3: Application & AI Screening (UC-10, UC-11, UC-12, UC-13, UC-14, UC-15, UC-16)
+
+' ==========================================
+' TẦNG 1: BOUNDARIES (GIAO DIỆN)
+' ==========================================
+package "Boundaries" {
+  class ApplicationForm <<Boundary>> BOUNDARY_COLOR {
+    File CV
+    Thư xin việc
+    ====
+    Kiểm tra tính hợp lệ
+    Kiểm tra kích thước file
+    Kiểm tra loại file
+  }
+  
+  class ApplicationListView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị danh sách hồ sơ
+    Hiển thị cho ứng viên
+    Hiển thị cho nhà tuyển dụng
+    Hiển thị bộ lọc
+    Hiển thị trạng thái
+  }
+  
+  class ApplicationDetailView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị hồ sơ
+    Hiển thị trình xem CV
+    Hiển thị lịch sử
+    Hiển thị phân tích AI
+    Hiển thị nút thao tác
+  }
+  
+  class AIResultView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị điểm số
+    Hiển thị khuyến nghị
+    Hiển thị điểm mạnh
+    Hiển thị điểm yếu
+    Hiển thị kỹ năng khớp
+  }
+  
+  class GeminiAPIService <<Boundary>> BOUNDARY_COLOR {
+    Khóa API
+    Điểm cuối API
+    Gửi yêu cầu phân tích
+    Phân tích phản hồi
+    Xử lý lỗi API
+    Thử lại khi thất bại
+  }
+  
+  class CloudStorageService <<Boundary>> BOUNDARY_COLOR {
+    Tải lên file
+    Xóa file
+    Lấy đường dẫn file
+    Tạo tên file duy nhất
+  }
+  
+  class EmailNotificationService <<Boundary>> BOUNDARY_COLOR {
+    Gửi email xác nhận nộp hồ sơ
+    Thông báo nhà tuyển dụng
+    Thông báo hoàn tất phân tích AI
+  }
+  
+  class CeleryTaskQueue <<Boundary>> BOUNDARY_COLOR {
+    Xếp hàng phân tích AI
+    Lấy trạng thái tác vụ
+    Thử lại tác vụ thất bại
+  }
+}
+
+' ==========================================
+' TẦNG 2: CONTROLLERS (XỦ LÝ)
+' ==========================================
+package "Controllers" {
+  class ApplicationController <<Control>> CONTROLLER_COLOR {
+    Nộp hồ sơ ứng tuyển
+    Xem chi tiết hồ sơ
+    Lấy hồ sơ của ứng viên
+    Lấy hồ sơ của tin tuyển dụng
+    Rút hồ sơ ứng tuyển
+    Cập nhật trạng thái hồ sơ
+    Tải xuống CV
+    Kiểm tra tính hợp lệ hồ sơ
+    Kiểm tra trùng lặp
+    Kích hoạt sàng lọc AI
+  }
+  
+  class AIAnalysisController <<Control>> CONTROLLER_COLOR {
+    Phân tích CV
+    Phân tích lại CV
+    Lấy kết quả phân tích
+    So sánh ứng viên
+    Chuẩn bị câu hỏi
+    Gọi API Gemini
+    Phân tích phản hồi AI
+    Tính điểm
+    Xác định khuyến nghị
+  }
+  
+  class CVProcessingController <<Control>> CONTROLLER_COLOR {
+    Tải lên CV
+    Kiểm tra tính hợp lệ CV
+    Trích xuất văn bản từ CV
+    Xóa CV
+    Kiểm tra kích thước
+    Kiểm tra loại file
+    Làm sạch tên file
+  }
+  
+  class ApplicationFilterController <<Control>> CONTROLLER_COLOR {
+    Lọc theo trạng thái
+    Lọc theo điểm AI
+    Lọc theo khoảng thời gian
+    Sắp xếp hồ sơ
+  }
+}
+
+' ==========================================
+' TẦNG 3: ENTITIES (DỮ LIỆU)
+' ==========================================
+package "Entities" {
+  class Application <<Entity>> {
+    Mã hồ sơ
+    Ứng viên
+    Tin tuyển dụng
+    File CV
+    Thư xin việc
+    Trạng thái
+    Điểm AI
+    Ngày nộp hồ sơ
+    Ngày cập nhật
+    Lý do rút hồ sơ
+    ====
+    Có thể rút hồ sơ
+    Rút hồ sơ
+    Cập nhật trạng thái
+    Lấy lịch sử thay đổi
+  }
+  
+  class AIAnalysis <<Entity>> {
+    Mã phân tích
+    Hồ sơ ứng tuyển
+    Điểm tổng
+    Điểm mạnh
+    Điểm yếu
+    Kỹ năng khớp
+    Kỹ năng thiếu
+    Mức độ phù hợp kinh nghiệm
+    Mức độ phù hợp học vấn
+    Khuyến nghị
+    Nội dung phân tích
+    Thời gian phân tích
+    Phiên bản mô hình
+    ====
+    Lấy tóm tắt
+  }
+  
+  class CVFile <<Entity>> {
+    Mã file
+    Hồ sơ ứng tuyển
+    Tên file gốc
+    Đường dẫn lưu trữ
+    Kích thước file
+    Loại file
+    Thời gian tải lên
+    Nội dung trích xuất
+    ====
+    Kiểm tra tính hợp lệ
+    Trích xuất văn bản
+    Lấy đường dẫn
+  }
+  
+  class ApplicationHistory <<Entity>> {
+    Mã lịch sử
+    Hồ sơ ứng tuyển
+    Trạng thái cũ
+    Trạng thái mới
+    Người thay đổi
+    Thời gian thay đổi
+    Ghi chú
+  }
+}
+
+package "Controllers" <<Rectangle>> {
+  class ApplicationController <<Control>> {
+    Nộp hồ sơ ứng tuyển
+    Xem chi tiết hồ sơ
+    Lấy hồ sơ của ứng viên
+    Lấy hồ sơ của tin tuyển dụng
+    Rút hồ sơ ứng tuyển
+    Cập nhật trạng thái hồ sơ
+    Tải xuống CV
+    Kiểm tra tính hợp lệ hồ sơ
+    Kiểm tra trùng lặp
+    Kích hoạt sàng lọc AI
+  }
+  
+  class AIAnalysisController <<Control>> {
+    Phân tích CV
+    Phân tích lại CV
+    Lấy kết quả phân tích
+    So sánh ứng viên
+    Chuẩn bị câu hỏi
+    Gọi API Gemini
+    Phân tích phản hồi AI
+    Tính điểm
+    Xác định khuyến nghị
+  }
+  
+  class CVProcessingController <<Control>> {
+    Tải lên CV
+    Kiểm tra tính hợp lệ CV
+    Trích xuất văn bản từ CV
+    Xóa CV
+    Kiểm tra kích thước
+    Kiểm tra loại file
+    Làm sạch tên file
+  }
+  
+  class ApplicationFilterController <<Control>> {
+    Lọc theo trạng thái
+    Lọc theo điểm AI
+    Lọc theo khoảng thời gian
+    Sắp xếp hồ sơ
+  }
+}
+
+package "Boundaries" <<Rectangle>> {
+  class ApplicationForm <<Boundary>> {
+    File CV
+    Thư xin việc
+    ====
+    Kiểm tra tính hợp lệ
+    Kiểm tra kích thước file
+    Kiểm tra loại file
+  }
+  
+  class ApplicationListView <<Boundary>> {
+    Hiển thị danh sách hồ sơ
+    Hiển thị cho ứng viên
+    Hiển thị cho nhà tuyển dụng
+    Hiển thị bộ lọc
+    Hiển thị trạng thái
+  }
+  
+  class ApplicationDetailView <<Boundary>> {
+    Hiển thị hồ sơ
+    Hiển thị trình xem CV
+    Hiển thị lịch sử
+    Hiển thị phân tích AI
+    Hiển thị nút thao tác
+  }
+  
+  class AIResultView <<Boundary>> {
+    Hiển thị điểm số
+    Hiển thị khuyến nghị
+    Hiển thị điểm mạnh
+    Hiển thị điểm yếu
+    Hiển thị kỹ năng khớp
+  }
+  
+  class GeminiAPIService <<Boundary>> {
+    Khóa API
+    Điểm cuối API
+    Gửi yêu cầu phân tích
+    Phân tích phản hồi
+    Xử lý lỗi API
+    Thử lại khi thất bại
+  }
+  
+  class CloudStorageService <<Boundary>> {
+    Tải lên file
+    Xóa file
+    Lấy đường dẫn file
+    Tạo tên file duy nhất
+  }
+  
+  class EmailNotificationService <<Boundary>> {
+    Gửi email xác nhận nộp hồ sơ
+    Thông báo nhà tuyển dụng
+    Thông báo hoàn tất phân tích AI
+  }
+  
+  class CeleryTaskQueue <<Boundary>> {
+    Xếp hàng phân tích AI
+    Lấy trạng thái tác vụ
+    Thử lại tác vụ thất bại
+  }
+}
+
+' ========== RELATIONSHIPS ==========
+
+' Entity relationships
+Application "1" -down- "0..1" AIAnalysis : được phân tích bởi >
+Application "1" *-down- "1" CVFile : chứa >
+Application "1" *-down- "0..*" ApplicationHistory : có lịch sử >
+
+' Controller to Entity relationships
+ApplicationController .down.> Application : quản lý
+ApplicationController .down.> CVProcessingController : ủy thác cho
+ApplicationController .down.> AIAnalysisController : kích hoạt
+
+AIAnalysisController .down.> Application : đọc
+AIAnalysisController .down.> AIAnalysis : tạo và quản lý
+
+CVProcessingController .down.> CVFile : quản lý
+
+ApplicationFilterController .down.> Application : lọc
+
+' Controller to Boundary relationships
+ApplicationController .down.> ApplicationForm : nhận dữ liệu từ
+ApplicationController .down.> EmailNotificationService : sử dụng
+ApplicationController .down.> ApplicationListView : cập nhật
+ApplicationController .down.> ApplicationDetailView : cập nhật
+
+AIAnalysisController .down.> GeminiAPIService : sử dụng
+AIAnalysisController .down.> CeleryTaskQueue : sử dụng
+AIAnalysisController .down.> AIResultView : cập nhật
+
+CVProcessingController .down.> CloudStorageService : sử dụng
+
+' Notes
+note right of Application
+  **Thực thể trung tâm của quy trình tuyển dụng**
+  - Trạng thái: CHỜ XỬ LÝ → SÀNG LỌC 
+    → PHỎNG VẤN → ĐỀ NGHỊ / TỪ CHỐI
+  - Ứng viên có thể rút hồ sơ
+    ở trạng thái CHỜ XỬ LÝ / SÀNG LỌC
+  - Theo dõi lịch sử mọi thay đổi
+end note
+
+note right of AIAnalysis
+  **Kết quả phân tích từ Google Gemini API**
+  - Điểm tổng: 0-100
+  - Phân tích: Điểm mạnh, Điểm yếu
+  - So sánh: Kỹ năng khớp, Kỹ năng thiếu
+  - Khuyến nghị dựa trên điểm:
+    >= 90: RẤT KHUYẾN NGHỊ
+    >= 75: KHUYẾN NGHỊ
+    >= 60: CÂN NHẮC
+    < 60: KHÔNG KHUYẾN NGHỊ
+end note
+
+note bottom of ApplicationController
+  **UC-10:** Nộp hồ sơ ứng tuyển
+  **UC-11:** Xem hồ sơ đã nộp (Ứng viên)
+  **UC-12:** Xem danh sách ứng viên (Nhà tuyển dụng)
+  **UC-13:** Xem chi tiết hồ sơ
+  **UC-14:** Rút hồ sơ ứng tuyển
+end note
+
+note bottom of AIAnalysisController
+  **UC-15:** Tự động sàng lọc CV bằng AI
+  **UC-16:** Xem kết quả sàng lọc AI
+  - Xử lý bất đồng bộ với Celery
+  - Thử lại 3 lần nếu API lỗi
+  - Phân tích phản hồi JSON từ Gemini
+end note
+
+legend right
+  **Chú thích:**
+  - <<Entity>>: Domain objects
+  - <<Control>>: Business logic
+  - <<Boundary>>: UI forms & External services
+  
+  **Dependencies với Module khác:**
+  - Module 1: User (Candidate)
+  - Module 2: Job
+endlegend
+
+@enduml

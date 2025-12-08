@@ -1,0 +1,494 @@
+@startuml Analysis Class Diagram - Hệ thống Tuyển dụng
+!theme plain
+title Sơ đồ Lớp Mức Phân Tích (ECB Pattern)\nHệ Thống Tuyển Dụng Nhân Sự Thông Minh
+
+' ===================================
+' ACTORS
+' ===================================
+actor Candidate <<Actor>>
+actor Recruiter <<Actor>>
+actor Admin <<Actor>>
+
+' ===================================
+' NHÓM 1: QUẢN LÝ TÀI KHOẢN
+' ===================================
+package "Authentication & Profile" {
+    ' Boundary
+    class AuthenticationUI <<Boundary>> {
+        displayLoginForm()
+        displayRegisterForm()
+        displayOTPForm()
+        showErrorMessage()
+    }
+    
+    class ProfileUI <<Boundary>> {
+        displayProfile()
+        displayEditForm()
+        displayChangePasswordForm()
+    }
+    
+    ' Control
+    class AuthenticationController <<Control>> {
+        validateCredentials()
+        generateOTP()
+        sendOTPEmail()
+        verifyOTP()
+        generateJWTToken()
+        lockAccount()
+    }
+    
+    class ProfileController <<Control>> {
+        updateProfile()
+        changePassword()
+        uploadAvatar()
+        validatePassword()
+    }
+    
+    ' Entity
+    class User <<Entity>> {
+        email
+        fullName
+        phoneNumber
+        role
+        isActive
+        avatar
+    }
+}
+
+' ===================================
+' NHÓM 2: QUẢN LÝ TIN TUYỂN DỤNG
+' ===================================
+package "Job Management" {
+    ' Boundary
+    class JobViewUI <<Boundary>> {
+        displayJobList()
+        displayJobDetail()
+        displayJobForm()
+        displaySearchFilter()
+    }
+    
+    class JobSearchUI <<Boundary>> {
+        displaySearchResults()
+        displayFilterOptions()
+        showSortOptions()
+    }
+    
+    ' Control
+    class JobManager <<Control>> {
+        createJob()
+        updateJob()
+        deleteJob()
+        changeJobStatus()
+        validateJobData()
+        notifyInterestedCandidates()
+    }
+    
+    class JobSearchController <<Control>> {
+        searchByKeyword()
+        filterByLocation()
+        filterBySalary()
+        sortByDate()
+        sortBySalary()
+    }
+    
+    ' Entity
+    class Job <<Entity>> {
+        title
+        description
+        requirements
+        salaryMin
+        salaryMax
+        location
+        employmentType
+        numberOfPositions
+        deadline
+        status
+    }
+}
+
+' ===================================
+' NHÓM 3: ỨNG TUYỂN & AI SCORING
+' ===================================
+package "Application & AI Analysis" {
+    ' Boundary
+    class ApplicationFormUI <<Boundary>> {
+        displayApplicationForm()
+        displayCVUploadField()
+        displayCoverLetterField()
+        showSubmissionConfirmation()
+    }
+    
+    class ApplicationListUI <<Boundary>> {
+        displayCandidateApplications()
+        displayRecruiterApplications()
+        displayApplicationDetail()
+        displayAIAnalysisReport()
+    }
+    
+    ' Control
+    class ApplicationController <<Control>> {
+        submitApplication()
+        validateCVFile()
+        uploadCV()
+        withdrawApplication()
+        triggerAIAnalysis()
+        notifyRecruiter()
+    }
+    
+    class AIAnalysisController <<Control>> {
+        analyzeCV()
+        extractCVContent()
+        compareWithJobDescription()
+        calculateScore()
+        generateRecommendation()
+        callGeminiAPI()
+        parseAIResponse()
+        retryOnFailure()
+    }
+    
+    ' Entity
+    class Application <<Entity>> {
+        cvFile
+        coverLetter
+        aiScore
+        aiAnalysis
+        status
+        appliedAt
+    }
+    
+    class AIAnalysisReport <<Entity>> {
+        overallScore
+        strengths
+        weaknesses
+        matchingSkills
+        missingSkills
+        experienceMatch
+        recommendation
+    }
+}
+
+' ===================================
+' NHÓM 4: PHỎNG VẤN & HỘI ĐỒNG
+' ===================================
+package "Interview Management" {
+    ' Boundary
+    class InterviewScheduleUI <<Boundary>> {
+        displayInterviewForm()
+        displayCalendar()
+        displayInterviewList()
+        displayInterviewDetail()
+    }
+    
+    class InterviewPanelUI <<Boundary>> {
+        displayPanelForm()
+        displayInterviewerList()
+        displayScoringForm()
+        displayFeedbackForm()
+    }
+    
+    ' Control
+    class InterviewController <<Control>> {
+        scheduleInterview()
+        sendInterviewInvitation()
+        rescheduleInterview()
+        cancelInterview()
+        validateInterviewTime()
+        checkInterviewerAvailability()
+        notifyCandidate()
+        notifyInterviewers()
+    }
+    
+    class InterviewPanelController <<Control>> {
+        assignInterviewer()
+        removeInterviewer()
+        submitScore()
+        submitFeedback()
+        calculateAverageScore()
+        validatePanelMembers()
+    }
+    
+    ' Entity
+    class Interview <<Entity>> {
+        scheduledAt
+        location
+        meetingLink
+        type
+        status
+        notes
+    }
+    
+    class InterviewPanel <<Entity>> {
+        score
+        feedback
+        scoringCriteria
+    }
+    
+    class Interviewer <<Entity>> {
+        name
+        position
+        department
+        expertise
+    }
+}
+
+' ===================================
+' NHÓM 5: KẾT QUẢ TUYỂN DỤNG
+' ===================================
+package "Recruitment Result" {
+    ' Boundary
+    class ResultUI <<Boundary>> {
+        displayResultForm()
+        displayOfferLetter()
+        displayRejectionLetter()
+    }
+    
+    ' Control
+    class ResultController <<Control>> {
+        makeHiringDecision()
+        sendOfferLetter()
+        sendRejectionLetter()
+        calculateSalaryOffer()
+        notifyCandidate()
+        updateApplicationStatus()
+    }
+    
+    ' Entity
+    class RecruitmentResult <<Entity>> {
+        finalDecision
+        salaryOffer
+        startDate
+        offerLetterContent
+        rejectionReason
+        decidedAt
+    }
+}
+
+' ===================================
+' NHÓM 6: CÔNG VIỆC ĐÃ LƯU
+' ===================================
+package "Saved Jobs" {
+    ' Boundary
+    class SavedJobUI <<Boundary>> {
+        displaySavedJobsList()
+        showSaveButton()
+        showRemoveButton()
+    }
+    
+    ' Control
+    class SavedJobController <<Control>> {
+        saveJob()
+        unsaveJob()
+        getSavedJobs()
+    }
+    
+    ' Entity
+    class SavedJob <<Entity>> {
+        savedAt
+    }
+}
+
+' ===================================
+' NHÓM 7: THÔNG BÁO
+' ===================================
+package "Notification System" {
+    ' Boundary
+    class NotificationUI <<Boundary>> {
+        displayNotificationList()
+        displayNotificationBadge()
+        showPopupNotification()
+    }
+    
+    ' Control
+    class NotificationController <<Control>> {
+        createNotification()
+        sendNotification()
+        markAsRead()
+        deleteNotification()
+    }
+    
+    ' Entity
+    class Notification <<Entity>> {
+        type
+        title
+        content
+        isRead
+        createdAt
+    }
+}
+
+' ===================================
+' NHÓM 8: QUY TRÌNH TUYỂN DỤNG
+' ===================================
+package "Recruitment Process" {
+    ' Boundary
+    class ProcessTemplateUI <<Boundary>> {
+        displayProcessList()
+        displayProcessBuilder()
+        displayStepConfiguration()
+    }
+    
+    ' Control
+    class ProcessController <<Control>> {
+        createProcess()
+        updateProcess()
+        deleteProcess()
+        setDefaultProcess()
+        applyProcessToJob()
+    }
+    
+    ' Entity
+    class RecruitmentProcess <<Entity>> {
+        name
+        description
+        isDefault
+    }
+    
+    class ProcessStep <<Entity>> {
+        stepName
+        stepType
+        order
+        isRequired
+        description
+    }
+}
+
+' ===================================
+' QUAN HỆ: ACTOR → BOUNDARY
+' ===================================
+Candidate --> AuthenticationUI
+Candidate --> JobSearchUI
+Candidate --> ApplicationFormUI
+Candidate --> ApplicationListUI
+Candidate --> SavedJobUI
+Candidate --> NotificationUI
+
+Recruiter --> AuthenticationUI
+Recruiter --> JobViewUI
+Recruiter --> ApplicationListUI
+Recruiter --> InterviewScheduleUI
+Recruiter --> InterviewPanelUI
+Recruiter --> ResultUI
+Recruiter --> ProcessTemplateUI
+
+Admin --> AuthenticationUI
+Admin --> ProfileUI
+
+' ===================================
+' QUAN HỆ: BOUNDARY → CONTROL
+' ===================================
+' Authentication
+AuthenticationUI --> AuthenticationController
+ProfileUI --> ProfileController
+
+' Job Management
+JobViewUI --> JobManager
+JobSearchUI --> JobSearchController
+
+' Application & AI
+ApplicationFormUI --> ApplicationController
+ApplicationListUI --> ApplicationController
+ApplicationListUI --> AIAnalysisController
+
+' Interview
+InterviewScheduleUI --> InterviewController
+InterviewPanelUI --> InterviewPanelController
+
+' Result
+ResultUI --> ResultController
+
+' Saved Jobs
+SavedJobUI --> SavedJobController
+
+' Notification
+NotificationUI --> NotificationController
+
+' Process
+ProcessTemplateUI --> ProcessController
+
+' ===================================
+' QUAN HỆ: CONTROL → ENTITY
+' ===================================
+' Authentication
+AuthenticationController --> User
+ProfileController --> User
+
+' Job Management
+JobManager --> Job
+JobSearchController --> Job
+
+' Application & AI
+ApplicationController --> Application
+ApplicationController --> Job
+AIAnalysisController --> Application
+AIAnalysisController --> AIAnalysisReport
+AIAnalysisController --> Job
+
+' Interview
+InterviewController --> Interview
+InterviewController --> Application
+InterviewPanelController --> InterviewPanel
+InterviewPanelController --> Interviewer
+
+' Result
+ResultController --> RecruitmentResult
+ResultController --> Application
+
+' Saved Jobs
+SavedJobController --> SavedJob
+SavedJobController --> Job
+SavedJobController --> User
+
+' Notification
+NotificationController --> Notification
+NotificationController --> User
+
+' Process
+ProcessController --> RecruitmentProcess
+ProcessController --> ProcessStep
+
+' ===================================
+' QUAN HỆ: ENTITY → ENTITY
+' ===================================
+User "1" -- "*" Job : creates >
+User "1" -- "*" Application : submits >
+Job "1" -- "*" Application : receives >
+Application "1" -- "0..1" AIAnalysisReport : has >
+Application "1" -- "*" Interview : schedules >
+Interview "1" -- "*" InterviewPanel : evaluatedBy >
+InterviewPanel "*" -- "1" Interviewer : assignedTo >
+Application "1" -- "0..1" RecruitmentResult : resultsIn >
+User "*" -- "*" Job : saves >
+SavedJob -- User
+SavedJob -- Job
+User "1" -- "*" Notification : receives >
+Job "*" -- "1" RecruitmentProcess : follows >
+RecruitmentProcess "1" -- "*" ProcessStep : contains >
+
+' ===================================
+' NOTES
+' ===================================
+note right of AIAnalysisController
+  <b>Chức năng AI quan trọng:</b>
+  - Gọi Google Gemini API
+  - Extract text từ CV (PDF/DOCX)
+  - So sánh với Job Description
+  - Chấm điểm 0-100
+  - Tạo báo cáo chi tiết
+  - Retry 3 lần nếu lỗi
+end note
+
+note right of InterviewPanelController
+  <b>Quản lý hội đồng phỏng vấn:</b>
+  - Nhiều giám khảo cho 1 buổi
+  - Mỗi người chấm điểm riêng
+  - Tính điểm trung bình
+  - Tổng hợp feedback
+end note
+
+note bottom of Application
+  <b>Trạng thái ứng tuyển:</b>
+  PENDING → SCREENING → 
+  INTERVIEW → OFFER/REJECTED
+end note
+
+@enduml

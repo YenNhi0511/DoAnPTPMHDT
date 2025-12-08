@@ -1,0 +1,389 @@
+// ============================================
+// RECRUITMENT SYSTEM - ERD Database Design
+// DBML (Database Markup Language) for dbdiagram.io
+// ============================================
+
+Project RecruitmentSystem {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Hệ Thống Tuyển Dụng Thông Minh
+    Recruitment Management System with AI-powered screening
+    
+    **Core Features:**
+    - User Management (Admin, Recruiter, Interviewer, Candidate)
+    - Job Posting & Management
+    - AI-powered CV Screening
+    - Interview Scheduling & Management
+    - Recruitment Decision & Offer Letters
+    - Analytics & Reporting
+  '''
+}
+
+// ============================================
+// TABLES
+// ============================================
+
+Table users {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  username varchar(150) [not null, unique]
+  email varchar(255) [not null, unique]
+  password varchar(128) [not null]
+  first_name varchar(150) [not null, default: '']
+  last_name varchar(150) [not null, default: '']
+  role varchar(20) [not null, default: 'CANDIDATE', note: 'ADMIN, RECRUITER, INTERVIEWER, CANDIDATE']
+  avatar varchar(100)
+  phone varchar(20)
+  is_superuser boolean [not null, default: false]
+  is_staff boolean [not null, default: false]
+  is_active boolean [not null, default: true]
+  last_login timestamp
+  date_joined timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Người dùng hệ thống với 4 vai trò: Admin, Recruiter, Interviewer, Candidate'
+  
+  indexes {
+    email [name: 'idx_users_email']
+    role [name: 'idx_users_role']
+  }
+}
+
+Table recruitment_processes {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  name varchar(255) [not null]
+  description text
+  is_default boolean [not null, default: false]
+  created_by_id uuid [not null, ref: > users.id]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Quy trình tuyển dụng tùy chỉnh cho từng vị trí (ví dụ: Junior, Senior, Manager)'
+}
+
+Table process_steps {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  process_id uuid [not null, ref: > recruitment_processes.id]
+  name varchar(255) [not null]
+  step_type varchar(30) [not null, note: 'SCREENING, PHONE_INTERVIEW, TECHNICAL_TEST, INTERVIEW, FINAL_INTERVIEW, OFFER, ONBOARDING']
+  order integer [not null, default: 0]
+  description text
+  duration_days integer [not null, default: 7]
+  is_required boolean [not null, default: true]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Các bước trong quy trình tuyển dụng (Screening → Interview → Offer → Onboarding)'
+  
+  indexes {
+    (process_id, order) [unique, name: 'process_steps_process_order_unique']
+  }
+}
+
+Table jobs {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  title varchar(255) [not null]
+  department varchar(255)
+  description text [not null]
+  requirements text [not null]
+  salary_min numeric(15,0)
+  salary_max numeric(15,0)
+  salary varchar(100)
+  location varchar(255) [not null]
+  employment_type varchar(20) [not null, default: 'FULLTIME', note: 'FULLTIME, PARTTIME, CONTRACT, INTERN']
+  positions_count integer [not null, default: 1]
+  experience_years integer
+  status varchar(20) [not null, default: 'DRAFT', note: 'DRAFT, OPEN, CLOSED, CANCELLED']
+  deadline timestamp [not null]
+  recruitment_process_id uuid [ref: > recruitment_processes.id]
+  created_by_id uuid [not null, ref: > users.id]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Vị trí tuyển dụng với đầy đủ thông tin job description, requirements, salary'
+  
+  indexes {
+    status [name: 'idx_jobs_status']
+    deadline [name: 'idx_jobs_deadline']
+    created_by_id [name: 'idx_jobs_created_by']
+  }
+}
+
+Table applications {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  job_id uuid [not null, ref: > jobs.id]
+  candidate_id uuid [not null, ref: > users.id]
+  cv_file varchar(100) [not null]
+  cover_letter text
+  status varchar(20) [not null, default: 'PENDING', note: 'PENDING, SCREENING, INTERVIEW, OFFER, REJECTED, ACCEPTED']
+  ai_score double
+  ai_analysis jsonb
+  screener_notes text
+  applied_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Hồ sơ ứng tuyển với AI screening score và analysis. Mỗi candidate chỉ apply 1 lần cho 1 job'
+  
+  indexes {
+    (job_id, status) [name: 'idx_applications_job_status']
+    candidate_id [name: 'idx_applications_candidate']
+    status [name: 'idx_applications_status']
+    ai_score [name: 'idx_applications_ai_score']
+    (job_id, candidate_id) [unique, name: 'applications_job_candidate_unique']
+  }
+}
+
+Table interviews {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  application_id uuid [not null, ref: > applications.id]
+  scheduled_at timestamp [not null]
+  duration integer [not null, note: 'Duration in minutes']
+  location varchar(500)
+  interview_type varchar(20) [not null, default: 'VIDEO', note: 'PHONE, VIDEO, ONSITE']
+  status varchar(20) [not null, default: 'SCHEDULED', note: 'SCHEDULED, COMPLETED, CANCELLED, RESCHEDULED']
+  feedback text
+  result varchar(20) [default: 'PENDING', note: 'PASS, FAIL, PENDING']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Lịch phỏng vấn với support cho PHONE, VIDEO (Zoom/Teams), ONSITE'
+  
+  indexes {
+    (scheduled_at, status) [name: 'idx_interviews_scheduled_status']
+    application_id [name: 'idx_interviews_application']
+  }
+}
+
+Table interview_panels {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  interview_id uuid [not null, ref: > interviews.id]
+  interviewer_id uuid [not null, ref: > users.id]
+  role varchar(20) [not null, default: 'MEMBER', note: 'LEAD, MEMBER, OBSERVER']
+  feedback text
+  score double [note: 'Score from 0 to 100']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Hội đồng phỏng vấn - Nhiều interviewers có thể tham gia 1 buổi phỏng vấn'
+  
+  indexes {
+    interview_id [name: 'idx_interview_panels_interview']
+    interviewer_id [name: 'idx_interview_panels_interviewer']
+    (interview_id, interviewer_id) [unique, name: 'interview_panels_interview_interviewer_unique']
+  }
+}
+
+Table recruitment_results {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  application_id uuid [not null, unique, ref: - applications.id]
+  final_decision varchar(20) [not null, note: 'OFFER, REJECT']
+  offer_letter_file varchar(100)
+  salary varchar(100)
+  start_date date
+  notes text
+  decided_by_id uuid [not null, ref: > users.id]
+  decided_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Kết quả tuyển dụng cuối cùng - OFFER hoặc REJECT. Một application chỉ có 1 kết quả duy nhất'
+  
+  indexes {
+    application_id [name: 'idx_recruitment_results_application']
+    decided_by_id [name: 'idx_recruitment_results_decided_by']
+    decided_at [name: 'idx_recruitment_results_decided_at']
+  }
+}
+
+Table notifications {
+  id uuid [pk, default: `uuid_generate_v4()`]
+  user_id uuid [not null, ref: > users.id]
+  notification_type varchar(20) [not null, default: 'SYSTEM', note: 'EMAIL, SYSTEM']
+  title varchar(255) [not null]
+  content text [not null]
+  is_read boolean [not null, default: false]
+  related_id uuid [note: 'ID của đối tượng liên quan (job_id, application_id, interview_id)']
+  sent_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  
+  Note: 'Thông báo hệ thống và email notifications cho users'
+  
+  indexes {
+    (user_id, is_read, created_at) [name: 'idx_notifications_user_read_created']
+    user_id [name: 'idx_notifications_user']
+  }
+}
+
+// ============================================
+// RELATIONSHIPS SUMMARY
+// ============================================
+
+// User Relationships
+// - users.id → jobs.created_by_id (1:N - Recruiter tạo nhiều jobs)
+// - users.id → applications.candidate_id (1:N - Candidate apply nhiều jobs)
+// - users.id → interview_panels.interviewer_id (1:N - Interviewer tham gia nhiều interview panels)
+// - users.id → recruitment_results.decided_by_id (1:N - HR quyết định nhiều recruitment results)
+// - users.id → notifications.user_id (1:N - User nhận nhiều notifications)
+// - users.id → recruitment_processes.created_by_id (1:N - User tạo nhiều recruitment processes)
+
+// Job & Application Flow
+// - jobs.id → applications.job_id (1:N - Một job có nhiều applications)
+// - applications.id → interviews.application_id (1:N - Một application có thể có nhiều interviews)
+// - interviews.id → interview_panels.interview_id (1:N - Một interview có nhiều panel members)
+// - applications.id → recruitment_results.application_id (1:1 - Một application có 1 kết quả cuối cùng)
+
+// Recruitment Process
+// - recruitment_processes.id → jobs.recruitment_process_id (1:N - Một process áp dụng cho nhiều jobs)
+// - recruitment_processes.id → process_steps.process_id (1:N - Một process có nhiều steps)
+
+// ============================================
+// ENUMS DOCUMENTATION
+// ============================================
+
+Enum user_role {
+  ADMIN [note: 'Quản trị hệ thống']
+  RECRUITER [note: 'Nhà tuyển dụng - Tạo job, review CV, schedule interview']
+  INTERVIEWER [note: 'Người phỏng vấn - Đánh giá ứng viên']
+  CANDIDATE [note: 'Ứng viên - Apply job, tham gia phỏng vấn']
+}
+
+Enum employment_type {
+  FULLTIME [note: 'Toàn thời gian']
+  PARTTIME [note: 'Bán thời gian']
+  CONTRACT [note: 'Hợp đồng']
+  INTERN [note: 'Thực tập']
+}
+
+Enum job_status {
+  DRAFT [note: 'Bản nháp - Chưa đăng']
+  OPEN [note: 'Đang tuyển dụng']
+  CLOSED [note: 'Đã đóng']
+  CANCELLED [note: 'Đã hủy']
+}
+
+Enum application_status {
+  PENDING [note: 'Chờ xử lý']
+  SCREENING [note: 'Đang screening CV (AI + Manual)']
+  INTERVIEW [note: 'Đang phỏng vấn']
+  OFFER [note: 'Đã gửi offer']
+  REJECTED [note: 'Bị từ chối']
+  ACCEPTED [note: 'Đã chấp nhận offer']
+}
+
+Enum interview_type {
+  PHONE [note: 'Phỏng vấn qua điện thoại']
+  VIDEO [note: 'Phỏng vấn qua video (Zoom, Teams)']
+  ONSITE [note: 'Phỏng vấn trực tiếp tại văn phòng']
+}
+
+Enum interview_status {
+  SCHEDULED [note: 'Đã lên lịch']
+  COMPLETED [note: 'Đã hoàn thành']
+  CANCELLED [note: 'Đã hủy']
+  RESCHEDULED [note: 'Đã dời lịch']
+}
+
+Enum interview_result {
+  PASS [note: 'Đạt yêu cầu']
+  FAIL [note: 'Không đạt yêu cầu']
+  PENDING [note: 'Chưa có kết quả']
+}
+
+Enum panel_role {
+  LEAD [note: 'Trưởng hội đồng phỏng vấn']
+  MEMBER [note: 'Thành viên hội đồng']
+  OBSERVER [note: 'Quan sát viên']
+}
+
+Enum final_decision {
+  OFFER [note: 'Đề nghị nhận việc']
+  REJECT [note: 'Từ chối']
+}
+
+Enum step_type {
+  SCREENING [note: 'Sàng lọc CV']
+  PHONE_INTERVIEW [note: 'Phỏng vấn qua điện thoại']
+  TECHNICAL_TEST [note: 'Bài test kỹ thuật']
+  INTERVIEW [note: 'Phỏng vấn chính thức']
+  FINAL_INTERVIEW [note: 'Phỏng vấn cuối']
+  OFFER [note: 'Gửi offer']
+  ONBOARDING [note: 'Nhập việc']
+}
+
+Enum notification_type {
+  EMAIL [note: 'Gửi qua email']
+  SYSTEM [note: 'Thông báo trong hệ thống']
+}
+
+// ============================================
+// TABLE GROUPS (for better visualization)
+// ============================================
+
+TableGroup authentication {
+  users
+  
+  Note: 'User Management & Authentication'
+}
+
+TableGroup job_management {
+  jobs
+  recruitment_processes
+  process_steps
+  
+  Note: 'Job Posting & Recruitment Process Management'
+}
+
+TableGroup application_flow {
+  applications
+  interviews
+  interview_panels
+  recruitment_results
+  
+  Note: 'Application Lifecycle: Apply → Screen → Interview → Decision'
+}
+
+TableGroup system {
+  notifications
+  
+  Note: 'System Services & Notifications'
+}
+
+// ============================================
+// BUSINESS RULES & CONSTRAINTS
+// ============================================
+
+Note business_rules {
+  '''
+  # Business Rules & Constraints
+  
+  ## User Management
+  - Email và username phải unique
+  - Mỗi user có 1 role duy nhất
+  - Candidate không thể tạo job hoặc phỏng vấn
+  
+  ## Job Posting
+  - Chỉ RECRUITER và ADMIN được tạo job
+  - Job status workflow: DRAFT → OPEN → CLOSED
+  - Deadline phải >= ngày hiện tại
+  - Một job có thể có nhiều applications
+  
+  ## Application
+  - Một candidate chỉ apply 1 lần cho 1 job (unique constraint)
+  - AI screening tự động chấm điểm từ 0-100
+  - Status workflow: PENDING → SCREENING → INTERVIEW → OFFER/REJECTED
+  
+  ## Interview
+  - Mỗi application có thể có nhiều rounds interview
+  - Interview có thể có nhiều interviewers (interview_panels)
+  - Minimum 2 giờ advance booking
+  - Auto conflict checking
+  - Result tính từ trung bình score của tất cả interviewers
+  
+  ## Recruitment Result
+  - Mỗi application chỉ có 1 recruitment result (1:1 relationship)
+  - Final decision: OFFER hoặc REJECT
+  - Offer letter tự động generate PDF
+  
+  ## Notifications
+  - Auto send khi có event quan trọng:
+    + New application
+    + Interview scheduled
+    + Interview result
+    + Offer extended
+  '''
+}

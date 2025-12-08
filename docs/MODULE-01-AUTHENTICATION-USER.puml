@@ -1,0 +1,258 @@
+@startuml Module 1: Authentication & User Management
+
+' ==========================================
+' CẤU HÌNH TỐI ƯU CHO WORD / GIẤY A4 DỌC
+' ==========================================
+top to bottom direction
+skinparam linetype ortho
+skinparam shadow false
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+' --- 1. CẤU HÌNH FONT CHỮ (ĐÃ TĂNG TITLE) ---
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+' Tăng Title lên size 30
+skinparam titleFontSize 30
+skinparam titleFontStyle bold
+
+' Class to để đọc rõ khi in
+skinparam classFontSize 18
+skinparam classAttributeFontSize 16
+
+' ĐỊNH NGHĨA MÀU SẮC
+!define ENTITY_COLOR #ffffff
+!define CONTROLLER_COLOR #ffffff
+!define BOUNDARY_COLOR #ffffff
+
+title Analysis Class Diagram - Module 1: Authentication & User Management (UC-01, UC-02, UC-03, UC-04, UC-24)
+
+' ==========================================
+' TẦNG 1: BOUNDARIES (GIAO DIỆN)
+' ==========================================
+package "Boundaries" {
+  class RegisterForm <<Boundary>> BOUNDARY_COLOR {
+    Email
+    Mật khẩu
+    Họ tên
+    Số điện thoại
+    Vai trò
+    Tên công ty
+    ====
+    Kiểm tra tính hợp lệ
+  }
+  
+  class LoginForm <<Boundary>> BOUNDARY_COLOR {
+    Email
+    Mật khẩu
+    ====
+    Kiểm tra tính hợp lệ
+  }
+  
+  class ProfileForm <<Boundary>> BOUNDARY_COLOR {
+    Họ tên
+    Số điện thoại
+    Địa chỉ
+    Ảnh đại diện
+    Tiểu sử
+    ====
+    Kiểm tra tính hợp lệ
+  }
+  
+  class EmailService <<Boundary>> BOUNDARY_COLOR {
+    Gửi email OTP
+    Gửi email chào mừng
+    Gửi email đặt lại mật khẩu
+    Lấy mẫu email
+  }
+}
+
+' ==========================================
+' TẦNG 2: CONTROLLERS (XỦ LÝ)
+' ==========================================
+package "Controllers" {
+  class AuthenticationController <<Control>> {
+    Đăng ký tài khoản
+    Gửi mã OTP
+    Xác thực mã OTP
+    Đăng nhập
+    Đăng xuất
+    Làm mới phiên đăng nhập
+    Quên mật khẩu
+    Đặt lại mật khẩu
+    Kiểm tra tính hợp lệ email
+    Kiểm tra email đã tồn tại
+    Tạo mã OTP
+    Mã hóa mật khẩu
+  }
+  
+  class ProfileController <<Control>> {
+    Xem hồ sơ
+    Cập nhật hồ sơ
+    Đổi mật khẩu
+    Tải ảnh đại diện
+    Kiểm tra tính hợp lệ dữ liệu
+  }
+  
+  class UserManagementController <<Control>> CONTROLLER_COLOR {
+    Liệt kê người dùng
+    Xem chi tiết người dùng
+    Cập nhật người dùng
+    Khóa người dùng
+    Mở khóa người dùng
+    Xóa người dùng
+    Đặt lại mật khẩu
+    Kiểm tra quyền quản trị
+  }
+}
+
+' ==========================================
+' TẦNG 3: ENTITIES (DỮ LIỆU)
+' ==========================================
+package "Entities" {
+  class User <<Entity>> ENTITY_COLOR {
+    Mã người dùng
+    Email
+    Mật khẩu
+    Họ tên
+    Số điện thoại
+    Vai trò
+    Trạng thái kích hoạt
+    Trạng thái xác thực
+    Ngày đăng ký
+    Lần đăng nhập cuối
+    Số lần đăng nhập sai
+    Thời điểm khóa tài khoản
+    ====
+    Xác thực mật khẩu
+    Đặt mật khẩu mới
+    Khóa tài khoản
+    Đặt lại số lần đăng nhập sai
+  }
+  
+  class OTPVerification <<Entity>> ENTITY_COLOR {
+    Mã xác thực
+    Người dùng
+    Mã OTP
+    Loại OTP
+    Thời gian tạo
+    Thời gian hết hạn
+    Trạng thái đã sử dụng
+    Số lần thử
+    ====
+    Kiểm tra hợp lệ
+    Kiểm tra hết hạn
+    Đánh dấu đã sử dụng
+  }
+  
+  class UserProfile <<Entity>> ENTITY_COLOR {
+    Mã hồ sơ
+    Người dùng
+    Ảnh đại diện
+    Địa chỉ
+    Thành phố
+    Quốc gia
+    Tiểu sử
+    Tên công ty
+    Logo công ty
+    Website
+    ====
+    Cập nhật hồ sơ
+    Tải ảnh đại diện
+  }
+  
+  class JWTToken <<Entity>> ENTITY_COLOR {
+    Token truy cập
+    Token làm mới
+    Loại token
+    Thời gian hết hạn
+    ====
+    Kiểm tra hết hạn
+  }
+}
+
+' ==========================================
+' QUAN HỆ & CĂN CHỈNH (ALIGNMENT)
+' ==========================================
+
+' Hidden alignment
+RegisterForm -[hidden]down- AuthenticationController
+AuthenticationController -[hidden]down- User
+
+' ========== RELATIONSHIPS ==========
+
+' Entity relationships
+User "1" *-down- "0..*" OTPVerification : tạo ra >
+User "1" -down- "0..1" UserProfile : có >
+
+' Controller to Entity relationships
+AuthenticationController .down.> User : quản lý
+AuthenticationController .down.> OTPVerification : tạo và xác thực
+AuthenticationController .down.> JWTToken : tạo
+
+ProfileController .down.> User : đọc
+ProfileController .down.> UserProfile : quản lý
+
+UserManagementController .down.> User : quản lý
+UserManagementController .down.> UserProfile : đọc
+
+' Controller to Boundary relationships
+AuthenticationController .down.> EmailService : sử dụng
+AuthenticationController .down.> RegisterForm : nhận dữ liệu từ
+AuthenticationController .down.> LoginForm : nhận dữ liệu từ
+
+ProfileController .down.> ProfileForm : nhận dữ liệu từ
+  
+  ' Notes
+  note right of User
+    **Core entity cho toàn hệ thống**
+    - Hỗ trợ 4 roles: CANDIDATE, RECRUITER, 
+      INTERVIEWER, ADMIN
+    - Có cơ chế khóa tài khoản tự động 
+      sau 5 lần đăng nhập sai
+    - Password được hash bằng bcrypt
+  end note
+  
+  note right of OTPVerification
+    **OTP có thời hạn 10 phút**
+    - Max 5 lần nhập sai
+    - 1 user có thể có nhiều OTP 
+      nhưng chỉ 1 active
+  end note
+  
+  note bottom of AuthenticationController
+    **UC-01:** Đăng ký và xác thực (OTP)
+    **UC-02:** Đăng nhập
+    **UC-03:** Đăng xuất
+  end note
+  
+  note bottom of ProfileController
+    **UC-04:** Quản lý hồ sơ cá nhân
+    - Xem/sửa thông tin
+    - Đổi mật khẩu
+    - Tải ảnh đại diện
+  end note
+  
+  note bottom of UserManagementController
+    **UC-24:** Quản lý người dùng (Chỉ Admin)
+    - Thêm, sửa, xóa người dùng
+    - Khóa/mở khóa tài khoản
+    - Đặt lại mật khẩu
+  end note
+
+legend right
+  **Chú thích:**
+  - <<Entity>>: Domain objects
+  - <<Control>>: Business logic
+  - <<Boundary>>: Input forms & External services
+  
+  **Relationships:**
+  ---> Association
+  *--> Composition
+  o--> Aggregation
+  ..> Dependency
+endlegend
+
+@enduml

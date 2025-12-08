@@ -1,0 +1,274 @@
+@startuml Module 3: Ứng tuyển và Sàng lọc AI
+
+!define ENTITY_COLOR #E1F5FE
+!define CONTROLLER_COLOR #FFF9C4
+!define BOUNDARY_COLOR #F3E5F5
+
+title Sơ đồ lớp phân tích - Module 3: Ứng tuyển và Sàng lọc AI\n(UC-10, UC-11, UC-12, UC-13, UC-14, UC-15, UC-16)
+
+package "Ứng tuyển và Sàng lọc AI" {
+  
+  ' ========== ENTITIES ==========
+  class "Hồ sơ ứng tuyển" <<Entity>> ENTITY_COLOR {
+    - Mã hồ sơ
+    - Ứng viên
+    - Tin tuyển dụng
+    - File CV
+    - Thư xin việc
+    - Trạng thái
+    - Điểm AI
+    - Ngày nộp hồ sơ
+    - Ngày cập nhật
+    - Lý do rút hồ sơ
+    + Có thể rút hồ sơ()
+    + Rút hồ sơ()
+    + Cập nhật trạng thái()
+    + Lấy lịch sử thay đổi()
+  }
+  
+  class "Phân tích AI" <<Entity>> ENTITY_COLOR {
+    - Mã phân tích
+    - Hồ sơ ứng tuyển
+    - Điểm tổng
+    - Điểm mạnh
+    - Điểm yếu
+    - Kỹ năng khớp
+    - Kỹ năng thiếu
+    - Mức độ phù hợp kinh nghiệm
+    - Mức độ phù hợp học vấn
+    - Khuyến nghị
+    - Nội dung phân tích
+    - Thời gian phân tích
+    - Phiên bản mô hình
+    + Lấy tóm tắt()
+  }
+  
+  class "File CV" <<Entity>> ENTITY_COLOR {
+    - Mã file
+    - Hồ sơ ứng tuyển
+    - Tên file gốc
+    - Đường dẫn lưu trữ
+    - Kích thước file
+    - Loại file
+    - Thời gian tải lên
+    - Nội dung trích xuất
+    + Kiểm tra tính hợp lệ()
+    + Trích xuất văn bản()
+    + Lấy đường dẫn()
+  }
+  
+  class "Lịch sử hồ sơ" <<Entity>> ENTITY_COLOR {
+    - Mã lịch sử
+    - Hồ sơ ứng tuyển
+    - Trạng thái cũ
+    - Trạng thái mới
+    - Người thay đổi
+    - Thời gian thay đổi
+    - Ghi chú
+  }
+  
+  ' ========== CONTROLLERS ==========
+  class "Bộ xử lý hồ sơ" <<Control>> CONTROLLER_COLOR {
+    + Nộp hồ sơ ứng tuyển()
+    + Xem chi tiết hồ sơ()
+    + Lấy hồ sơ của ứng viên()
+    + Lấy hồ sơ của tin tuyển dụng()
+    + Rút hồ sơ ứng tuyển()
+    + Cập nhật trạng thái hồ sơ()
+    + Tải xuống CV()
+    - Kiểm tra tính hợp lệ hồ sơ()
+    - Kiểm tra trùng lặp()
+    - Kích hoạt sàng lọc AI()
+  }
+  
+  class "Bộ phân tích AI" <<Control>> CONTROLLER_COLOR {
+    + Phân tích CV()
+    + Phân tích lại CV()
+    + Lấy kết quả phân tích()
+    + So sánh ứng viên()
+    - Chuẩn bị câu hỏi()
+    - Gọi API Gemini()
+    - Phân tích phản hồi AI()
+    - Tính điểm()
+    - Xác định khuyến nghị()
+  }
+  
+  class "Bộ xử lý CV" <<Control>> CONTROLLER_COLOR {
+    + Tải lên CV()
+    + Kiểm tra tính hợp lệ CV()
+    + Trích xuất văn bản từ CV()
+    + Xóa CV()
+    - Kiểm tra kích thước()
+    - Kiểm tra loại file()
+    - Làm sạch tên file()
+  }
+  
+  class "Bộ lọc hồ sơ" <<Control>> CONTROLLER_COLOR {
+    + Lọc theo trạng thái()
+    + Lọc theo điểm AI()
+    + Lọc theo khoảng thời gian()
+    + Sắp xếp hồ sơ()
+  }
+  
+  ' ========== BOUNDARIES ==========
+  class "Form ứng tuyển" <<Boundary>> BOUNDARY_COLOR {
+    + File CV
+    + Thư xin việc
+    + Kiểm tra tính hợp lệ()
+    + Kiểm tra kích thước file()
+    + Kiểm tra loại file()
+  }
+  
+  class "Giao diện danh sách hồ sơ" <<Boundary>> BOUNDARY_COLOR {
+    + Hiển thị danh sách hồ sơ()
+    + Hiển thị cho ứng viên()
+    + Hiển thị cho nhà tuyển dụng()
+    + Hiển thị bộ lọc()
+    + Hiển thị trạng thái()
+  }
+  
+  class "Giao diện chi tiết hồ sơ" <<Boundary>> BOUNDARY_COLOR {
+    + Hiển thị hồ sơ()
+    + Hiển thị trình xem CV()
+    + Hiển thị lịch sử()
+    + Hiển thị phân tích AI()
+    + Hiển thị nút thao tác()
+  }
+  
+  class "Giao diện kết quả AI" <<Boundary>> BOUNDARY_COLOR {
+    + Hiển thị điểm số()
+    + Hiển thị khuyến nghị()
+    + Hiển thị điểm mạnh()
+    + Hiển thị điểm yếu()
+    + Hiển thị kỹ năng khớp()
+  }
+  
+  class "Dịch vụ Gemini AI" <<Boundary>> BOUNDARY_COLOR {
+    - Khóa API
+    - Điểm cuối API
+    + Gửi yêu cầu phân tích()
+    + Phân tích phản hồi()
+    - Xử lý lỗi API()
+    - Thử lại khi thất bại()
+  }
+  
+  class "Dịch vụ lưu trữ file" <<Boundary>> BOUNDARY_COLOR {
+    + Tải lên file()
+    + Xóa file()
+    + Lấy đường dẫn file()
+    - Tạo tên file duy nhất()
+  }
+  
+  class "Dịch vụ thông báo Email" <<Boundary>> BOUNDARY_COLOR {
+    + Gửi email xác nhận nộp hồ sơ()
+    + Thông báo nhà tuyển dụng()
+    + Thông báo hoàn tất phân tích AI()
+  }
+  
+  class "Hàng đợi tác vụ Celery" <<Boundary>> BOUNDARY_COLOR {
+    + Xếp hàng phân tích AI()
+    + Lấy trạng thái tác vụ()
+    + Thử lại tác vụ thất bại()
+  }
+  
+  ' ========== RELATIONSHIPS ==========
+  
+  ' Entity relationships
+  "Hồ sơ ứng tuyển" "1" -- "0..1" "Phân tích AI" : được phân tích bởi >
+  "Hồ sơ ứng tuyển" "1" *-- "1" "File CV" : chứa >
+  "Hồ sơ ứng tuyển" "1" *-- "0..*" "Lịch sử hồ sơ" : có lịch sử >
+  "Hồ sơ ứng tuyển" ..> "Người dùng" : thuộc về
+  "Hồ sơ ứng tuyển" ..> "Tin tuyển dụng" : ứng tuyển vào
+  
+  ' Controller relationships
+  "Bộ xử lý hồ sơ" ..> "Hồ sơ ứng tuyển" : quản lý
+  "Bộ xử lý hồ sơ" ..> "Form ứng tuyển" : nhận dữ liệu từ
+  "Bộ xử lý hồ sơ" ..> "Bộ xử lý CV" : ủy thác cho
+  "Bộ xử lý hồ sơ" ..> "Bộ phân tích AI" : kích hoạt
+  "Bộ xử lý hồ sơ" ..> "Dịch vụ thông báo Email" : sử dụng
+  "Bộ xử lý hồ sơ" ..> "Giao diện danh sách hồ sơ" : cập nhật
+  "Bộ xử lý hồ sơ" ..> "Giao diện chi tiết hồ sơ" : cập nhật
+  
+  "Bộ phân tích AI" ..> "Hồ sơ ứng tuyển" : đọc
+  "Bộ phân tích AI" ..> "Phân tích AI" : tạo và quản lý
+  "Bộ phân tích AI" ..> "Dịch vụ Gemini AI" : sử dụng
+  "Bộ phân tích AI" ..> "Hàng đợi tác vụ Celery" : sử dụng
+  "Bộ phân tích AI" ..> "Giao diện kết quả AI" : cập nhật
+  
+  "Bộ xử lý CV" ..> "File CV" : quản lý
+  "Bộ xử lý CV" ..> "Dịch vụ lưu trữ file" : sử dụng
+  
+  "Bộ lọc hồ sơ" ..> "Hồ sơ ứng tuyển" : lọc
+  
+  ' Notes
+  note right of "Hồ sơ ứng tuyển"
+    **Thực thể trung tâm của quy trình tuyển dụng**
+    - Trạng thái: CHỜ XỬ LÝ → SÀNG LỌC 
+      → PHỎNG VẤN → ĐỀ NGHỊ / TỪ CHỐI
+    - Ứng viên có thể rút hồ sơ
+      ở trạng thái CHỜ XỬ LÝ / SÀNG LỌC
+    - Theo dõi lịch sử mọi thay đổi
+  end note
+  
+  note right of "Phân tích AI"
+    **Kết quả phân tích từ Google Gemini API**
+    - Điểm tổng: 0-100
+    - Phân tích: Điểm mạnh, Điểm yếu
+    - So sánh: Kỹ năng khớp, Kỹ năng thiếu
+    - Khuyến nghị dựa trên điểm:
+      >= 90: RẤT KHUYẾN NGHỊ
+      >= 75: KHUYẾN NGHỊ
+      >= 60: CÂN NHẮC
+      < 60: KHÔNG KHUYẾN NGHỊ
+  end note
+  
+  note right of "File CV"
+    **Quản lý file CV**
+    - Chỉ chấp nhận PDF, DOCX
+    - Kích thước tối đa: 5MB
+    - Trích xuất văn bản để phân tích AI
+    - Lưu trữ trên cloud
+  end note
+  
+  note bottom of "Bộ xử lý hồ sơ"
+    **UC-10:** Nộp hồ sơ ứng tuyển
+    **UC-11:** Xem hồ sơ đã nộp (Ứng viên)
+    **UC-12:** Xem danh sách ứng viên (Nhà tuyển dụng)
+    **UC-13:** Xem chi tiết hồ sơ
+    **UC-14:** Rút hồ sơ ứng tuyển
+  end note
+  
+  note bottom of "Bộ phân tích AI"
+    **UC-15:** Tự động sàng lọc CV bằng AI
+    **UC-16:** Xem kết quả sàng lọc AI
+    - Xử lý bất đồng bộ với Celery
+    - Thử lại 3 lần nếu API lỗi
+    - Phân tích phản hồi JSON từ Gemini
+  end note
+  
+  note bottom of "Dịch vụ Gemini AI"
+    **Tích hợp API bên ngoài**
+    - Google Gemini 1.5 Flash
+    - Kỹ thuật thiết kế câu hỏi cho phân tích CV
+    - Giới hạn tốc độ và xử lý lỗi
+  end note
+}
+
+legend right
+  **Chú thích:**
+  - <<Entity>>: Thực thể nghiệp vụ
+  - <<Control>>: Xử lý nghiệp vụ
+  - <<Boundary>>: Giao diện & Dịch vụ bên ngoài
+  
+  **Phụ thuộc Module khác:**
+  - Module 1: Người dùng (Ứng viên, Nhà tuyển dụng)
+  - Module 2: Tin tuyển dụng
+  - Module 4: Phỏng vấn (khi trạng thái = PHỎNG VẤN)
+  
+  **Phụ thuộc bên ngoài:**
+  - Google Gemini API (Phân tích AI)
+  - Celery + Redis (Hàng đợi tác vụ)
+  - Cloud Storage (Lưu trữ CV)
+endlegend
+
+@enduml

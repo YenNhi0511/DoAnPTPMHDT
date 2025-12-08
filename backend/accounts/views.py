@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django_filters.rest_framework import DjangoFilterBackend
+from utils.email_sender import send_email
 from .models import User
 from .serializers import (
     UserSerializer,
@@ -191,10 +192,8 @@ class UserViewSet(viewsets.ModelViewSet):
             # Try to send via email first
             email_sent = False
             try:
-                from django.core.mail import EmailMultiAlternatives
-                from django.conf import settings
                 subject = "Mã OTP xác thực đăng ký - GoodCV"
-                message = f"""
+                text_content = f"""
 Xin chào {user.get_full_name() or user.username},
 
 Mã OTP xác thực tài khoản của bạn là: {otp_code}
@@ -206,8 +205,25 @@ Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.
 Trân trọng,
 Đội ngũ GoodCV
                 """
-                msg = EmailMultiAlternatives(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-                msg.send()
+                html_content = f"""
+<html>
+<body>
+    <h2>Xin chào {user.get_full_name() or user.username},</h2>
+    <p>Mã OTP xác thực tài khoản của bạn là:</p>
+    <h1 style="color: #4CAF50; font-size: 36px;">{otp_code}</h1>
+    <p>Mã này có hiệu lực trong <strong>10 phút</strong>.</p>
+    <p>Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.</p>
+    <p>Trân trọng,<br>Đội ngũ GoodCV</p>
+</body>
+</html>
+                """
+                # Gửi email qua API
+                send_email(
+                    to_email=user.email,
+                    subject=subject,
+                    html_content=html_content,
+                    text_content=text_content
+                )
                 email_sent = True
                 print(f'✅ OTP email sent to {user.email}')
             except Exception as e:

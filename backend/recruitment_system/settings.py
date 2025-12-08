@@ -189,6 +189,10 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'no
 # Frontend URL for email links
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 
+# Email API Keys (Alternative to SMTP)
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')  # https://resend.com/api-keys
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')  # https://sendgrid.com
+
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

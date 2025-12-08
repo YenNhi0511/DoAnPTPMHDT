@@ -1,0 +1,12 @@
+[phases.setup]
+nixPkgs = ["python310", "postgresql", "file"]
+aptPkgs = ["libmagic1"]
+
+[phases.install]
+cmds = [
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
+]
+
+[start]
+cmd = "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn recruitment_system.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120"

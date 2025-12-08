@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import F, Q, Count, Avg
 from django.db.models.functions import TruncMonth
+from utils.email_sender import send_email
 from .models import Application, Interview, InterviewPanel, RecruitmentResult
 from .serializers import (
     ApplicationSerializer,
@@ -109,9 +110,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         
         # Gửi email mời phỏng vấn
         try:
-            from django.core.mail import EmailMultiAlternatives
             from django.template.loader import render_to_string
-            from django.conf import settings
             
             candidate = application.candidate
             job = application.job
@@ -132,15 +131,13 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             text_content = render_to_string('email/interview_invitation.txt', context)
             html_content = render_to_string('email/interview_invitation.html', context)
             
-            # Gửi email
-            msg = EmailMultiAlternatives(
+            # Gửi email qua API
+            send_email(
+                to_email=candidate.email,
                 subject=subject,
-                body=text_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[candidate.email]
+                html_content=html_content,
+                text_content=text_content
             )
-            msg.attach_alternative(html_content, 'text/html')
-            msg.send()
             print(f'✅ Email interview invitation sent to {candidate.email}')
         except Exception as e:
             print(f'❌ Failed to send interview invitation email: {e}')
@@ -236,9 +233,7 @@ class InterviewViewSet(viewsets.ModelViewSet):
                     
                     # Gửi email và notification
                     try:
-                        from django.core.mail import EmailMultiAlternatives
                         from django.template.loader import render_to_string
-                        from django.conf import settings
                         
                         candidate = application.candidate
                         job = application.job
@@ -253,14 +248,13 @@ class InterviewViewSet(viewsets.ModelViewSet):
                         text_content = render_to_string('email/result_notification.txt', context)
                         html_content = render_to_string('email/result_notification.html', context)
                         
-                        msg = EmailMultiAlternatives(
+                        # Gửi email qua API
+                        send_email(
+                            to_email=candidate.email,
                             subject=subject,
-                            body=text_content,
-                            from_email=settings.DEFAULT_FROM_EMAIL,
-                            to=[candidate.email]
+                            html_content=html_content,
+                            text_content=text_content
                         )
-                        msg.attach_alternative(html_content, 'text/html')
-                        msg.send()
                         print(f'✅ Email offer notification sent to {candidate.email}')
                     except Exception as e:
                         print(f'❌ Failed to send offer email: {e}')
@@ -298,9 +292,7 @@ class InterviewViewSet(viewsets.ModelViewSet):
         
         # Gửi email thông báo lịch phỏng vấn
         try:
-            from django.core.mail import EmailMultiAlternatives
             from django.template.loader import render_to_string
-            from django.conf import settings
             
             candidate = interview.application.candidate
             job = interview.application.job
@@ -317,15 +309,13 @@ class InterviewViewSet(viewsets.ModelViewSet):
             text_content = render_to_string('email/interview_notification.txt', context)
             html_content = render_to_string('email/interview_notification.html', context)
             
-            # Gửi email
-            msg = EmailMultiAlternatives(
+            # Gửi email qua API
+            send_email(
+                to_email=candidate.email,
                 subject=subject,
-                body=text_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[candidate.email]
+                html_content=html_content,
+                text_content=text_content
             )
-            msg.attach_alternative(html_content, 'text/html')
-            msg.send()
             print(f'✅ Email interview notification sent to {candidate.email}')
         except Exception as e:
             print(f'❌ Failed to send interview email: {e}')
@@ -363,9 +353,7 @@ class InterviewViewSet(viewsets.ModelViewSet):
         
         # Gửi email kết quả phỏng vấn
         try:
-            from django.core.mail import EmailMultiAlternatives
             from django.template.loader import render_to_string
-            from django.conf import settings
             
             # Chuẩn bị context cho template
             context = {
@@ -386,15 +374,13 @@ class InterviewViewSet(viewsets.ModelViewSet):
                 text_content = render_to_string('email/interview_result_fail.txt', context)
                 html_content = render_to_string('email/interview_result_fail.html', context)
             
-            # Gửi email
-            msg = EmailMultiAlternatives(
+            # Gửi email qua API
+            send_email(
+                to_email=candidate.email,
                 subject=subject,
-                body=text_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[candidate.email]
+                html_content=html_content,
+                text_content=text_content
             )
-            msg.attach_alternative(html_content, 'text/html')
-            msg.send()
             print(f'✅ Email interview result sent to {candidate.email}')
         except Exception as e:
             print(f'❌ Failed to send interview result email: {e}')
@@ -496,9 +482,7 @@ class InterviewPanelViewSet(viewsets.ModelViewSet):
                         
                         # Gửi email và notification
                         try:
-                            from django.core.mail import EmailMultiAlternatives
                             from django.template.loader import render_to_string
-                            from django.conf import settings
                             
                             candidate = application.candidate
                             job = application.job
@@ -514,14 +498,13 @@ class InterviewPanelViewSet(viewsets.ModelViewSet):
                             text_content = render_to_string('email/result_notification.txt', context)
                             html_content = render_to_string('email/result_notification.html', context)
                             
-                            msg = EmailMultiAlternatives(
+                            # Gửi email qua API
+                            send_email(
+                                to_email=candidate.email,
                                 subject=subject,
-                                body=text_content,
-                                from_email=settings.DEFAULT_FROM_EMAIL,
-                                to=[candidate.email]
+                                html_content=html_content,
+                                text_content=text_content
                             )
-                            msg.attach_alternative(html_content, 'text/html')
-                            msg.send()
                             print(f'✅ Email offer notification sent to {candidate.email}')
                         except Exception as e:
                             print(f'❌ Failed to send offer email: {e}')
@@ -667,9 +650,7 @@ class RecruitmentResultViewSet(viewsets.ModelViewSet):
         
         # Gửi email kết quả
         try:
-            from django.core.mail import EmailMultiAlternatives
             from django.template.loader import render_to_string
-            from django.conf import settings
             
             candidate = result.application.candidate
             job = result.application.job
@@ -691,15 +672,13 @@ class RecruitmentResultViewSet(viewsets.ModelViewSet):
             text_content = render_to_string('email/result_notification.txt', context)
             html_content = render_to_string('email/result_notification.html', context)
             
-            # Gửi email
-            msg = EmailMultiAlternatives(
+            # Gửi email qua API
+            send_email(
+                to_email=candidate.email,
                 subject=subject,
-                body=text_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[candidate.email]
+                html_content=html_content,
+                text_content=text_content
             )
-            msg.attach_alternative(html_content, 'text/html')
-            msg.send()
             print(f'✅ Email result notification sent to {candidate.email}')
         except Exception as e:
             print(f'❌ Failed to send result email: {e}')

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sơ Đồ Class - Mức Phân Tích</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(33, 150, 243, 0.4);
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
+        }
+        
+        .diagram-container {
+            padding: 30px;
+            overflow: auto;
+            background: #fafafa;
+            min-height: 600px;
+        }
+        
+        .diagram-wrapper {
+            transform-origin: top left;
+            transition: transform 0.3s;
+            display: inline-block;
+            min-width: 100%;
+        }
+        
+        svg {
+            display: block;
+        }
+        
+        .class-box {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .class-box:hover {
+            filter: brightness(0.95);
+            transform: scale(1.02);
+        }
+        
+        .class-header {
+            font-weight: bold;
+        }
+        
+        .relationship-line {
+            transition: all 0.3s;
+        }
+        
+        .relationship-line:hover {
+            stroke-width: 3;
+            filter: brightness(0.8);
+        }
+        
+        .legend {
+            position: fixed;
+            top: 150px;
+            right: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            max-width: 300px;
+            z-index: 1000;
+        }
+        
+        .legend.hidden {
+            display: none;
+        }
+        
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #1e3c72;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 10px;
+        }
+        
+        .legend-item {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-symbol {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 3px;
+        }
+        
+        .zoom-info {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .legend {
+                position: static;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SƠ ĐỒ LỚP MỨC PHÂN TÍCH</h1>
+            <p>Hệ Thống Tuyển Dụng Nhân Sự Thông Minh</p>
+        </div>
+        
+        <div class="controls">
+            <div>
+                <button class="btn btn-primary" onclick="zoomIn()">🔍+ Phóng to</button>
+                <button class="btn btn-primary" onclick="zoomOut()">🔍- Thu nhỏ</button>
+                <button class="btn btn-primary" onclick="resetZoom()">↺ Reset</button>
+                <button class="btn btn-success" onclick="toggleLegend()">ℹ️ Chú thích</button>
+            </div>
+            <div class="zoom-info">Zoom: <span id="zoomLevel">100</span>%</div>
+        </div>
+        
+        <div class="diagram-container">
+            <div class="diagram-wrapper" id="diagramWrapper">
+                <svg width="1600" height="900" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Title -->
+                    <text x="800" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#1e3c72">
+                        HỆ THỐNG TUYỂN DỤNG NHÂN SỰ THÔNG MINH
+                    </text>
+                    
+                    <!-- Job Class -->
+                    <g class="class-box">
+                        <rect x="50" y="80" width="240" height="350" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2" rx="5"/>
+                        <rect x="50" y="80" width="240" height="45" fill="#6c8ebf" rx="5"/>
+                        <text x="170" y="105" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="170" y="118" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Job</text>
+                        <text x="60" y="145" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="60" y="160" font-size="11" fill="#000">- title: String</text>
+                        <text x="60" y="175" font-size="11" fill="#000">- department: String</text>
+                        <text x="60" y="190" font-size="11" fill="#000">- salary_min: Decimal</text>
+                        <text x="60" y="205" font-size="11" fill="#000">- salary_max: Decimal</text>
+                        <text x="60" y="220" font-size="11" fill="#000">- employment_type: Enum</text>
+                        <text x="60" y="235" font-size="11" fill="#000">- status: Enum</text>
+                        <text x="60" y="250" font-size="11" fill="#000">- deadline: DateTime</text>
+                        <text x="60" y="265" font-size="11" fill="#000">- created_by: FK(User)</text>
+                        <line x1="50" y1="280" x2="290" y2="280" stroke="#6c8ebf" stroke-width="1"/>
+                        <text x="60" y="300" font-size="11" fill="#000">+ dang_tin()</text>
+                        <text x="60" y="315" font-size="11" fill="#000">+ dong_tin()</text>
+                        <text x="60" y="330" font-size="11" fill="#000">+ cap_nhat()</text>
+                    </g>
+                    
+                    <!-- Application Class -->
+                    <g class="class-box">
+                        <rect x="380" y="80" width="240" height="310" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2" rx="5"/>
+                        <rect x="380" y="80" width="240" height="45" fill="#6c8ebf" rx="5"/>
+                        <text x="500" y="105" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="500" y="118" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Application</text>
+                        <text x="390" y="145" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="390" y="160" font-size="11" fill="#000">- job: FK(Job)</text>
+                        <text x="390" y="175" font-size="11" fill="#000">- candidate: FK(User)</text>
+                        <text x="390" y="190" font-size="11" fill="#000">- cv_file: File</text>
+                        <text x="390" y="205" font-size="11" fill="#000">- ai_score: Float</text>
+                        <text x="390" y="220" font-size="11" fill="#000">- status: Enum</text>
+                        <text x="390" y="235" font-size="11" fill="#000">- applied_at: DateTime</text>
+                        <line x1="380" y1="250" x2="620" y2="250" stroke="#6c8ebf" stroke-width="1"/>
+                        <text x="390" y="270" font-size="11" fill="#000">+ nop_ho_so()</text>
+                        <text x="390" y="285" font-size="11" fill="#000">+ cap_nhat_trang_thai()</text>
+                    </g>
+                    
+                    <!-- Interview Class -->
+                    <g class="class-box">
+                        <rect x="710" y="80" width="240" height="290" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2" rx="5"/>
+                        <rect x="710" y="80" width="240" height="45" fill="#6c8ebf" rx="5"/>
+                        <text x="830" y="105" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="830" y="118" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Interview</text>
+                        <text x="720" y="145" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="720" y="160" font-size="11" fill="#000">- application: FK(App)</text>
+                        <text x="720" y="175" font-size="11" fill="#000">- scheduled_at: DateTime</text>
+                        <text x="720" y="190" font-size="11" fill="#000">- location_link: String</text>
+                        <text x="720" y="205" font-size="11" fill="#000">- type: Enum</text>
+                        <text x="720" y="220" font-size="11" fill="#000">- status: Enum</text>
+                        <text x="720" y="235" font-size="11" fill="#000">- result: Enum</text>
+                        <line x1="710" y1="250" x2="950" y2="250" stroke="#6c8ebf" stroke-width="1"/>
+                        <text x="720" y="270" font-size="11" fill="#000">+ dat_lich()</text>
+                        <text x="720" y="285" font-size="11" fill="#000">+ huy_lich()</text>
+                    </g>
+                    
+                    <!-- User Class -->
+                    <g class="class-box">
+                        <rect x="50" y="500" width="240" height="240" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2" rx="5"/>
+                        <rect x="50" y="500" width="240" height="45" fill="#6c8ebf" rx="5"/>
+                        <text x="170" y="525" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="170" y="538" font-size="16" font-weight="bold" text-anchor="middle" fill="white">User</text>
+                        <text x="60" y="565" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="60" y="580" font-size="11" fill="#000">- email: String (unique)</text>
+                        <text x="60" y="595" font-size="11" fill="#000">- password_hash: String</text>
+                        <text x="60" y="610" font-size="11" fill="#000">- role: Enum</text>
+                        <text x="60" y="625" font-size="11" fill="#000">- full_name: String</text>
+                        <text x="60" y="640" font-size="11" fill="#000">- is_active: Boolean</text>
+                        <line x1="50" y1="655" x2="290" y2="655" stroke="#6c8ebf" stroke-width="1"/>
+                        <text x="60" y="675" font-size="11" fill="#000">+ dang_nhap()</text>
+                        <text x="60" y="690" font-size="11" fill="#000">+ dang_xuat()</text>
+                    </g>
+                    
+                    <!-- SavedJob Class -->
+                    <g class="class-box">
+                        <rect x="380" y="580" width="200" height="120" fill="#fff2cc" stroke="#d6b656" stroke-width="2" rx="5"/>
+                        <rect x="380" y="580" width="200" height="40" fill="#d6b656" rx="5"/>
+                        <text x="480" y="603" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="480" y="615" font-size="14" font-weight="bold" text-anchor="middle" fill="white">SavedJob</text>
+                        <text x="390" y="640" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="390" y="655" font-size="11" fill="#000">- user: FK(User)</text>
+                        <text x="390" y="670" font-size="11" fill="#000">- job: FK(Job)</text>
+                        <text x="390" y="685" font-size="11" fill="#000">- saved_at: DateTime</text>
+                    </g>
+                    
+                    <!-- RecruitmentResult Class -->
+                    <g class="class-box">
+                        <rect x="380" y="430" width="240" height="130" fill="#ffffff" stroke="#999999" stroke-width="2" rx="5"/>
+                        <rect x="380" y="430" width="240" height="40" fill="#999999" rx="5"/>
+                        <text x="500" y="453" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="500" y="465" font-size="14" font-weight="bold" text-anchor="middle" fill="white">RecruitmentResult</text>
+                        <text x="390" y="490" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="390" y="505" font-size="11" fill="#000">- application: FK (1:1)</text>
+                        <text x="390" y="520" font-size="11" fill="#000">- final_decision: Enum</text>
+                        <text x="390" y="535" font-size="11" fill="#000">- salary_offer: Decimal</text>
+                        <text x="390" y="550" font-size="11" fill="#000">- decided_by: FK(User)</text>
+                    </g>
+                    
+                    <!-- InterviewPanel Class -->
+                    <g class="class-box">
+                        <rect x="1040" y="80" width="220" height="150" fill="#ffffff" stroke="#999999" stroke-width="2" rx="5"/>
+                        <rect x="1040" y="80" width="220" height="40" fill="#999999" rx="5"/>
+                        <text x="1150" y="103" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="1150" y="115" font-size="14" font-weight="bold" text-anchor="middle" fill="white">InterviewPanel</text>
+                        <text x="1050" y="140" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="1050" y="155" font-size="11" fill="#000">- interview: FK(Interview)</text>
+                        <text x="1050" y="170" font-size="11" fill="#000">- interviewer: FK(User)</text>
+                        <text x="1050" y="185" font-size="11" fill="#000">- score: Enum</text>
+                        <text x="1050" y="200" font-size="11" fill="#000">- feedback: Text</text>
+                    </g>
+                    
+                    <!-- Notification Class -->
+                    <g class="class-box">
+                        <rect x="710" y="500" width="220" height="140" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2" rx="5"/>
+                        <rect x="710" y="500" width="220" height="40" fill="#6c8ebf" rx="5"/>
+                        <text x="820" y="523" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="820" y="535" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Notification</text>
+                        <text x="720" y="560" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="720" y="575" font-size="11" fill="#000">- user: FK(User)</text>
+                        <text x="720" y="590" font-size="11" fill="#000">- type: Enum</text>
+                        <text x="720" y="605" font-size="11" fill="#000">- content: Text</text>
+                        <text x="720" y="620" font-size="11" fill="#000">- is_read: Boolean</text>
+                    </g>
+                    
+                    <!-- RecruitmentProcess Class -->
+                    <g class="class-box">
+                        <rect x="1040" y="300" width="220" height="140" fill="#d5e8d4" stroke="#82b366" stroke-width="2" rx="5"/>
+                        <rect x="1040" y="300" width="220" height="40" fill="#82b366" rx="5"/>
+                        <text x="1150" y="323" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="1150" y="335" font-size="14" font-weight="bold" text-anchor="middle" fill="white">RecruitmentProcess</text>
+                        <text x="1050" y="360" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="1050" y="375" font-size="11" fill="#000">- name: String</text>
+                        <text x="1050" y="390" font-size="11" fill="#000">- description: Text</text>
+                        <text x="1050" y="405" font-size="11" fill="#000">- is_default: Boolean</text>
+                    </g>
+                    
+                    <!-- ProcessStep Class -->
+                    <g class="class-box">
+                        <rect x="1330" y="300" width="220" height="160" fill="#d5e8d4" stroke="#82b366" stroke-width="2" rx="5"/>
+                        <rect x="1330" y="300" width="220" height="40" fill="#82b366" rx="5"/>
+                        <text x="1440" y="323" font-size="12" text-anchor="middle" fill="white">&lt;&lt;Entity&gt;&gt;</text>
+                        <text x="1440" y="335" font-size="14" font-weight="bold" text-anchor="middle" fill="white">ProcessStep</text>
+                        <text x="1340" y="360" font-size="11" fill="#000">- id: UUID (PK)</text>
+                        <text x="1340" y="375" font-size="11" fill="#000">- process: FK(Process)</text>
+                        <text x="1340" y="390" font-size="11" fill="#000">- step_name: String</text>
+                        <text x="1340" y="405" font-size="11" fill="#000">- step_type: Enum</text>
+                        <text x="1340" y="420" font-size="11" fill="#000">- order: Integer</text>
+                        <text x="1340" y="435" font-size="11" fill="#000">- is_required: Boolean</text>
+                    </g>
+                    
+                    <!-- Relationships -->
+                    <!-- Job ◆→ Application (Composition) -->
+                    <g class="relationship-line">
+                        <line x1="290" y1="220" x2="380" y2="220" stroke="#000" stroke-width="2"/>
+                        <polygon points="290,220 305,215 305,225" fill="#000"/>
+                        <text x="300" y="215" font-size="10" fill="#000">1</text>
+                        <text x="365" y="215" font-size="10" fill="#000">*</text>
+                    </g>
+                    
+                    <!-- Application ◆→ Interview (Composition) -->
+                    <g class="relationship-line">
+                        <line x1="620" y1="220" x2="710" y2="220" stroke="#000" stroke-width="2"/>
+                        <polygon points="620,220 635,215 635,225" fill="#000"/>
+                        <text x="630" y="215" font-size="10" fill="#000">1</text>
+                        <text x="695" y="215" font-size="10" fill="#000">*</text>
+                    </g>
+                    
+                    <!-- Interview ◆→ InterviewPanel (Composition) -->
+                    <g class="relationship-line">
+                        <line x1="950" y1="155" x2="1040" y2="155" stroke="#000" stroke-width="2"/>
+                        <polygon points="950,155 965,150 965,160" fill="#000"/>
+                        <text x="960" y="150" font-size="10" fill="#000">1</text>
+                        <text x="1025" y="150" font-size="10" fill="#000">*</text>
+                    </g>
+                    
+                    <!-- User ◇→ Job (Aggregation) -->
+                    <g class="relationship-line">
+                        <line x1="170" y1="500" x2="170" y2="430" stroke="#000" stroke-width="2"/>
+                        <polygon points="170,500 165,485 175,485" fill="none" stroke="#000" stroke-width="2"/>
+                        <text x="155" y="470" font-size="10" fill="#000">1</text>
+                        <text x="155" y="420" font-size="10" fill="#000">*</text>
+                    </g>
+                    
+                    <!-- Application ◆→ RecruitmentResult (Composition 1:1) -->
+                    <g class="relationship-line">
+                        <line x1="500" y1="390" x2="500" y2="430" stroke="#000" stroke-width="2"/>
+                        <polygon points="500,390 495,405 505,405" fill="#000"/>
+                        <text x="485" y="410" font-size="10" fill="#000">1</text>
+                        <text x="485" y="425" font-size="10" fill="#000">0..1</text>
+                    </g>
+                    
+                    <!-- User ◆→ Notification (Composition) -->
+                    <g class="relationship-line">
+                        <line x1="290" y1="620" x2="710" y2="570" stroke="#000" stroke-width="2"/>
+                        <polygon points="290,620 300,612 295,625" fill="#000"/>
+                        <text x="300" y="615" font-size="10" fill="#000">1</text>
+                        <text x="695" y="575" font-size="10" fill="#000">*</text>
+                    </g>
+                    
+                    <!-- User ←→ SavedJob ←→ Job (Association M:N) -->
+                    <g class="relationship-line">
+                        <line x1="290" y1="650" x2="380" y2="650" stroke="#000" stroke-width="2"/>
+                        <text x="300" y="645" font-size="10" fill="#000">*</text>
+                        <text x="365" y="645" font-size="10" fill="#000">*</text>
+                    </g>
+                    
+                    <g class="relationship-line">
+                        <line x1="480" y1="580" x2="480" y2="390" stroke="#000" stroke-width="2"/>
+                        <text x="465" y="490" font-size="10" fill="#000">*</text>
+                        <text x="465" y="400" font-size="10" fill="#000">*</text>
+                    </g>
+                    
+                    <!-- RecruitmentProcess ◆→ ProcessStep (Composition) -->
+                    <g class="relationship-line">
+                        <line x1="1260" y1="370" x2="1330" y2="370" stroke="#000" stroke-width="2"/>
+                        <polygon points="1260,370 1275,365 1275,375" fill="#000"/>
+                        <text x="1270" y="365" font-size="10" fill="#000">1</text>
+                        <text x="1315" y="365" font-size="10" fill="#000">*</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Legend -->
+    <div class="legend" id="legend">
+        <h3>CHÚ THÍCH</h3>
+        
+        <div class="legend-item">
+            <span class="legend-symbol">◆</span>
+            <span>Composition (Liên kết mạnh)</span>
+        </div>
+        
+        <div class="legend-item">
+            <span class="legend-symbol">◇</span>
+            <span>Aggregation (Liên kết yếu)</span>
+        </div>
+        
+        <div class="legend-item">
+            <span class="legend-symbol">—</span>
+            <span>Association (Liên kết)</span>
+        </div>
+        
+        <div class="legend-item">
+            <div class="legend-color" style="background: #dae8fc;"></div>
+            <span>Entity chính</span>
+        </div>
+        
+        <div class="legend-item">
+            <div class="legend-color" style="background: #fff2cc;"></div>
+            <span>Entity liên kết</span>
+        </div>
+        
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ffffff;"></div>
+            <span>Entity hỗ trợ</span>
+        </div>
+        
+        <div class="legend-item">
+            <div class="legend-color" style="background: #d5e8d4;"></div>
+            <span>Entity quy trình</span>
+        </div>
+        
+        <hr style="margin: 15px 0;">
+        
+        <div style="font-size: 11px; color: #666;">
+            <strong>Multiplicity:</strong><br>
+            1 = Một đối tượng<br>
+            * = Nhiều đối tượng<br>
+            0..1 = Không hoặc một<br>
+            1..* = Một hoặc nhiều
+        </div>
+    </div>
+    
+    <script>
+        let currentZoom = 1;
+        const wrapper = document.getElementById('diagramWrapper');
+        const zoomDisplay = document.getElementById('zoomLevel');
+        const legend = document.getElementById('legend');
+        
+        function zoomIn() {
+            if (currentZoom < 2) {
+                currentZoom += 0.1;
+                updateZoom();
+            }
+        }
+        
+        function zoomOut() {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.1;
+                updateZoom();
+            }
+        }
+        
+        function resetZoom() {
+            currentZoom = 1;
+            updateZoom();
+        }
+        
+        function updateZoom() {
+            wrapper.style.transform = `scale(${currentZoom})`;
+            zoomDisplay.textContent = Math.round(currentZoom * 100);
+        }
+        
+        function toggleLegend() {
+            legend.classList.toggle('hidden');
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '+' || e.key === '=') {
+                zoomIn();
+            } else if (e.key === '-' || e.key === '_') {
+                zoomOut();
+            } else if (e.key === '0') {
+                resetZoom();
+            } else if (e.key === 'l' || e.key === 'L') {
+                toggleLegend();
+            }
+        });
+        
+        // Mouse wheel zoom
+        wrapper.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
 
   // Menu items CHỈ cho RECRUITER (nhà tuyển dụng)
   const recruiterMenuItems = [
-    { path: '/dashboard', icon: Home, label: 'Dashboard', roles: ['RECRUITER'] },
+    { path: '/dashboard', icon: Home, label: 'Trang chủ', roles: ['RECRUITER'] },
     { path: '/jobs', icon: Briefcase, label: 'Quản lý việc làm', roles: ['RECRUITER'] },
     { path: '/applications', icon: FileText, label: 'Hồ sơ ứng tuyển', roles: ['RECRUITER'] },
     { path: '/pipeline', icon: ClipboardList, label: 'Pipeline tuyển dụng', roles: ['RECRUITER'] },
@@ -153,7 +153,7 @@ const Layout = ({ children }) => {
           <header className="sticky top-16 z-20 bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-bold text-gray-900">
-                {menuItems.find(item => location.pathname.startsWith(item.path))?.label || 'Dashboard'}
+                {menuItems.find(item => location.pathname.startsWith(item.path))?.label || 'Trang chủ'}
               </h1>
 
               <div className="flex items-center gap-4">

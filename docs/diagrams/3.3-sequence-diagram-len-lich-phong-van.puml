@@ -1,0 +1,155 @@
+@startuml Sơ đồ Tuần Tự - Lên Lịch Phỏng Vấn
+skinparam monochrome true
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title Sơ đồ Tuần Tự: Lên Lịch Phỏng Vấn
+
+actor "Recruiter" as R
+participant "<<Boundary>>\nInterviewForm" as IF
+participant "<<Control>>\nInterviewController" as IC
+participant "<<Entity>>\nInterview" as I
+participant "<<Entity>>\nApplication" as A
+participant "<<Entity>>\nInterviewPanel" as IP
+participant "<<Service>>\nCalendarService" as CS
+participant "<<Service>>\nVideoConferenceService" as VCS
+participant "<<Service>>\nEmailService" as ES
+database "Database" as DB
+
+== Giai đoạn 1: Khởi tạo lịch phỏng vấn ==
+R -> IF: Chọn ứng viên cần phỏng vấn
+activate IF
+IF -> IC: getApplication(application_id)
+activate IC
+IC -> A: findById(application_id)
+activate A
+A -> DB: SELECT * FROM applications\nWHERE id = application_id
+activate DB
+DB --> A: application_data
+deactivate DB
+A --> IC: Application (SCREENING_PASSED)
+deactivate A
+IC --> IF: Application details +\nCandidate info
+deactivate IC
+
+IF --> R: Hiển thị form lên lịch
+deactivate IF
+
+== Giai đoạn 2: Nhập thông tin phỏng vấn ==
+R -> IF: Nhập thông tin:\n- Round (1, 2, 3, FINAL)\n- Interview type (PHONE/VIDEO/ONSITE)\n- Start time, End time\n- Location (nếu ONSITE)\n- Chọn interviewers\n- Notes
+activate IF
+
+IF -> IF: Validate dữ liệu:\n- start_time > now + 2 hours\n- end_time > start_time\n- Required fields đầy đủ
+
+alt Validation failed
+    IF --> R: Hiển thị lỗi validation
+else Validation passed
+    IF -> IC: createInterview(interviewData)
+    activate IC
+    
+    == Giai đoạn 3: Kiểm tra xung đột lịch ==
+    IC -> IC: checkConflicts(start_time, end_time,\ninterviewer_ids)
+    activate IC
+    IC -> DB: SELECT i.* FROM interviews i\nJOIN interview_panels ip ON i.id = ip.interview_id\nWHERE ip.interviewer_id IN (interviewer_ids)\nAND i.status = 'SCHEDULED'\nAND time_overlap
+    activate DB
+    DB --> IC: conflicting_interviews
+    deactivate DB
+    deactivate IC
+    
+    alt Có xung đột lịch
+        IC --> IF: Conflict error:\nDanh sách interviewers bận
+        IF --> R: Hiển thị thông báo xung đột\n+ Đề xuất thời gian khác
+    else Không xung đột
+        
+        == Giai đoạn 4: Tạo Interview record ==
+        IC -> I: new Interview(interviewData)
+        activate I
+        I -> I: Set status = SCHEDULED
+        I -> DB: INSERT INTO interviews\n(application_id, scheduled_at,\nduration, interview_type,\nlocation, status)
+        activate DB
+        DB --> I: interview_id
+        deactivate DB
+        I --> IC: Interview object
+        deactivate I
+        
+        == Giai đoạn 5: Tạo Interview Panel ==
+        loop Cho mỗi interviewer
+            IC -> IP: createPanelMember(interview_id,\ninterviewer_id, role)
+            activate IP
+            IP -> DB: INSERT INTO interview_panels\n(interview_id, interviewer_id, role)
+            activate DB
+            DB --> IP: panel_id
+            deactivate DB
+            IP --> IC: InterviewPanel created
+            deactivate IP
+        end
+        
+        == Giai đoạn 6: Tạo Video link (nếu VIDEO) ==
+        alt Interview type = VIDEO
+            IC -> VCS: createMeeting(interview)
+            activate VCS
+            VCS -> VCS: Create Zoom/Google Meet room
+            VCS --> IC: video_link
+            deactivate VCS
+            
+            IC -> I: updateVideoLink(video_link)
+            activate I
+            I -> DB: UPDATE interviews\nSET video_link = ?
+            activate DB
+            DB --> I: success
+            deactivate DB
+            deactivate I
+        end
+        
+        == Giai đoạn 7: Tạo Calendar Event ==
+        IC -> CS: createCalendarEvent(interview)
+        activate CS
+        CS -> CS: Tạo event details:\n- Title: "Interview - [Candidate]"\n- Start/End time\n- Attendees: candidate + interviewers\n- Location/Video link
+        CS -> CS: Send calendar invites
+        CS --> IC: event_id
+        deactivate CS
+        
+        == Giai đoạn 8: Gửi Email Notifications ==
+        par Parallel notifications
+            IC -> ES: notifyCandidate(interview)
+            activate ES
+            ES -> ES: Tạo email cho candidate:\n- Thông tin phỏng vấn\n- Thời gian, địa điểm\n- Hướng dẫn chuẩn bị
+            ES --> IC: email sent
+            deactivate ES
+        and
+            IC -> ES: notifyInterviewers(interview)
+            activate ES
+            ES -> ES: Tạo email cho interviewers:\n- Thông tin ứng viên\n- CV attachment\n- Lịch phỏng vấn
+            ES --> IC: emails sent
+            deactivate ES
+        end
+        
+        == Giai đoạn 9: Cập nhật Application status ==
+        IC -> A: updateStatus(INTERVIEWING)
+        activate A
+        A -> DB: UPDATE applications\nSET status = 'INTERVIEWING'\nWHERE id = application_id
+        activate DB
+        DB --> A: success
+        deactivate DB
+        A --> IC: Application updated
+        deactivate A
+        
+        IC --> IF: Interview scheduled successfully
+        deactivate IC
+        IF --> R: Hiển thị thông báo thành công\n+ Chi tiết lịch phỏng vấn
+        deactivate IF
+    end
+end
+
+== Ghi chú ==
+note over R, DB
+  **Business Rules:**
+  1. Advance booking: Phỏng vấn phải đặt trước >= 2 giờ
+  2. Conflict check: Kiểm tra lịch trống của interviewers
+  3. Auto notification: Gửi email + calendar invite tự động
+  4. Video link: Tự động tạo cho interview type = VIDEO
+  5. Application status: Tự động chuyển sang INTERVIEWING
+  6. Cancel/Reschedule: Chỉ được phép nếu còn > 2 giờ
+end note
+
+@enduml

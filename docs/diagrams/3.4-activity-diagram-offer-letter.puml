@@ -1,0 +1,54 @@
+@startuml Sơ đồ Trạng Thái - Thư Mời Nhận Việc
+skinparam monochrome true
+
+title SƠ ĐỒ TRẠNG THÁI: OFFER LETTER
+
+[*] --> DRAFTING : Tạo quyết định
+
+DRAFTING : Soạn thảo
+DRAFTING : - Nhập thông tin offer
+DRAFTING : - Mức lương, vị trí
+DRAFTING : - Ngày nhận việc
+
+DRAFTING --> SENT : Gửi Email Offer
+
+SENT : Đã gửi
+SENT : - Chờ phản hồi ứng viên
+SENT : - Theo dõi trạng thái
+
+SENT --> ACCEPTED : Ứng viên đồng ý
+SENT --> DECLINED : Ứng viên từ chối  
+SENT --> EXPIRED : Quá hạn phản hồi
+
+ACCEPTED : Chấp nhận
+ACCEPTED : - Ứng viên đồng ý
+ACCEPTED : - Chuẩn bị onboard
+
+DECLINED : Từ chối
+DECLINED : - Ứng viên từ chối
+DECLINED : - Kết thúc
+
+EXPIRED : Hết hạn
+EXPIRED : - Quá deadline
+EXPIRED : - Tự động đóng
+
+ACCEPTED --> [*]
+DECLINED --> [*]
+EXPIRED --> [*]
+
+note right of SENT
+  Deadline: 7-14 ngày
+  Ứng viên có thể:
+  - Accept
+  - Decline
+  - Negotiate
+end note
+
+note right of ACCEPTED
+  Tiếp theo:
+  - Background check
+  - Onboarding
+  - Ký hợp đồng
+end note
+
+@enduml

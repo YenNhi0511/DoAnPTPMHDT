@@ -1,0 +1,274 @@
+@startuml Module 2: Job Management
+
+' ==========================================
+' CẤU HÌNH TỐI ƯU CHO WORD / GIẤY A4 DỌC
+' ==========================================
+top to bottom direction
+skinparam linetype ortho
+skinparam shadow false
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+' --- 1. CẤU HÌNH FONT CHỮ (ĐÃ TĂNG TITLE) ---
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+' Tăng Title lên size 30
+skinparam titleFontSize 30
+skinparam titleFontStyle bold
+
+' Class to để đọc rõ khi in
+skinparam classFontSize 18
+skinparam classAttributeFontSize 16
+
+' ĐỊNH NGHĨA MÀU SẮC (Flat Design - Giống Module 1)
+!define ENTITY_COLOR #ffffff
+!define CONTROLLER_COLOR #ffffff
+!define BOUNDARY_COLOR #ffffff
+!define EXTERNAL_COLOR #ffffff
+
+title Analysis Class Diagram - Module 2: Job Management (UC-05 to UC-09)
+
+' ==========================================
+' TẦNG 1: BOUNDARIES (GIAO DIỆN)
+' ==========================================
+package "Boundaries" {
+  class JobForm <<Boundary>> BOUNDARY_COLOR {
+    Tiêu đề
+    Mô tả công việc
+    Yêu cầu
+    Mức lương tối thiểu
+    Mức lương tối đa
+    Địa điểm
+    Loại công việc
+    Số lượng cần tuyển
+    Hạn nộp hồ sơ
+    Trạng thái
+    ====
+    Kiểm tra tính hợp lệ
+  }
+
+  class JobSearchForm <<Boundary>> BOUNDARY_COLOR {
+    Từ khóa
+    Địa điểm
+    Loại công việc
+    Khoảng lương
+    Sắp xếp theo
+    ====
+    Kiểm tra tính hợp lệ
+  }
+
+  class JobListView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị danh sách tin
+    Hiển thị phân trang
+    Hiển thị bộ lọc
+    Hiển thị thẻ tin tuyển dụng
+  }
+
+  class JobDetailView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị tin tuyển dụng
+    Hiển thị công ty
+    Hiển thị nút ứng tuyển
+    Hiển thị tin tương tự
+  }
+
+  class NotificationService <<Boundary>> BOUNDARY_COLOR {
+    Thông báo tin mới
+    Thông báo tin cập nhật
+    Thông báo tin đóng
+  }
+}
+
+' ==========================================
+' TẦNG 2: CONTROLLERS (XỦ LÝ)
+' ==========================================
+package "Controllers" {
+  class JobController <<Control>> CONTROLLER_COLOR {
+    Tạo tin tuyển dụng
+    Cập nhật tin tuyển dụng
+    Xóa tin tuyển dụng
+    Thay đổi trạng thái
+    Xem chi tiết tin
+    Lấy danh sách tin của nhà tuyển dụng
+    Tăng lượt xem
+    Kiểm tra tính hợp lệ dữ liệu
+    Kiểm tra quyền sở hữu
+    Kiểm tra có thể xóa
+  }
+
+  class JobSearchController <<Control>> CONTROLLER_COLOR {
+    Tìm kiếm công việc
+    Lọc công việc
+    Sắp xếp công việc
+    Lấy tin nổi bật
+    Lấy tin tương tự
+    Xây dựng câu truy vấn
+    Áp dụng bộ lọc
+  }
+
+  class SavedJobController <<Control>> CONTROLLER_COLOR {
+    Lưu tin tuyển dụng
+    Bỏ lưu tin tuyển dụng
+    Lấy danh sách đã lưu
+    Kiểm tra đã lưu
+  }
+
+  class CompanyController <<Control>> CONTROLLER_COLOR {
+    Xem chi tiết công ty
+    Lấy tin tuyển dụng của công ty
+    Cập nhật thông tin công ty
+    Tìm kiếm công ty
+  }
+}
+
+' ==========================================
+' TẦNG 3: ENTITIES (DỮ LIỆU)
+' ==========================================
+package "Entities" {
+
+
+  class Job <<Entity>> ENTITY_COLOR {
+    Mã tin
+    Nhà tuyển dụng
+    Tiêu đề
+    Mô tả công việc
+    Yêu cầu
+    Mức lương tối thiểu
+    Mức lương tối đa
+    Đơn vị tiền tệ
+    Địa điểm
+    Loại công việc
+    Trạng thái
+    Số lượng cần tuyển
+    Hạn nộp hồ sơ
+    Ngày đăng
+    Ngày cập nhật
+    Số lượt xem
+    Số hồ sơ ứng tuyển
+    ====
+    Kiểm tra còn hiệu lực
+    Kiểm tra hết hạn
+    Có thể ứng tuyển
+    Tăng lượt xem
+  }
+  
+  class Company <<Entity>> {
+    Mã công ty
+    Tên công ty
+    Logo
+    Giới thiệu
+    Website
+    Ngành nghề
+    Quy mô
+    Năm thành lập
+    Địa chỉ
+    Thành phố
+    Quốc gia
+    ====
+    Lấy tin đang tuyển
+    Đếm số tin tuyển dụng
+  }
+  
+  class SavedJob <<Entity>> {
+    Mã lưu
+    Ứng viên
+    Tin tuyển dụng
+    Thời gian lưu
+    Ghi chú
+    ====
+    Xóa khỏi danh sách
+  }
+  
+  class JobSearchCriteria <<Entity>> ENTITY_COLOR {
+    Từ khóa
+    Địa điểm
+    Loại công việc
+    Mức lương tối thiểu
+    Mức lương tối đa
+    Sắp xếp theo
+    Trang hiện tại
+    Số tin mỗi trang
+  }
+}
+
+' Class tham chiếu bên ngoài
+class "User" as User <<Entity>> EXTERNAL_COLOR
+
+' ==========================================
+' QUAN HỆ & CĂN CHỈNH (ALIGNMENT)
+' ==========================================
+
+' 1. Căn chỉnh thẳng hàng dọc (Kỹ thuật hidden)
+' Giúp JobForm nằm ngay trên JobController, JobController ngay trên Job
+JobForm -[hidden]down- JobController
+JobController -[hidden]down- Job
+
+JobSearchForm -[hidden]down- JobSearchController
+JobSearchController -[hidden]down- JobSearchCriteria
+
+NotificationService -[hidden]down- CompanyController
+CompanyController -[hidden]down- Company
+
+' ==========================================
+' RELATIONSHIPS (QUAN HỆ)
+' ==========================================
+
+' 2. Boundary -> Controller
+JobForm ..> JobController : submit
+JobSearchForm ..> JobSearchController : submit
+JobController ..> NotificationService : use
+JobController ..> JobListView : update
+JobSearchController ..> JobListView : update
+JobDetailView <.. JobController : display
+
+' 3. Controller -> Entity
+JobController ..> Job : quản lý
+JobController ..> Company : tham chiếu
+CompanyController ..> Company : quản lý
+CompanyController ..> Job : query
+
+JobSearchController ..> Job : tìm kiếm
+JobSearchController ..> JobSearchCriteria : sử dụng
+
+SavedJobController ..> SavedJob : quản lý
+SavedJobController ..> Job : tham chiếu
+SavedJobController ..> User : tham chiếu
+
+' 4. Entity Relationships
+Company "1" *-- "0..*" Job : đăng >
+User "1" -- "0..*" SavedJob : lưu >
+Job "1" -- "0..*" SavedJob : được lưu >
+Job .> JobSearchCriteria : match
+' ==========================================
+' GHI CHÚ (NOTES)
+' ==========================================
+note right of Job
+  **Core entity của module**
+  - Status: DRAFT, OPEN, CLOSED
+  - Hỗ trợ nhiều loại công việc
+  - Tự động đóng khi hết deadline
+end note
+
+note bottom of JobController
+  **UC-05, UC-08, UC-09**
+  (Đăng tin, Sửa tin, Quản lý trạng thái)
+end note
+
+note bottom of JobSearchController
+  **UC-06, UC-07**
+  (Tìm kiếm, Xem chi tiết)
+end note
+
+legend right
+  **Chú thích:**
+  - <<Entity>>: Domain objects
+  - <<Control>>: Business logic
+  - <<Boundary>>: Input forms & External services
+  
+  **Dependencies với Module khác:**
+  - Module 1: User (Recruiter, Candidate)
+  - Module 3: Application (job.application_count)
+endlegend
+
+@enduml

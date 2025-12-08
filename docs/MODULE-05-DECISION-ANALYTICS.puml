@@ -1,0 +1,313 @@
+@startuml Module 5: Decision & Analytics
+
+' ==========================================
+' CẤU HÌNH TỐI ƯU CHO WORD / GIẤY A4 DỌC
+' ==========================================
+top to bottom direction
+skinparam linetype ortho
+skinparam shadow false
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+' --- 1. CẤU HÌNH FONT CHỮ (ĐÃ TĂNG TITLE) ---
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+skinparam titleFontSize 30
+skinparam titleFontStyle bold
+
+skinparam classFontSize 18
+skinparam classAttributeFontSize 16
+
+!define ENTITY_COLOR #ffffff
+!define CONTROLLER_COLOR #ffffff
+!define BOUNDARY_COLOR #ffffff
+
+title Analysis Class Diagram - Module 5: Decision & Analytics (UC-21, UC-22, UC-23, UC-25)
+
+' ==========================================
+' TẦNG 1: BOUNDARIES (GIAO DIỆN)
+' ==========================================
+package "Boundaries" {
+  class DecisionForm <<Boundary>> BOUNDARY_COLOR {
+    Hồ sơ ứng tuyển
+    Quyết định
+    Lý do
+    Ghi chú
+    ====
+    Kiểm tra tính hợp lệ
+  }
+  
+  class OfferForm <<Boundary>> BOUNDARY_COLOR {
+    Vị trí
+    Mức lương
+    Ngày bắt đầu
+    Thời hạn phản hồi
+    ====
+    Kiểm tra tính hợp lệ
+  }
+  
+  class NotificationListView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị danh sách thông báo
+    Hiển thị badge số lượng
+    Hiển thị theo thời gian
+    Phân loại theo loại
+  }
+  
+  class DashboardView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị KPI
+    Hiển thị biểu đồ
+    Hiển thị thống kê
+    Lọc theo thời gian
+    Xuất dữ liệu
+  }
+  
+  class ReportView <<Boundary>> BOUNDARY_COLOR {
+    Chọn loại báo cáo
+    Cấu hình tham số
+    Preview báo cáo
+    Tải xuống báo cáo
+  }
+  
+  class EmailService <<Boundary>> BOUNDARY_COLOR {
+    Gửi thông báo quyết định
+    Gửi đề nghị làm việc
+    Gửi email từ chối
+    Gửi báo cáo định kỳ
+  }
+  
+  class WebSocketService <<Boundary>> BOUNDARY_COLOR {
+    Gửi thông báo realtime
+    Cập nhật dashboard realtime
+    Thông báo sự kiện mới
+  }
+  
+  class ExportService <<Boundary>> BOUNDARY_COLOR {
+    Xuất Excel
+    Xuất PDF
+    Xuất CSV
+    Tạo biểu đồ
+  }
+  
+  class SchedulerService <<Boundary>> BOUNDARY_COLOR {
+    Lên lịch báo cáo
+    Lên lịch thống kê
+    Lên lịch backup
+    Xử lý tác vụ định kỳ
+  }
+}
+
+' ==========================================
+' TẦNG 2: CONTROLLERS (XỦ LÝ)
+' ==========================================
+package "Controllers" {
+  class RecruitmentDecisionController <<Control>> CONTROLLER_COLOR {
+    Đưa ra quyết định
+    Cập nhật quyết định
+    Xem lịch sử quyết định
+    Gửi thông báo ứng viên
+    Xuất danh sách trúng tuyển
+  }
+  
+  class OfferController <<Control>> CONTROLLER_COLOR {
+    Tạo đề nghị làm việc
+    Gửi đề nghị
+    Theo dõi đề nghị
+    Xử lý phản hồi
+    Hủy đề nghị
+  }
+  
+  class NotificationController <<Control>> CONTROLLER_COLOR {
+    Tạo thông báo
+    Gửi thông báo
+    Lấy danh sách thông báo
+    Đánh dấu đã đọc
+    Xóa thông báo
+    Đếm thông báo chưa đọc
+  }
+  
+  class ReportController <<Control>> CONTROLLER_COLOR {
+    Tạo báo cáo
+    Xuất báo cáo
+    Lấy danh sách báo cáo
+    Xóa báo cáo
+    Lên lịch báo cáo định kỳ
+  }
+  
+  class AnalyticsController <<Control>> CONTROLLER_COLOR {
+    Thống kê tổng quan
+    Phân tích hiệu suất tuyển dụng
+    Phân tích nguồn ứng viên
+    Phân tích thời gian tuyển dụng
+    Phân tích chi phí
+    Tạo dashboard
+  }
+}
+
+' ==========================================
+' TẦNG 3: ENTITIES (DỮ LIỆU)
+' ==========================================
+package "Entities" {
+  class RecruitmentResult <<Entity>> {
+    Mã kết quả
+    Hồ sơ ứng tuyển
+    Quyết định
+    Người quyết định
+    Lý do
+    Ngày quyết định
+    Ghi chú nội bộ
+    Đã thông báo ứng viên
+    ====
+    Có thể thay đổi
+    Cập nhật quyết định
+    Gửi thông báo
+  }
+  
+  class Offer <<Entity>> {
+    Mã đề nghị
+    Kết quả tuyển dụng
+    Vị trí
+    Mức lương đề nghị
+    Ngày bắt đầu
+    Thời hạn phản hồi
+    Trạng thái
+    Ngày phản hồi
+    Lý do từ chối
+    ====
+    Kiểm tra hết hạn
+    Chấp nhận đề nghị
+    Từ chối đề nghị
+  }
+  
+  class Notification <<Entity>> {
+    Mã thông báo
+    Người nhận
+    Loại thông báo
+    Tiêu đề
+    Nội dung
+    Link liên quan
+    Đã đọc
+    Thời gian tạo
+    Thời gian đọc
+    ====
+    Đánh dấu đã đọc
+    Xóa thông báo
+  }
+  
+  class Report <<Entity>> {
+    Mã báo cáo
+    Loại báo cáo
+    Người tạo
+    Tham số
+    Kết quả
+    Định dạng
+    Đường dẫn file
+    Thời gian tạo
+    ====
+    Xuất file
+    Tải xuống
+  }
+  
+  class Analytics <<Entity>> ENTITY_COLOR {
+    Mã phân tích
+    Khoảng thời gian
+    Số tin đăng
+    Số ứng viên
+    Số phỏng vấn
+    Số tuyển dụng
+    Thời gian trung bình
+    Tỷ lệ chuyển đổi
+    Nguồn ứng viên
+    ====
+    Tính toán chỉ số
+  }
+}
+
+' Class tham chiếu từ module khác
+class "Application" as Application <<Entity>> ENTITY_COLOR
+
+' ==========================================
+' QUAN HỆ & CĂN CHỈNH (ALIGNMENT)
+' ==========================================
+
+' 1. Căn chỉnh thẳng hàng dọc (Kỹ thuật hidden)
+DecisionForm -[hidden]down- RecruitmentDecisionController
+RecruitmentDecisionController -[hidden]down- RecruitmentResult
+
+OfferForm -[hidden]down- OfferController
+OfferController -[hidden]down- Offer
+
+NotificationListView -[hidden]down- NotificationController
+NotificationController -[hidden]down- Notification
+
+DashboardView -[hidden]down- AnalyticsController
+AnalyticsController -[hidden]down- Analytics
+
+ReportView -[hidden]down- ReportController
+ReportController -[hidden]down- Report
+
+' ==========================================
+' RELATIONSHIPS (QUAN HỆ)
+' ==========================================
+
+' 2. Boundary -> Controller
+DecisionForm ..> RecruitmentDecisionController : submit
+OfferForm ..> OfferController : submit
+NotificationListView <.. NotificationController : update
+DashboardView <.. AnalyticsController : update
+ReportView <.. ReportController : update
+
+' 3. Controller -> Entity
+RecruitmentDecisionController ..> RecruitmentResult : quản lý
+RecruitmentDecisionController ..> Application : đọc
+
+OfferController ..> Offer : quản lý
+OfferController ..> RecruitmentResult : tham chiếu
+
+NotificationController ..> Notification : quản lý
+
+ReportController ..> Report : quản lý
+ReportController ..> Analytics : sử dụng
+
+AnalyticsController ..> Analytics : tạo
+
+' 4. Controller -> Boundary (External Services)
+RecruitmentDecisionController ..> EmailService : use
+OfferController ..> EmailService : use
+NotificationController ..> WebSocketService : use
+ReportController ..> ExportService : use
+ReportController ..> SchedulerService : use
+AnalyticsController ..> ExportService : use
+
+' 5. Entity Relationships
+RecruitmentResult "1" -- "0..1" Offer : có >
+Application "1" -- "0..1" RecruitmentResult : kết quả >
+
+' ==========================================
+' GHI CHÚ (NOTES)
+' ==========================================
+note right of RecruitmentResult
+  **Quyết định cuối cùng**
+  - HIRED, REJECTED, WAITLIST
+  - Chỉ HR Manager có quyền
+end note
+
+note bottom of RecruitmentDecisionController
+  **UC-21, UC-22**
+  (Quyết định tuyển dụng, Thông báo kết quả)
+end note
+
+note bottom of AnalyticsController
+  **UC-23, UC-25**
+  (Báo cáo & Thống kê)
+end note
+
+legend right
+  **Chú thích:**
+  - <<Entity>>: Domain objects
+  - <<Control>>: Business logic
+  - <<Boundary>>: Input forms & External services
+endlegend
+
+@enduml

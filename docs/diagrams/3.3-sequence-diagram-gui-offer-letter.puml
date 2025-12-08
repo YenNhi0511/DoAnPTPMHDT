@@ -1,0 +1,172 @@
+@startuml Sơ đồ Tuần Tự - Gửi Thư Mời Nhận Việc
+skinparam monochrome true
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title Sơ đồ Tuần Tự: Gửi Thư Mời Nhận Việc (Offer Letter)
+
+actor "HR Manager" as HRM
+participant "<<Boundary>>\nOfferForm" as OF
+participant "<<Control>>\nRecruitmentResultController" as RRC
+participant "<<Entity>>\nRecruitmentResult" as RR
+participant "<<Entity>>\nApplication" as A
+participant "<<Entity>>\nJob" as J
+participant "<<Service>>\nEmailService" as ES
+participant "<<Service>>\nPDFGeneratorService" as PDF
+database "Database" as DB
+
+== Giai đoạn 1: Chọn ứng viên đạt yêu cầu ==
+HRM -> OF: Truy cập danh sách\nứng viên đạt phỏng vấn
+activate OF
+
+OF -> RRC: getCandidatesForOffer(job_id)
+activate RRC
+
+RRC -> A: findByStatusAndJob(SCREENING_PASSED, job_id)
+activate A
+A -> DB: SELECT * FROM applications\nWHERE status = 'SCREENING_PASSED'\nAND job_id = ?
+activate DB
+DB --> A: applications_list
+deactivate DB
+A --> RRC: List<Application>
+deactivate A
+
+RRC --> OF: Candidates list
+deactivate RRC
+OF --> HRM: Hiển thị danh sách ứng viên
+deactivate OF
+
+== Giai đoạn 2: Chọn ứng viên và tạo offer ==
+HRM -> OF: Chọn ứng viên\nClick "Tạo offer letter"
+activate OF
+
+OF -> RRC: getOfferFormData(application_id)
+activate RRC
+
+RRC -> A: findById(application_id)
+activate A
+A -> DB: SELECT * FROM applications\nWHERE id = ?
+activate DB
+DB --> A: application_data
+deactivate DB
+A --> RRC: Application object
+deactivate A
+
+RRC -> J: findById(job_id)
+activate J
+J -> DB: SELECT * FROM jobs\nWHERE id = ?
+activate DB
+DB --> J: job_data
+deactivate DB
+J --> RRC: Job object\n(job_title, salary_range, location)
+deactivate J
+
+RRC --> OF: Pre-filled offer data
+deactivate RRC
+OF --> HRM: Hiển thị form offer:\n- Candidate info\n- Job title & description\n- Proposed salary\n- Benefits\n- Start date\n- Deadline to respond\n- Other terms
+deactivate OF
+
+== Giai đoạn 3: Nhập thông tin offer ==
+HRM -> OF: Nhập/điều chỉnh:\n- Salary: 50,000,000 VND/tháng\n- Benefits: Health insurance,\n  13th month salary, etc.\n- Start date: 2024-06-01\n- Response deadline: 2024-05-20\n- Contract type: FULL_TIME\n- Probation period: 2 months\n- Additional terms
+activate OF
+
+OF -> OF: Validate dữ liệu:\n- Salary > 0\n- Start date > current date\n- Response deadline < start date\n- Required fields không trống
+
+alt Validation failed
+    OF --> HRM: Hiển thị lỗi validation
+else Validation passed
+    OF -> RRC: createOffer(offerData)
+    activate RRC
+    
+    == Giai đoạn 4: Tạo bản ghi recruitment_result ==
+    RRC -> RR: create(offerData)
+    activate RR
+    RR -> DB: INSERT INTO recruitment_results\n(id, application_id, recruiter_id,\nfinal_decision, offer_letter_url,\nsalary_offer, benefits, start_date,\ndeadline, contract_type,\nstatus = 'PENDING')\nVALUES (...)
+    activate DB
+    DB --> RR: result_id
+    deactivate DB
+    RR --> RRC: RecruitmentResult object
+    deactivate RR
+    
+    == Giai đoạn 5: Generate offer letter PDF ==
+    RRC -> PDF: generateOfferLetterPDF(recruitmentResult)
+    activate PDF
+    PDF -> PDF: Tạo PDF từ template:\n- Company logo\n- Candidate name\n- Job details\n- Salary & benefits\n- Terms & conditions\n- Signature section
+    PDF -> DB: Upload PDF to storage\n(Azure Blob / S3)
+    activate DB
+    DB --> PDF: pdf_url
+    deactivate DB
+    PDF --> RRC: offer_letter_url
+    deactivate PDF
+    
+    RRC -> RR: updateOfferLetterUrl(offer_letter_url)
+    activate RR
+    RR -> DB: UPDATE recruitment_results\nSET offer_letter_url = ?\nWHERE id = ?
+    activate DB
+    DB --> RR: success
+    deactivate DB
+    RR --> RRC: updated
+    deactivate RR
+    
+    == Giai đoạn 6: Gửi email offer letter ==
+    RRC -> ES: sendOfferLetterEmail(candidate, offerDetails)
+    activate ES
+    ES -> ES: Tạo email:\nTo: candidate_email\nSubject: "Thư mời nhận việc - [Job Title]"\nBody:\n- Congratulations message\n- Offer details summary\n- PDF attachment\n- Instructions to accept/decline\n- Link to acceptance portal\n- Deadline reminder
+    ES -> ES: Attach offer letter PDF
+    ES --> RRC: email sent
+    deactivate ES
+    
+    == Giai đoạn 7: Cập nhật Application status ==
+    RRC -> A: updateStatus(OFFER_EXTENDED)
+    activate A
+    A -> DB: UPDATE applications\nSET status = 'OFFER_EXTENDED'\nWHERE id = application_id
+    activate DB
+    DB --> A: success
+    deactivate DB
+    A --> RRC: Application updated
+    deactivate A
+    
+    RRC --> OF: Offer created & sent successfully
+    deactivate RRC
+    OF --> HRM: Hiển thị thông báo thành công:\n"Offer letter đã được gửi"\n+ Link preview PDF
+    deactivate OF
+end
+
+== Giai đoạn 8: Candidate Response (Optional Flow) ==
+note over HRM, DB
+  **Candidate Response Scenarios:**
+  
+  **Scenario A: Candidate Accepts**
+  - Candidate clicks "Accept" link in email
+  - System updates recruitment_results.candidate_response = 'ACCEPTED'
+  - Application status → HIRED
+  - HR receives notification
+  - Onboarding process triggered
+  
+  **Scenario B: Candidate Declines**
+  - Candidate clicks "Decline" link
+  - System updates recruitment_results.candidate_response = 'DECLINED'
+  - Application status → OFFER_DECLINED
+  - HR receives notification
+  - System suggests next candidate
+  
+  **Scenario C: Deadline Expired**
+  - System checks daily for expired deadlines
+  - Auto-update status to 'EXPIRED' if no response
+  - HR receives notification
+end note
+
+== Ghi chú ==
+note over HRM, DB
+  **Business Rules:**
+  1. Chỉ ứng viên có status = SCREENING_PASSED mới được tạo offer
+  2. Salary offer phải nằm trong budget của job
+  3. Response deadline phải trước start date
+  4. PDF offer letter tự động generate từ template
+  5. Email gửi kèm PDF attachment
+  6. Candidate có thể Accept/Decline qua link
+  7. Auto reminder: Gửi lại email trước deadline 3 ngày
+  8. Hỗ trợ negotiation: Candidate có thể yêu cầu điều chỉnh
+end note
+
+@enduml

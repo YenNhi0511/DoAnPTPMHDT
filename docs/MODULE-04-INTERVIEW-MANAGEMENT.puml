@@ -1,0 +1,269 @@
+@startuml Module 4: Interview Management
+
+' ==========================================
+' CẤU HÌNH TỐI ƯU CHO WORD / GIẤY A4 DỌC
+' ==========================================
+top to bottom direction
+skinparam linetype ortho
+skinparam shadow false
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+' --- 1. CẤU HÌNH FONT CHỮ (ĐÃ TĂNG TITLE) ---
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+skinparam titleFontSize 30
+skinparam titleFontStyle bold
+
+skinparam classFontSize 18
+skinparam classAttributeFontSize 16
+
+!define ENTITY_COLOR #ffffff
+!define CONTROLLER_COLOR #ffffff
+!define BOUNDARY_COLOR #ffffff
+
+title Analysis Class Diagram - Module 4: Interview Management (UC-17, UC-18, UC-19, UC-20)
+
+' ==========================================
+' TẦNG 1: BOUNDARIES (GIAO DIỆN)
+' ==========================================
+package "Boundaries" {
+  class InterviewForm <<Boundary>> BOUNDARY_COLOR {
+    Hồ sơ ứng tuyển
+    Vòng phỏng vấn
+    Loại phỏng vấn
+    Thời gian
+    Địa điểm
+    Người phỏng vấn
+    ====
+    Kiểm tra tính hợp lệ
+    Kiểm tra xung đột
+  }
+  
+  class InterviewCalendarView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị lịch phỏng vấn
+    Hiển thị theo ngày
+    Hiển thị theo tuần
+    Hiển thị theo người
+    Đánh dấu xung đột
+  }
+  
+  class InterviewDetailView <<Boundary>> BOUNDARY_COLOR {
+    Hiển thị thông tin phỏng vấn
+    Hiển thị hội đồng
+    Hiển thị đánh giá
+    Hiển thị lịch sử
+  }
+  
+  class EvaluationForm <<Boundary>> BOUNDARY_COLOR {
+    Tiêu chí đánh giá
+    Điểm số
+    Nhận xét
+    Khuyến nghị
+    ====
+    Kiểm tra tính hợp lệ
+  }
+  
+  class EmailService <<Boundary>> BOUNDARY_COLOR {
+    Gửi lời mời phỏng vấn
+    Thông báo đổi lịch
+    Thông báo hủy
+    Nhắc nhở trước phỏng vấn
+    Gửi link video conference
+  }
+  
+  class CalendarIntegration <<Boundary>> BOUNDARY_COLOR {
+    Tạo sự kiện lịch
+    Cập nhật sự kiện
+    Xóa sự kiện
+    Kiểm tra khả dụng
+  }
+  
+  class VideoConferenceService <<Boundary>> BOUNDARY_COLOR {
+    Tạo phòng họp
+    Tạo link tham gia
+    Kết thúc phòng họp
+    Ghi lại cuộc họp
+  }
+}
+
+' ==========================================
+' TẦNG 2: CONTROLLERS (XỦ LÝ)
+' ==========================================
+package "Controllers" {
+  class InterviewController <<Control>> CONTROLLER_COLOR {
+    Tạo lịch phỏng vấn
+    Cập nhật lịch phỏng vấn
+    Hủy phỏng vấn
+    Đổi lịch phỏng vấn
+    Xem lịch phỏng vấn
+    Lấy danh sách phỏng vấn
+    Kiểm tra xung đột lịch
+    Xác nhận tham gia
+  }
+  
+  class InterviewPanelController <<Control>> CONTROLLER_COLOR {
+    Thêm người phỏng vấn
+    Xóa người phỏng vấn
+    Cập nhật vai trò
+    Lấy danh sách hội đồng
+  }
+  
+  class EvaluationController <<Control>> CONTROLLER_COLOR {
+    Gửi đánh giá
+    Cập nhật đánh giá
+    Xem đánh giá
+    Tính điểm tổng hợp
+    Xuất báo cáo đánh giá
+  }
+  
+  class InterviewScheduleController <<Control>> CONTROLLER_COLOR {
+    Tìm khung giờ trống
+    Đề xuất thời gian
+    Kiểm tra sẵn sàng
+    Gửi thông báo lịch
+  }
+}
+
+' ==========================================
+' TẦNG 3: ENTITIES (DỮ LIỆU)
+' ==========================================
+package "Entities" {
+  class Interview <<Entity>> {
+    Mã phỏng vấn
+    Hồ sơ ứng tuyển
+    Vòng phỏng vấn
+    Loại phỏng vấn
+    Thời gian bắt đầu
+    Thời gian kết thúc
+    Địa điểm
+    Link video conference
+    Trạng thái
+    Ghi chú
+    ====
+    Có thể hủy
+    Hủy phỏng vấn
+    Có thể đổi lịch
+    Đổi lịch phỏng vấn
+  }
+  
+  class InterviewPanel <<Entity>> {
+    Mã hội đồng
+    Phỏng vấn
+    Người phỏng vấn
+    Vai trò
+    Đánh giá tổng thể
+    Nhận xét
+    Khuyến nghị
+    ====
+    Gửi đánh giá
+    Cập nhật đánh giá
+  }
+  
+  class InterviewEvaluation <<Entity>> {
+    Mã đánh giá
+    Hội đồng phỏng vấn
+    Tiêu chí
+    Điểm số
+    Nhận xét chi tiết
+    Điểm mạnh
+    Điểm yếu
+    ====
+    Tính điểm trung bình
+  }
+  
+  class InterviewSchedule <<Entity>> ENTITY_COLOR {
+    Mã lịch
+    Phỏng vấn
+    Thời gian cũ
+    Thời gian mới
+    Người yêu cầu
+    Lý do
+    Thời gian yêu cầu
+  }
+}
+
+' Class tham chiếu từ module khác
+class "Application" as Application <<Entity>> ENTITY_COLOR
+class "User" as User <<Entity>> ENTITY_COLOR
+
+' ==========================================
+' QUAN HỆ & CĂN CHỈNH (ALIGNMENT)
+' ==========================================
+
+' 1. Căn chỉnh thẳng hàng dọc (Kỹ thuật hidden)
+InterviewForm -[hidden]down- InterviewController
+InterviewController -[hidden]down- Interview
+
+InterviewCalendarView -[hidden]down- InterviewPanelController
+InterviewPanelController -[hidden]down- InterviewPanel
+
+EvaluationForm -[hidden]down- EvaluationController
+EvaluationController -[hidden]down- InterviewEvaluation
+
+EmailService -[hidden]down- InterviewScheduleController
+InterviewScheduleController -[hidden]down- InterviewSchedule
+
+' ==========================================
+' RELATIONSHIPS (QUAN HỆ)
+' ==========================================
+
+' 2. Boundary -> Controller
+InterviewForm ..> InterviewController : submit
+InterviewCalendarView <.. InterviewController : update
+InterviewDetailView <.. InterviewController : display
+EvaluationForm ..> EvaluationController : submit
+
+' 3. Controller -> Entity
+InterviewController ..> Interview : quản lý
+InterviewController ..> Application : tham chiếu
+
+InterviewPanelController ..> InterviewPanel : quản lý
+InterviewPanelController ..> User : tham chiếu
+
+EvaluationController ..> InterviewEvaluation : quản lý
+EvaluationController ..> InterviewPanel : đọc
+
+InterviewScheduleController ..> InterviewSchedule : tạo
+InterviewScheduleController ..> Interview : đọc
+
+' 4. Controller -> Boundary (External Services)
+InterviewController ..> EmailService : use
+InterviewController ..> CalendarIntegration : use
+InterviewController ..> VideoConferenceService : use
+
+' 5. Entity Relationships
+Interview "1" *-- "1..*" InterviewPanel : có >
+Interview "1" *-- "0..*" InterviewSchedule : lịch sử >
+InterviewPanel "1" *-- "0..*" InterviewEvaluation : đánh giá >
+Application "1" -- "0..*" Interview : được phỏng vấn >
+
+' ==========================================
+' GHI CHÚ (NOTES)
+' ==========================================
+note right of Interview
+  **Lịch phỏng vấn**
+  - Loại: PHONE, VIDEO, ONSITE
+  - Trạng thái: SCHEDULED, COMPLETED, CANCELLED
+end note
+
+note bottom of InterviewController
+  **UC-17, UC-18**
+  (Lập lịch & Quản lý phỏng vấn)
+end note
+
+note bottom of EvaluationController
+  **UC-19, UC-20**
+  (Đánh giá & Xem kết quả)
+end note
+
+legend right
+  **Chú thích:**
+  - <<Entity>>: Domain objects
+  - <<Control>>: Business logic
+  - <<Boundary>>: Input forms & External services
+endlegend
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml Sơ đồ Trạng Thái - Buổi Phỏng Vấn
+skinparam monochrome true
+
+title SƠ ĐỒ TRẠNG THÁI: BUỔI PHỎNG VẤN
+
+[*] --> SCHEDULED : Hẹn lịch PV
+note on link
+  Recruiter tạo lịch
+end note
+
+SCHEDULED : Đã lên lịch
+SCHEDULED : - Có thời gian cụ thể
+SCHEDULED : - Gửi thông báo
+
+SCHEDULED --> COMPLETED : Hoàn thành PV
+SCHEDULED --> CANCELLED : Hủy lịch
+
+COMPLETED : Hoàn thành
+COMPLETED : - Đã phỏng vấn xong
+COMPLETED : - Chờ đánh giá
+
+COMPLETED --> EVALUATED : Interviewer đánh giá
+
+EVALUATED : Đã chấm điểm
+EVALUATED : - Có kết quả
+EVALUATED : - Pass/Fail
+
+CANCELLED : Đã hủy
+CANCELLED : - Ứng viên/NTD hủy
+CANCELLED : - Có thể đặt lại
+
+CANCELLED --> SCHEDULED : Đặt lịch lại
+CANCELLED --> [*]
+
+EVALUATED --> [*]
+
+note right of SCHEDULED
+  Thông tin:
+  - Ngày giờ
+  - Hình thức (Online/Offline)
+  - Interviewer
+  - Link meeting
+end note
+
+note right of EVALUATED
+  Kết quả:
+  - Điểm số
+  - Nhận xét
+  - Pass/Fail
+  - Đề xuất vòng tiếp
+end note
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml Sơ đồ Trạng Thái - Tin Tuyển Dụng
+skinparam monochrome true
+
+title SƠ ĐỒ TRẠNG THÁI: TIN TUYỂN DỤNG
+
+[*] --> DRAFT : Tạo mới
+
+DRAFT : Soạn thảo
+DRAFT : - Nhập thông tin JD
+DRAFT : - Chưa công khai
+
+DRAFT --> OPEN : Nhấn "Đăng tin"
+DRAFT --> [*] : Hủy bỏ
+
+OPEN : Đang tuyển
+OPEN : - Hiển thị công khai
+OPEN : - Nhận hồ sơ
+
+OPEN --> CLOSED : Đủ ứng viên / Hết hạn
+OPEN --> DELETED : Xóa tin
+
+CLOSED : Đã đóng
+CLOSED : - Ngừng nhận hồ sơ
+CLOSED : - Đã tuyển đủ
+
+DELETED : Đã xóa
+DELETED : - Không hiển thị
+
+CLOSED --> [*]
+DELETED --> [*]
+
+note right of OPEN
+  Ứng viên có thể:
+  - Xem chi tiết
+  - Nộp hồ sơ
+end note
+
+note right of CLOSED
+  Lý do đóng:
+  - Tuyển đủ người
+  - Hết deadline
+  - Không còn nhu cầu
+end note
+
+@enduml

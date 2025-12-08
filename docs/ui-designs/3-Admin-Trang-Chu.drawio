@@ -1,0 +1,195 @@
+<mxfile host="app.diagrams.net" modified="2025-12-09T00:00:00.000Z" agent="5.0" version="22.0.0">
+  <diagram name="Admin - Trang Chủ" id="admin-home">
+    <mxGraphModel dx="1434" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Browser Window -->
+        <mxCell id="browser-frame" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="80" y="50" width="1000" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Top Navigation Bar -->
+        <mxCell id="top-nav" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a1a1a;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="50" width="1000" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Logo -->
+        <mxCell id="logo" value="🏢 ADMIN PANEL" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#ffffff;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="100" y="60" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- User Menu -->
+        <mxCell id="user-menu" value="👤 Admin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;fontColor=#ffffff;fontSize=12;align=right;spacingRight=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="65" width="110" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Sidebar -->
+        <mxCell id="sidebar" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;align=top;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="110" width="200" height="640" as="geometry" />
+        </mxCell>
+        
+        <!-- Sidebar Menu Items -->
+        <mxCell id="menu-dashboard" value="📊 Dashboard" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0066cc;strokeColor=none;fontColor=#ffffff;fontSize=13;align=left;spacingLeft=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-users" value="👥 Quản lý tài khoản" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;fontColor=#333333;fontSize=13;align=left;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="160" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-jobs" value="💼 Quản lý tin tuyển dụng" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;fontColor=#333333;fontSize=13;align=left;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-applications" value="📄 Quản lý đơn ứng tuyển" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;fontColor=#333333;fontSize=13;align=left;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="240" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-reports" value="📈 Báo cáo thống kê" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;fontColor=#333333;fontSize=13;align=left;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="280" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-settings" value="⚙️ Cài đặt hệ thống" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;fontColor=#333333;fontSize=13;align=left;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Main Content Area -->
+        <mxCell id="main-content" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=none;align=top;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="280" y="110" width="800" height="640" as="geometry" />
+        </mxCell>
+        
+        <!-- Page Title -->
+        <mxCell id="page-title" value="Dashboard Tổng Quan" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="300" y="130" width="400" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Stats Cards Row 1 -->
+        <mxCell id="card-users" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#90caf9;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="200" width="170" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-users-icon" value="👥" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=24;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="310" y="200" width="60" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-users-number" value="1,234" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="310" y="235" width="170" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-users-label" value="Tổng người dùng" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="310" y="270" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-jobs" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ffb74d;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="200" width="170" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-jobs-icon" value="💼" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=24;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="200" width="60" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-jobs-number" value="456" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="500" y="235" width="170" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-jobs-label" value="Tin tuyển dụng" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="500" y="270" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-applications" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#ba68c8;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="200" width="170" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-applications-icon" value="📄" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=24;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="690" y="200" width="60" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-applications-number" value="2,890" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="690" y="235" width="170" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-applications-label" value="Đơn ứng tuyển" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="690" y="270" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-companies" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#81c784;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="200" width="170" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-companies-icon" value="🏢" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=24;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="200" width="60" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-companies-number" value="89" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="880" y="235" width="170" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="card-companies-label" value="Công ty" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="880" y="270" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Chart Section -->
+        <mxCell id="chart-container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;shadow=1;align=top;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="310" y="330" width="740" height="280" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="chart-title" value="📈 Thống kê ứng tuyển theo tháng" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="310" y="340" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Simple chart representation -->
+        <mxCell id="chart-area" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="340" y="390" width="680" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="chart-line" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#0066cc;strokeColor=none;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="360" y="560" as="sourcePoint" />
+            <mxPoint x="500" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="chart-line-2" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#0066cc;strokeColor=none;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="480" as="sourcePoint" />
+            <mxPoint x="640" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="chart-line-3" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#0066cc;strokeColor=none;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="640" y="420" as="sourcePoint" />
+            <mxPoint x="780" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="chart-line-4" value="" style="shape=flexArrow;endArrow=classic;html=1;fillColor=#0066cc;strokeColor=none;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="450" as="sourcePoint" />
+            <mxPoint x="980" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Recent Activity -->
+        <mxCell id="activity-title" value="🕐 Hoạt động gần đây" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="310" y="640" width="300" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="activity-1" value="• Người dùng mới: Nguyễn Văn A đã đăng ký" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="310" y="670" width="400" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="activity-2" value="• Tin tuyển dụng mới: Lập trình viên Java" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="310" y="695" width="400" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="activity-3" value="• Đơn ứng tuyển mới từ: Trần Thị B" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="310" y="720" width="400" height="20" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

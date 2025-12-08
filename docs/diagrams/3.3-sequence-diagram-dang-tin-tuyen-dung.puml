@@ -1,0 +1,127 @@
+@startuml Sơ đồ Tuần Tự - Đăng Tin Tuyển Dụng
+skinparam monochrome true
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title Sơ đồ Tuần Tự: Đăng Tin Tuyển Dụng
+
+actor "Recruiter" as R
+participant "<<Boundary>>\nJobForm" as JF
+participant "<<Control>>\nJobController" as JC
+participant "<<Entity>>\nJob" as J
+participant "<<Entity>>\nCompany" as C
+participant "<<Service>>\nEmailService" as ES
+participant "<<Service>>\nSearchIndexService" as SIS
+database "Database" as DB
+
+== Giai đoạn 1: Tạo tin tuyển dụng ==
+R -> JF: Nhập thông tin job\n(title, description, requirements,\nsalary, location, deadline)
+activate JF
+
+JF -> JF: Validate dữ liệu đầu vào
+note right
+  - Kiểm tra các trường bắt buộc
+  - Validate deadline >= today
+  - Validate salary range
+end note
+
+alt Dữ liệu không hợp lệ
+    JF --> R: Hiển thị lỗi validation
+else Dữ liệu hợp lệ
+    JF -> JC: createJob(jobData, recruiter)
+    activate JC
+    
+    == Giai đoạn 2: Xác thực và xử lý ==
+    JC -> JC: Kiểm tra quyền Recruiter
+    note right: Authorization check
+    
+    JC -> C: getCompanyByRecruiter(recruiter_id)
+    activate C
+    C -> DB: SELECT * FROM company\nWHERE id = recruiter.company_id
+    activate DB
+    DB --> C: company_data
+    deactivate DB
+    C --> JC: Company object
+    deactivate C
+    
+    alt Company chưa tồn tại
+        JC -> C: createCompany(company_name, recruiter)
+        activate C
+        C -> DB: INSERT INTO company
+        activate DB
+        DB --> C: company_id
+        deactivate DB
+        C --> JC: Company object
+        deactivate C
+    end
+    
+    == Giai đoạn 3: Tạo Job mới ==
+    JC -> J: new Job(jobData)
+    activate J
+    J -> J: Set status = DRAFT
+    J -> J: Set created_by = recruiter
+    J -> J: Set company_id = company.id
+    
+    J -> DB: INSERT INTO jobs\n(title, description, requirements,\nsalary_min, salary_max, location,\ndeadline, status, created_by, company_id)
+    activate DB
+    DB --> J: job_id
+    deactivate DB
+    J --> JC: Job object
+    deactivate J
+    
+    JC --> JF: Job created (DRAFT)
+    deactivate JC
+    JF --> R: Hiển thị thông báo:\n"Tin tuyển dụng đã tạo (Bản nháp)"
+    deactivate JF
+end
+
+== Giai đoạn 4: Đăng tin (Publish) ==
+R -> JF: Click "Đăng tin"
+activate JF
+
+JF -> JC: publishJob(job_id, recruiter)
+activate JC
+
+JC -> J: updateStatus(OPEN)
+activate J
+J -> J: Validate:\n- Kiểm tra tất cả thông tin đầy đủ\n- Deadline còn hiệu lực
+J -> DB: UPDATE jobs\nSET status = 'OPEN',\nupdated_at = NOW()\nWHERE id = job_id
+activate DB
+DB --> J: success
+deactivate DB
+J --> JC: Job (OPEN)
+deactivate J
+
+== Giai đoạn 5: Indexing và Notification ==
+par Parallel processing
+    JC -> SIS: indexJob(job)
+    activate SIS
+    SIS -> SIS: Tạo full-text search index\ncho title và description
+    SIS --> JC: indexed
+    deactivate SIS
+and
+    JC -> ES: sendJobPostedNotification(job)
+    activate ES
+    ES -> ES: Lấy danh sách subscribers\ntheo location/skills
+    ES -> ES: Tạo email template
+    ES --> JC: emails queued
+    deactivate ES
+end
+
+JC --> JF: Job published successfully
+deactivate JC
+
+JF --> R: Hiển thị thông báo:\n"Tin tuyển dụng đã được đăng"\n+ Link xem tin
+deactivate JF
+
+== Ghi chú ==
+note over R, DB
+  **Business Rules:**
+  1. Chỉ RECRUITER hoặc ADMIN được tạo job
+  2. Job phải có đầy đủ thông tin bắt buộc
+  3. Deadline >= current_date
+  4. Status workflow: DRAFT → OPEN → CLOSED
+  5. Auto-index khi publish để hỗ trợ tìm kiếm
+end note
+
+@enduml

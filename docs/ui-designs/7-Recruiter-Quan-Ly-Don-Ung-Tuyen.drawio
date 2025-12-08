@@ -1,0 +1,419 @@
+<mxfile host="app.diagrams.net" modified="2025-12-09T00:00:00.000Z" agent="5.0" version="22.0.0">
+  <diagram name="Recruiter - Quản Lý Đơn Ứng Tuyển" id="recruiter-dashboard">
+    <mxGraphModel dx="1434" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Browser Window -->
+        <mxCell id="browser-frame" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="80" y="50" width="1000" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Top Navigation Bar -->
+        <mxCell id="top-nav" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a1a1a;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="50" width="1000" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="logo" value="💼 Nhà Tuyển Dụng Portal" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#ffffff;spacingLeft=30;" vertex="1" parent="1">
+          <mxGeometry x="100" y="60" width="300" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-menu" value="👤 Công ty ABC ▼" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#333333;strokeColor=none;fontColor=#ffffff;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="930" y="65" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Left Sidebar -->
+        <mxCell id="sidebar" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="110" width="200" height="640" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-dashboard" value="📊 Dashboard" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;align=left;fontSize=13;spacingLeft=25;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="200" height="45" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-applications" value="📋 Đơn ứng tuyển" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#0066cc;strokeWidth=3;align=left;fontSize=13;spacingLeft=25;fontColor=#0066cc;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="165" width="200" height="45" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-jobs" value="💼 Quản lý tin tuyển dụng" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;align=left;fontSize=13;spacingLeft=25;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="210" width="200" height="45" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-interviews" value="📅 Lịch phỏng vấn" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;align=left;fontSize=13;spacingLeft=25;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="255" width="200" height="45" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-reports" value="📈 Báo cáo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;align=left;fontSize=13;spacingLeft=25;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="300" width="200" height="45" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="menu-settings" value="⚙️ Cài đặt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=none;align=left;fontSize=13;spacingLeft=25;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="345" width="200" height="45" as="geometry" />
+        </mxCell>
+        
+        <!-- Main Content Area -->
+        <mxCell id="main-content" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=none;align=top;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="280" y="110" width="800" height="640" as="geometry" />
+        </mxCell>
+        
+        <!-- Page Title -->
+        <mxCell id="page-title" value="Quản Lý Đơn Ứng Tuyển" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="300" y="130" width="760" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Status Tabs -->
+        <mxCell id="tab-all" value="Tất cả (156)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0066cc;strokeColor=#0066cc;fontColor=#ffffff;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="190" width="120" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="tab-pending" value="Chờ duyệt (45)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="425" y="190" width="120" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="tab-reviewing" value="Đang xem xét (32)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="550" y="190" width="140" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="tab-interview" value="Phỏng vấn (28)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="695" y="190" width="125" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="tab-offer" value="Offer (18)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="825" y="190" width="90" height="35" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="tab-rejected" value="Từ chối (33)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="920" y="190" width="110" height="35" as="geometry" />
+        </mxCell>
+        
+        <!-- Filter Bar -->
+        <mxCell id="filter-bar" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="245" width="740" height="50" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="search-box" value="🔍  Tìm theo tên ứng viên, vị trí..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;align=left;spacingLeft=15;fontSize=12;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="315" y="255" width="300" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="job-filter" value="Vị trí tuyển dụng: Tất cả ▼" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="630" y="255" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="sort-filter" value="Sắp xếp: Mới nhất ▼" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="845" y="255" width="180" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Table Container -->
+        <mxCell id="table-container" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="315" width="740" height="385" as="geometry" />
+        </mxCell>
+        
+        <!-- Table Header -->
+        <mxCell id="table-header" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e9ecef;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="315" width="740" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="header-checkbox" value="☐" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="310" y="325" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="header-candidate" value="Ứng viên" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="325" width="120" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="header-position" value="Vị trí" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="500" y="325" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="header-date" value="Ngày nộp" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="650" y="325" width="90" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="header-status" value="Trạng thái" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="750" y="325" width="110" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="header-actions" value="Thao tác" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="870" y="325" width="160" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Row 1 -->
+        <mxCell id="row1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="355" width="740" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-checkbox" value="☐" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="310" y="375" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-avatar" value="👤" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9ecef;strokeColor=#dee2e6;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="360" y="363" width="40" height="44" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-name" value="Nguyễn Văn An" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="365" width="120" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-email" value="nguyenvanan@email.com" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="385" width="140" height="15" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-position" value="Java Senior Developer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="500" y="375" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-date" value="15/12/2024" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="650" y="375" width="90" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-status" value="Chờ duyệt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=none;fontColor=#e65100;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="760" y="370" width="90" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-view-cv" value="📄 Xem CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=none;fontColor=#0066cc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="365" width="70" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-accept" value="✓ Duyệt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4edda;strokeColor=none;fontColor=#155724;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="365" width="55" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-reject" value="✗ Từ chối" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8d7da;strokeColor=none;fontColor=#721c24;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="391" width="65" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row1-schedule" value="📅 Hẹn PV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=none;fontColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="945" y="391" width="65" height="22" as="geometry" />
+        </mxCell>
+        
+        <!-- Row 2 -->
+        <mxCell id="row2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="415" width="740" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-checkbox" value="☐" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="310" y="435" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-avatar" value="👤" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9ecef;strokeColor=#dee2e6;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="360" y="423" width="40" height="44" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-name" value="Trần Thị Bình" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="425" width="120" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-email" value="tranthib@email.com" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="445" width="140" height="15" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-position" value="Frontend Developer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="500" y="435" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-date" value="12/12/2024" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="650" y="435" width="90" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-status" value="Đang xem xét" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=none;fontColor=#0066cc;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="755" y="430" width="100" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-view-cv" value="📄 Xem CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=none;fontColor=#0066cc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="425" width="70" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-accept" value="✓ Duyệt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4edda;strokeColor=none;fontColor=#155724;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="425" width="55" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-reject" value="✗ Từ chối" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8d7da;strokeColor=none;fontColor=#721c24;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="451" width="65" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row2-schedule" value="📅 Hẹn PV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=none;fontColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="945" y="451" width="65" height="22" as="geometry" />
+        </mxCell>
+        
+        <!-- Row 3 -->
+        <mxCell id="row3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="475" width="740" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-checkbox" value="☐" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="310" y="495" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-avatar" value="👤" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9ecef;strokeColor=#dee2e6;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="360" y="483" width="40" height="44" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-name" value="Lê Văn Cường" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="485" width="120" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-email" value="levancuong@email.com" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="505" width="140" height="15" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-position" value="Business Analyst" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="500" y="495" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-date" value="10/12/2024" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="650" y="495" width="90" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-status" value="Phỏng vấn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=none;fontColor=#e65100;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="760" y="490" width="90" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-view-cv" value="📄 Xem CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=none;fontColor=#0066cc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="485" width="70" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-interview-detail" value="📅 Chi tiết PV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=none;fontColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="485" width="75" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-pass" value="✓ Đạt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4edda;strokeColor=none;fontColor=#155724;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="511" width="50" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row3-fail" value="✗ Không đạt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8d7da;strokeColor=none;fontColor=#721c24;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="511" width="80" height="22" as="geometry" />
+        </mxCell>
+        
+        <!-- Row 4 -->
+        <mxCell id="row4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="535" width="740" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-checkbox" value="☐" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="310" y="555" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-avatar" value="👤" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9ecef;strokeColor=#dee2e6;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="360" y="543" width="40" height="44" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-name" value="Phạm Thị Dung" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="545" width="120" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-email" value="phamthidung@email.com" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="565" width="140" height="15" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-position" value="Java Senior Developer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="500" y="555" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-date" value="08/12/2024" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="650" y="555" width="90" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-status" value="Offer gửi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4edda;strokeColor=none;fontColor=#155724;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="760" y="550" width="90" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-view-cv" value="📄 Xem CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=none;fontColor=#0066cc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="545" width="70" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-offer" value="📧 Chi tiết Offer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4edda;strokeColor=none;fontColor=#155724;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="545" width="95" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row4-track" value="👁️ Theo dõi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=none;fontColor=#0066cc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="571" width="75" height="22" as="geometry" />
+        </mxCell>
+        
+        <!-- Row 5 -->
+        <mxCell id="row5" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="595" width="740" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-checkbox" value="☐" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="310" y="615" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-avatar" value="👤" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9ecef;strokeColor=#dee2e6;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="360" y="603" width="40" height="44" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-name" value="Hoàng Văn Em" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="605" width="120" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-email" value="hoangvanem@email.com" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="625" width="140" height="15" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-position" value="Frontend Developer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="500" y="615" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-date" value="05/12/2024" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="650" y="615" width="90" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-status" value="Từ chối" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8d7da;strokeColor=none;fontColor=#721c24;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="760" y="610" width="90" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-view-cv" value="📄 Xem CV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=none;fontColor=#0066cc;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="605" width="70" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-reason" value="📝 Lý do" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8d7da;strokeColor=none;fontColor=#721c24;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="605" width="60" height="22" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="row5-archive" value="📦 Lưu trữ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e9ecef;strokeColor=none;fontColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="631" width="75" height="22" as="geometry" />
+        </mxCell>
+        
+        <!-- More rows indicator -->
+        <mxCell id="more-rows" value="..." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="600" y="665" width="100" height="25" as="geometry" />
+        </mxCell>
+        
+        <!-- Pagination -->
+        <mxCell id="pagination-bar" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#dee2e6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="700" width="740" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="pagination-info" value="Hiển thị 1-10 của 156 đơn ứng tuyển" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="315" y="710" width="300" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="pagination-prev" value="← Trước" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontSize=11;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="720" y="707" width="70" height="26" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="pagination-1" value="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0066cc;strokeColor=none;fontSize=11;fontColor=#ffffff;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="707" width="40" height="26" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="pagination-2" value="2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="707" width="40" height="26" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="pagination-3" value="3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="900" y="707" width="40" height="26" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="pagination-dots" value="..." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="945" y="710" width="30" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="pagination-next" value="Sau →" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dee2e6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="980" y="707" width="50" height="26" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

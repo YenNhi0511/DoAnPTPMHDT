@@ -1,0 +1,64 @@
+@startuml Sơ đồ Trạng Thái - Hồ Sơ Ứng Tuyển
+skinparam monochrome true
+
+title SƠ ĐỒ TRẠNG THÁI: HỒ SƠ ỨNG TUYỂN
+
+[*] --> PENDING : Ứng viên nộp hồ sơ
+
+PENDING : Chờ duyệt
+PENDING : - Mới nộp
+PENDING : - Chưa xem xét
+
+PENDING --> SCREENING : AI phân tích CV
+
+SCREENING : Đang sàng lọc AI
+SCREENING : - Tự động chấm điểm
+SCREENING : - Đánh giá phù hợp
+
+SCREENING --> INTERVIEW : Đạt yêu cầu
+SCREENING --> REJECTED : Không phù hợp / Xét AI không đạt
+
+INTERVIEW : Phỏng vấn
+INTERVIEW : - Đã hẹn lịch
+INTERVIEW : - Đang thực hiện
+
+INTERVIEW --> OFFER_SENT : Kết quả ĐẠT
+INTERVIEW --> REJECTED : Kết quả TRƯỢT
+
+OFFER_SENT : Gửi offer
+OFFER_SENT : - Chờ phản hồi
+OFFER_SENT : - Đàm phán
+
+OFFER_SENT --> HIRED : Ứng viên chấp nhận
+OFFER_SENT --> WITHDRAWN : Rút hồ sơ
+
+REJECTED : Bị loại
+REJECTED : - Không đạt tiêu chuẩn
+
+WITHDRAWN : Rút hồ sơ
+WITHDRAWN : - Ứng viên từ chối
+
+HIRED : Đã tuyển
+HIRED : - Chấp nhận offer
+HIRED : - Onboarding
+
+HIRED --> [*]
+REJECTED --> [*]
+WITHDRAWN --> [*]
+
+note right of SCREENING
+  AI đánh giá:
+  - Kỹ năng
+  - Kinh nghiệm
+  - Văn bằng
+  Score > 70% → Pass
+end note
+
+note right of INTERVIEW
+  Các vòng:
+  - HR Screen
+  - Technical
+  - Manager
+end note
+
+@enduml

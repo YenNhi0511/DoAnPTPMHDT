@@ -1,0 +1,318 @@
+@startuml Sơ đồ Hoạt Động - Phân Tích và Báo Cáo
+skinparam monochrome true
+
+title Sơ đồ Hoạt Động: Phân Tích và Báo Cáo Tuyển Dụng
+
+|HR Manager / Admin|
+start
+:Truy cập Analytics Dashboard;
+
+|System|
+:Load dashboard với
+overview metrics:
+- Total jobs: 45
+- Active jobs: 12
+- Total applications: 1,234
+- Pending review: 87
+- Interviews scheduled: 23
+- Offers extended: 8
+- Hired: 15;
+
+|HR Manager / Admin|
+:Chọn loại báo cáo;
+
+split
+  -> **Recruitment Funnel**;
+  |System|
+  :Truy vấn database:
+  COUNT applications
+  GROUP BY status;
+  
+  :Tính conversion rates:
+  - Applied → Screening: 60%
+  - Screening → Interview: 30%
+  - Interview → Offer: 40%
+  - Offer → Hired: 75%;
+  
+  :Generate funnel chart;
+  
+  |HR Manager|
+  :Phân tích bottleneck:
+  "Tỷ lệ Screening → Interview thấp
+  → Cần review screening criteria";
+
+split again
+  -> **Time-to-Hire Analysis**;
+  |System|
+  :Truy vấn:
+  SELECT job_id, job_title,
+  posted_at, hired_date,
+  DATEDIFF(hired_date, posted_at)
+    as days_to_hire
+  FROM jobs
+  WHERE status = 'CLOSED';
+  
+  :Tính metrics:
+  - Average time-to-hire: 28 days
+  - Median: 25 days
+  - Min: 14 days
+  - Max: 60 days;
+  
+  :Generate timeline chart
+  per job/department;
+  
+  |HR Manager|
+  :Identify slow positions:
+  "Senior positions: 45 days avg
+  → Cần tối ưu interview process";
+
+split again
+  -> **Source Effectiveness**;
+  |System|
+  :Truy vấn:
+  COUNT applications
+  GROUP BY source
+  (LinkedIn, Indeed, Website,
+  Referral, etc.);
+  
+  :Tính quality metrics
+  per source:
+  - Total applications
+  - Interview rate
+  - Hire rate
+  - Cost per hire;
+  
+  :Generate comparison chart;
+  
+  |HR Manager|
+  :Phân tích ROI:
+  "Referral: Hire rate 45%
+  LinkedIn: Hire rate 12%
+  → Tăng budget cho referral program";
+
+split again
+  -> **Interviewer Performance**;
+  |System|
+  :Truy vấn:
+  SELECT interviewer_id,
+  COUNT(*) as total_interviews,
+  AVG(score) as avg_score,
+  AVG(CASE WHEN result='PASS'
+    THEN 1 ELSE 0 END) as pass_rate
+  FROM interview_panels
+  GROUP BY interviewer_id;
+  
+  :Tính metrics:
+  - Total interviews conducted
+  - Average score given
+  - Pass rate %
+  - Feedback completion rate;
+  
+  :Identify patterns:
+  - Too strict interviewers
+  - Too lenient interviewers
+  - Slow feedback submitters;
+  
+  |HR Manager|
+  :Calibrate interviewer scoring:
+  "Interviewer A: 90% pass rate
+  Interviewer B: 20% pass rate
+  → Cần training session";
+
+split again
+  -> **Candidate Demographics**;
+  |System|
+  :Aggregate data:
+  - Experience level distribution
+  - Education background
+  - Skills frequency
+  - Location distribution
+  - Gender diversity (if tracked)
+  - Age range (if tracked);
+  
+  :Generate demographic charts;
+  
+  |HR Manager|
+  :Review diversity metrics:
+  "Need to improve outreach
+  to underrepresented groups";
+
+split again
+  -> **AI Screening Performance**;
+  |System|
+  :Truy vấn AI results:
+  SELECT ai_screening_score,
+  interview_result,
+  final_decision
+  FROM applications;
+  
+  :Tính accuracy:
+  - Correlation: AI score vs Interview result
+  - False positives: High AI score, failed interview
+  - False negatives: Low AI score, passed interview;
+  
+  :Calculate ROI:
+  - Time saved
+  - Cost reduction
+  - Quality improvement;
+  
+  |HR Manager|
+  :Optimize AI model:
+  "False negative rate: 8%
+  → Re-train model với
+  recent interview data";
+
+end split
+
+|HR Manager / Admin|
+:Chọn tùy chọn export;
+
+if (Export format?) then (PDF Report)
+  |System|
+  :Generate PDF report:
+  - Executive summary
+  - All charts & graphs
+  - Key insights
+  - Recommendations;
+  
+  :Save to storage;
+  
+  |EmailService|
+  :Gửi email với
+  PDF attachment đến
+  stakeholders;
+
+else (Excel/CSV)
+  |System|
+  :Export raw data
+  to Excel/CSV:
+  - Multiple sheets per report type
+  - Pivot-ready format;
+  
+  :Download file;
+
+else (Dashboard Screenshot)
+  |System|
+  :Capture dashboard image;
+  
+  :Copy to clipboard
+  hoặc download PNG;
+
+else (Scheduled Report)
+  |HR Manager|
+  :Configure schedule:
+  - Frequency: Weekly/Monthly/Quarterly
+  - Recipients: Email list
+  - Report types: Selected
+  - Delivery time: Monday 9 AM;
+  
+  |System|
+  :Lưu schedule configuration;
+  
+  :Set up cron job/scheduled task;
+  
+  note right
+    Auto-generate và gửi
+    report định kỳ
+  end note
+endif
+
+|HR Manager|
+:Review insights;
+
+:Take action:
+- Adjust job descriptions
+- Optimize screening criteria
+- Improve interview process
+- Allocate budget
+- Train interviewers
+- Update recruitment strategy;
+
+== Predictive Analytics (Advanced) ==
+
+|HR Manager|
+:Request predictive insights;
+
+|AI/ML Service|
+:Load historical data:
+- Past 2 years recruitment data
+- Success/failure patterns
+- Seasonal trends;
+
+:Run ML models:
+- Predict time-to-hire
+- Predict candidate success
+- Forecast application volume
+- Identify hiring needs;
+
+:Generate predictions:
+"Based on trends,
+Q4 sẽ cần 30% more applications
+cho Tech positions";
+
+|System|
+:Display predictions
+với confidence intervals;
+
+|HR Manager|
+:Plan ahead:
+- Increase marketing budget
+- Schedule more interviewers
+- Prepare onboarding resources;
+
+== Real-time Monitoring ==
+
+|System|
+:Monitor KPIs real-time:
+- Application rate
+- Response time
+- Interview completion rate
+- Offer acceptance rate;
+
+if (KPI anomaly detected?) then (yes)
+  |NotificationService|
+  :Gửi alert đến HR Manager:
+  "Warning: Interview completion
+  rate giảm 30% this week";
+  
+  |HR Manager|
+  :Investigate issue;
+  
+  :Take corrective action;
+else (no)
+  :Continue monitoring;
+endif
+
+stop
+
+== Ghi chú ==
+note right
+  **Các loại báo cáo chính:**
+  1. Recruitment Funnel Analysis
+  2. Time-to-Hire Metrics
+  3. Source Effectiveness (ROI)
+  4. Interviewer Performance
+  5. Candidate Demographics
+  6. AI Screening Performance
+  7. Cost per Hire Analysis
+  8. Diversity & Inclusion Metrics
+  
+  **Tính năng nâng cao:**
+  - Real-time dashboard
+  - Predictive analytics
+  - Auto-scheduled reports
+  - Custom date ranges
+  - Department/job filtering
+  - Export multiple formats
+  - Drill-down capabilities
+  - Benchmark comparisons
+  
+  **Business Rules:**
+  1. Data privacy: Anonymize sensitive info
+  2. Access control: Role-based reporting
+  3. Audit trail: Track report generation
+  4. Data retention: Archive old reports
+  5. Performance: Cache frequent queries
+end note
+
+@enduml

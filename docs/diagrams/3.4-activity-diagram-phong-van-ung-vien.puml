@@ -1,0 +1,233 @@
+@startuml Sơ đồ Hoạt Động - Phỏng Vấn Ứng Viên (Chi Tiết)
+skinparam monochrome true
+
+title Sơ đồ Hoạt Động: Quy Trình Phỏng Vấn Ứng Viên (Chi Tiết)
+
+|Recruiter|
+start
+:Xem danh sách ứng viên
+đạt CV screening;
+
+:Chọn ứng viên để
+lên lịch phỏng vấn;
+
+:Điền form phỏng vấn:
+- Interview date & time
+- Interview type (VIDEO/ONSITE/PHONE)
+- Location (nếu ONSITE)
+- Danh sách interviewers
+- Ghi chú;
+
+:Submit lịch phỏng vấn;
+
+|System|
+:Validate dữ liệu:
+- Date phải sau hiện tại ít nhất 2h
+- Interviewers không trống;
+
+if (Valid?) then (no)
+  :Hiển thị lỗi validation;
+  stop
+else (yes)
+  :Kiểm tra conflict:
+  - Interviewer availability
+  - Room availability (nếu ONSITE);
+  
+  if (Có conflict?) then (yes)
+    :Suggest alternative time slots;
+    stop
+  else (no)
+    :Tạo Interview record
+    (status = SCHEDULED);
+    
+    :Tạo InterviewPanel
+    cho mỗi interviewer;
+    
+    if (Interview type = VIDEO?) then (yes)
+      :Gọi VideoConferenceService;
+      :Generate meeting link
+      (Zoom/Teams);
+    endif
+    
+    :Gọi CalendarService;
+    :Tạo calendar event
+    cho tất cả participants;
+    
+    fork
+      |#LightCoral|EmailService|
+      :Gửi email thông báo
+      đến Candidate:
+      - Interview details
+      - Time & location/link
+      - Interviewers
+      - Preparation notes;
+    fork again
+      |#LightCoral|EmailService|
+      :Gửi email thông báo
+      đến tất cả Interviewers:
+      - Candidate profile
+      - Interview time
+      - Meeting link/room
+      - Evaluation criteria;
+    endfork
+    
+    |System|
+    :Cập nhật Application
+    status = INTERVIEWING;
+    
+    :Set reminder:
+    - 24h trước: Email reminder
+    - 1h trước: Email reminder;
+    
+    |Recruiter|
+    :Nhận confirmation;
+    
+    note right
+      Lịch phỏng vấn đã được tạo
+      và thông báo đã gửi
+    end note
+  endif
+endif
+
+== Ngày Phỏng Vấn ==
+
+|Interviewer|
+:Nhận reminder email
+1h trước phỏng vấn;
+
+:Chuẩn bị tài liệu:
+- Review CV
+- Check câu hỏi phỏng vấn
+- Join meeting (VIDEO)
+  hoặc đến phòng (ONSITE);
+
+:Thực hiện phỏng vấn;
+
+note right
+  Thời gian: 30-60 phút
+  Đánh giá các tiêu chí:
+  - Technical skills
+  - Communication
+  - Problem solving
+  - Cultural fit
+end note
+
+:Hoàn thành phỏng vấn;
+
+|System|
+:Gửi notification:
+"Vui lòng đánh giá ứng viên";
+
+|Interviewer|
+:Truy cập form đánh giá;
+
+:Nhập feedback:
+- Technical score (0-100)
+- Communication score (0-100)
+- Problem solving score (0-100)
+- Cultural fit score (0-100)
+- Overall assessment: PASS/FAIL
+- Detailed feedback (text)
+- Recommendations;
+
+:Submit feedback;
+
+|System|
+:Lưu feedback vào
+InterviewPanel record;
+
+:Kiểm tra tất cả
+interviewers đã submit?;
+
+if (Tất cả đã submit?) then (no)
+  :Gửi reminder email
+  đến interviewers chưa submit;
+  
+  |Interviewer|
+  :Chờ feedback từ
+  interviewers khác;
+  stop
+else (yes)
+  :Tính điểm tổng hợp:
+  AVG(all scores);
+  
+  :Xác định kết quả:
+  - AVG >= 70: PASS
+  - AVG < 50: FAIL
+  - 50-70: PENDING;
+  
+  :Cập nhật Interview
+  status = COMPLETED
+  result = [PASS/FAIL/PENDING];
+  
+  if (Result = PASS?) then (yes)
+    :Cập nhật Application
+    status = SCREENING_PASSED;
+    
+    fork
+      |EmailService|
+      :Gửi email thông báo
+      đến Recruiter:
+      "Ứng viên [Name] đạt
+      phỏng vấn";
+    fork again
+      |EmailService|
+      :Gửi email thông báo
+      đến Candidate:
+      "Congratulations! Bạn đã
+      qua vòng phỏng vấn";
+    endfork
+    
+    |Recruiter|
+    :Xem chi tiết feedback
+    từ tất cả interviewers;
+    
+    :Quyết định:
+    Tiếp tục hoặc
+    lên offer letter;
+    
+  else (no)
+    if (Result = FAIL?) then (yes)
+      :Cập nhật Application
+      status = REJECTED;
+      
+      |EmailService|
+      :Gửi email rejection
+      đến Candidate
+      (nếu policy cho phép);
+      
+      |Recruiter|
+      :Xem chi tiết feedback;
+      :Đóng hồ sơ ứng viên;
+      
+    else (PENDING)
+      :Gửi notification
+      đến HR Manager
+      để review thêm;
+      
+      |Recruiter|
+      :Review chi tiết feedback;
+      :Quyết định thủ công:
+      PASS hoặc FAIL;
+    endif
+  endif
+endif
+
+stop
+
+== Ghi chú ==
+note right
+  **Business Rules:**
+  1. Minimum 2h advance booking
+  2. Auto conflict checking
+  3. Auto calendar integration
+  4. Auto email notifications
+  5. Pass threshold: AVG >= 70
+  6. Fail threshold: AVG < 50
+  7. PENDING range: 50-70 (cần review)
+  8. All interviewers phải submit feedback
+  9. Reminder: 24h và 1h trước interview
+  10. Auto update Application status
+end note
+
+@enduml

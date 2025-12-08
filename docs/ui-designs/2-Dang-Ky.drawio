@@ -1,0 +1,108 @@
+<mxfile host="app.diagrams.net" modified="2025-12-09T00:00:00.000Z" agent="5.0" version="22.0.0">
+  <diagram name="Đăng Ký" id="dang-ky">
+    <mxGraphModel dx="1434" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Browser Window -->
+        <mxCell id="browser-frame" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="150" y="50" width="520" height="700" as="geometry" />
+        </mxCell>
+        
+        <!-- Header Bar -->
+        <mxCell id="header-bar" value="localhost:3000/register" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="150" y="50" width="520" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Logo -->
+        <mxCell id="logo" value="🏢 Hệ Thống Tuyển Dụng" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="250" y="110" width="320" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Register Form Container -->
+        <mxCell id="form-container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="170" width="340" height="520" as="geometry" />
+        </mxCell>
+        
+        <!-- Form Title -->
+        <mxCell id="form-title" value="Đăng Ký Tài Khoản" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="240" y="185" width="340" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Họ tên -->
+        <mxCell id="name-label" value="Họ và tên:" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="240" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="name-input" value="Nguyễn Văn A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=12;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="270" y="265" width="280" height="35" as="geometry" />
+        </mxCell>
+        
+        <!-- Email -->
+        <mxCell id="email-label" value="Email:" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="315" width="80" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="email-input" value="email@example.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=12;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="270" y="340" width="280" height="35" as="geometry" />
+        </mxCell>
+        
+        <!-- Số điện thoại -->
+        <mxCell id="phone-label" value="Số điện thoại:" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="390" width="120" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="phone-input" value="0912345678" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=12;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="270" y="415" width="280" height="35" as="geometry" />
+        </mxCell>
+        
+        <!-- Mật khẩu -->
+        <mxCell id="password-label" value="Mật khẩu:" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="465" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="password-input" value="••••••••" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="490" width="280" height="35" as="geometry" />
+        </mxCell>
+        
+        <!-- Vai trò -->
+        <mxCell id="role-label" value="Đăng ký với vai trò:" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="540" width="150" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Radio buttons for role -->
+        <mxCell id="role-candidate" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="270" y="565" width="18" height="18" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="role-candidate-label" value="Ứng viên" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="295" y="562" width="80" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="role-recruiter" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="390" y="565" width="18" height="18" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="role-recruiter-label" value="Nhà tuyển dụng" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="415" y="562" width="120" height="25" as="geometry" />
+        </mxCell>
+        
+        <!-- Register Button -->
+        <mxCell id="register-button" value="Đăng Ký" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#28a745;strokeColor=none;fontColor=#ffffff;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="270" y="610" width="280" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Login Link -->
+        <mxCell id="login-text" value="Đã có tài khoản?" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="270" y="660" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="login-link" value="Đăng nhập ngay" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#0066cc;decoration=underline;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="410" y="660" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
