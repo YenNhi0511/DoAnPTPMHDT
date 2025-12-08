@@ -2,8 +2,7 @@
 # Railway Root Directory should be set to: backend
 
 [phases.setup]
-nixPkgs = ["python310", "postgresql", "file"]
-aptPkgs = ["libmagic1"]
+nixPkgs = ["python310", "postgresql"]
 
 [phases.install]
 cmds = [
@@ -17,4 +16,4 @@ cmds = [
 ]
 
 [start]
-cmd = "python manage.py migrate --noinput && gunicorn recruitment_system.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+cmd = "gunicorn recruitment_system.wsgi --bind 0.0.0.0:$PORT"

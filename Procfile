@@ -1,5 +1,5 @@
 # Procfile for Backend service only
 # Railway Root Directory should be: backend
-web: python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn recruitment_system.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+web: gunicorn recruitment_system.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120
 worker: celery -A recruitment_system worker --loglevel=info --pool=solo
 beat: celery -A recruitment_system beat --loglevel=info

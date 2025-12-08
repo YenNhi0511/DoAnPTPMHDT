@@ -1,6 +1,27 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+// Auto-detect API URL based on environment
+const getApiUrl = () => {
+  // If env var is set, use it (highest priority)
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // For production deployment with custom domain
+  if (window.location.hostname.includes('recruitmentpro.live')) {
+    return 'https://api.recruitmentpro.live/api';
+  }
+  
+  // For Railway deployment
+  if (window.location.hostname.includes('railway.app')) {
+    return 'https://doanptpmhdtbackend-production.up.railway.app/api';
+  }
+  
+  // Default to localhost for development
+  return 'http://localhost:8000/api';
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
