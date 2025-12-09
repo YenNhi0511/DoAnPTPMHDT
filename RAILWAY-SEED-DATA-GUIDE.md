@@ -7,6 +7,7 @@ npm i -g @railway/cli
 ```
 
 Sau đó login:
+
 ```cmd
 railway login
 ```
@@ -29,6 +30,7 @@ railway run --service backend python manage.py migrate
 ```
 
 Output sẽ hiển thị:
+
 ```
 Operations to perform:
   Apply all migrations: accounts, jobs, applications, ...
@@ -45,6 +47,7 @@ railway run --service backend python manage.py createsuperuser
 ```
 
 Nhập thông tin khi được hỏi:
+
 - Email: `admin@recruitmentpro.live`
 - Password: `Admin@123456` (hoặc password mạnh khác)
 
@@ -57,12 +60,14 @@ railway run --service backend python manage.py seed_sample_data
 ```
 
 Command này sẽ tạo:
+
 - ✅ 3 users (admin, recruiter, candidate)
 - ✅ 15 jobs từ các công ty: FPT, VNG, Tiki, Viettel, Momo
 - ✅ 2 sample applications
 - ✅ 1 sample interview
 
 Output:
+
 ```
 🌱 Starting to seed sample data...
 📝 Creating users...
@@ -108,6 +113,7 @@ railway run --service backend python seed_data.py
 ```
 
 Script này tạo:
+
 - 3 users (admin, recruiter, candidate)
 - 2 jobs
 - 1 application
@@ -145,10 +151,12 @@ curl https://api.recruitmentpro.live/api/jobs/
 ## Bước 7: Test Trên Website
 
 1. **Login Admin:**
+
    - Email: `admin@recruitmentpro.live`
    - Password: `Admin@123456`
 
 2. **Login Recruiter:**
+
    - Email: `recruiter@recruitmentpro.live`
    - Password: `Recruiter@123`
 
@@ -179,6 +187,7 @@ curl https://api.recruitmentpro.live/api/jobs/
 ### Lỗi: "No module named 'jobs'"
 
 Kiểm tra Railway service có đúng root directory:
+
 ```cmd
 railway variables --service backend
 ```
@@ -188,6 +197,7 @@ railway variables --service backend
 ### Lỗi: "Database connection failed"
 
 Kiểm tra database đã được provision:
+
 ```cmd
 railway logs --service backend
 ```
@@ -195,6 +205,7 @@ railway logs --service backend
 ### Lỗi: "Table does not exist"
 
 Chạy migrations:
+
 ```cmd
 railway run --service backend python manage.py migrate
 ```
@@ -208,15 +219,18 @@ railway logs --service backend --tail
 ## Tips
 
 1. **Push code lên GitHub trước khi seed:**
+
    - Railway auto-deploy từ GitHub
    - Đảm bảo code mới nhất được deploy
 
 2. **Kiểm tra environment variables:**
+
    ```cmd
    railway variables --service backend
    ```
 
 3. **Backup data trước khi clear:**
+
    ```cmd
    railway run --service backend python manage.py dumpdata > backup.json
    ```
@@ -229,6 +243,7 @@ railway logs --service backend --tail
 ## Next Steps
 
 Sau khi có dữ liệu:
+
 1. ✅ Test toàn bộ tính năng trên production
 2. ✅ Test job search, filter
 3. ✅ Test application submission
